@@ -6,12 +6,14 @@ public class ENEMY
 
 	final public int width, height;
 	final public String id_string;
+	final public int follow_type;
 	
 	public final int max_speed = 8;
 	
 	public ENEMY(String id_string, int follow_type, int x, int y, int width, int height)
 	{
 		this.id_string = id_string;
+		this.follow_type = follow_type;
 		this.x = x;
 		this.y = y;
 		this.width = width;
