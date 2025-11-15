@@ -39,34 +39,38 @@ public class KEY_HANDLER implements KeyListener
 		if(user_inp == KeyEvent.VK_ESCAPE && !game_paused)
 		{
 			setGame_paused(true);
-			System.exit(0);
+//			System.exit(0);
 		}
 		else if(user_inp == KeyEvent.VK_ESCAPE && game_paused)
 		{
 			setGame_paused(false);
-			System.exit(0);
+//			System.exit(0);
 		}
 		
 		else
 		{
-			if(user_inp == KeyEvent.VK_UP || user_inp == KeyEvent.VK_W)
+			if((user_inp == KeyEvent.VK_UP || user_inp == KeyEvent.VK_W))// && !DOWN)
 			{
 				UP = true;
+//				DOWN = false;
 				dy = -1;
 			}
-			if(user_inp == KeyEvent.VK_LEFT || user_inp == KeyEvent.VK_A)
+			if((user_inp == KeyEvent.VK_LEFT || user_inp == KeyEvent.VK_A))// && !RIGHT)
 			{
 				LEFT = true;
+//				RIGHT = false;
 				dx = -1;
 			}
-			if(user_inp == KeyEvent.VK_DOWN || user_inp == KeyEvent.VK_S)
+			if((user_inp == KeyEvent.VK_DOWN || user_inp == KeyEvent.VK_S))// && !UP)
 			{
 				DOWN = true;
+//				UP = false;
 				dy = 1;
 			}
-			if(user_inp == KeyEvent.VK_RIGHT || user_inp == KeyEvent.VK_D)
+			if((user_inp == KeyEvent.VK_RIGHT || user_inp == KeyEvent.VK_D))// && !LEFT)
 			{
 				RIGHT = true;
+//				LEFT = false;
 				dx = 1;
 			}
 			
@@ -84,22 +88,26 @@ public class KEY_HANDLER implements KeyListener
 		if(user_inp == KeyEvent.VK_UP || user_inp == KeyEvent.VK_W)
 		{
 			UP = false;
-			dy = -1;
+			if(!DOWN)
+				dy = -1;
 		}
 		if(user_inp == KeyEvent.VK_LEFT || user_inp == KeyEvent.VK_A)
 		{
 			LEFT = false;
-			dx = -1;
+			if(!RIGHT)
+				dx = -1;
 		}
 		if(user_inp == KeyEvent.VK_DOWN || user_inp == KeyEvent.VK_S)
 		{
 			DOWN = false;
-			dy = 1;
+			if(!UP)
+				dy = 1;
 		}
 		if(user_inp == KeyEvent.VK_RIGHT || user_inp == KeyEvent.VK_D)
 		{
 			RIGHT = false;
-			dx = 1;
+			if(!LEFT)
+				dx = 1;
 		}
 		
 		setDirection_arr(new int[]{dx, dy});

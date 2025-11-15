@@ -9,13 +9,15 @@ import javax.swing.JPanel;
 
 import entities.ENEMY;
 import entities.PLAYER;
+import menu.GAME_MENU;
 
 public class GAME_PANEL extends JPanel implements Runnable
 {
 	KEY_HANDLER key_handler;
 	PLAYER player;
-	ENEMY lulle, albin, lkab, ssc;
+	ENEMY lulle, albin, lkab, ssc, slusk, attila, pauline;
 	ENEMY[] enemies;
+	GAME_TIMER game_timer = new GAME_TIMER();
 	
 	Thread game_thread;
 	
@@ -46,11 +48,14 @@ public class GAME_PANEL extends JPanel implements Runnable
 		player = new PLAYER(width / 2, 10, 108 / 2, 192 / 2);
 		
 		// Init. enemies
-		lulle = new ENEMY("lulle", 0, 1 * (this.width / 6), 4 * (this.height / 6), 108 / 2, 192 / 2);
-		lkab = new ENEMY("lkab", 1, 2 * (this.width / 6), 5 * (this.height / 6), 108 / 2, 192 / 2);
-		albin = new ENEMY("albin", 3, 3 * (this.width / 6), 4 * (this.height / 6), 108 / 2, 192 / 2);
-		ssc = new ENEMY("ssc", 2, 4 * (this.width / 6), 5 * (this.height / 6), 108 / 2, 192 / 2);
-		enemies = new ENEMY[]{lulle, albin, lkab, ssc};
+		lulle = new ENEMY(	"lulle",	0,  1 * (this.width / 9), 4 * (this.height / 6), 108 / 2, 192 / 2);
+		lkab = new ENEMY(	"lkab",		1,  2 * (this.width / 9), 5 * (this.height / 6), 108 / 2, 192 / 2);
+		albin = new ENEMY(	"albin",	3,  3 * (this.width / 9), 4 * (this.height / 6), 108 / 2, 192 / 2);
+		ssc = new ENEMY(	"ssc",		2,  4 * (this.width / 9), 5 * (this.height / 6), 108 / 2, 192 / 2);
+		slusk = new ENEMY(	"slusk",	1,  5 * (this.width / 9), 4 * (this.height / 6), 108 / 2, 192 / 2);
+		attila = new ENEMY(	"attila",	0,  6 * (this.width / 9), 5 * (this.height / 6), 108 / 2, 192 / 2);
+		pauline = new ENEMY("pauline",	2,  7 * (this.width / 9), 5 * (this.height / 6), 108 / 2, 192 / 2);
+		enemies = new ENEMY[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 		
 		this.frame = frame;
 		
@@ -59,6 +64,8 @@ public class GAME_PANEL extends JPanel implements Runnable
 
 	private void initGameThread()
 	{
+		game_timer.initTimer();
+		
 		game_loop_running = true;
 		game_thread = new Thread(this);
 		game_thread.start();
@@ -82,6 +89,8 @@ public class GAME_PANEL extends JPanel implements Runnable
 			long current_time;
 			
 			boolean game_paused = key_handler.isGame_paused();
+			if(!game_paused)
+				game_timer.setTime_coeff(1);
 			
 			// Slave game-loop
 			while(game_loop_running && !game_paused)
@@ -100,9 +109,16 @@ public class GAME_PANEL extends JPanel implements Runnable
 					
 					checkCollision();
 					
-					delta = 0; 
+					delta = 0;
+					
+					game_paused = key_handler.isGame_paused();
+					if(game_paused)
+					{
+						game_timer.setTime_coeff(0);
+//						GAME_MENU game_menu = new GAME_MENU(frame);
+					}
 				}
-			} // End of slave game-loop			
+			} // End of slave game-loop	
 		} // End of master game-loop
 	}
 	
@@ -186,7 +202,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 					break;
 				case 2:
 					// Later implement that it changes every second
-					speed_coeff = getRandom_speed_coeff();
+					speed_coeff = game_timer.getRandom_speed_coeff();
 					break;
 				case 3:
 					speed_coeff = -1;
@@ -292,7 +308,10 @@ public class GAME_PANEL extends JPanel implements Runnable
 			 * Mini game
 			 */
 			if(x_crossed && y_crossed)
+			{
 				System.err.println(current_enemy.id_string);
+				game_loop_running = false;
+			}
 		}
 	}
 	
@@ -317,14 +336,5 @@ public class GAME_PANEL extends JPanel implements Runnable
 		}
 		
 		g_2d.dispose();
-	}
-
-	private float getRandom_speed_coeff()
-	{
-		return (float) random_speed_coeff;
-	}
-	public void setRandom_speed_coeff()
-	{
-		random_speed_coeff = (Math.random() * (1 - (-1))) + (-1);
 	}
 }
