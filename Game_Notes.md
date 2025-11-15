@@ -1,0 +1,34 @@
+- MENU
+   - Play
+   - Options
+      - Song choice
+      - Screen size: half, 3/4, full
+   - Exit
+- GAME
+   - Kiruna --> Italy
+      - Can only go on land
+   - Enemies along the road
+      - Enemy_list:
+         - SLUSK
+            - Need to bong
+            - Really increases time
+         - Lulle
+            - Need to clean up after him
+         - Albin (hero?)
+            - Time goes down
+            - RNG amount of time restored
+         - LKAB
+            - Need to go through swamp
+            - Player speed ~50%
+         - Pauline
+            - Organize rockethouse sittning
+         - Attila
+         	- Need to catch him??
+         - SSC
+            - Need to avoid rocket engines
+
+
+      - Enemies have "path-finding"
+- FINISH
+   - Show completion time
+   - Log and disp. leaderboard
