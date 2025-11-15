@@ -42,8 +42,10 @@ public class GAME_PANEL extends JPanel implements Runnable
 		frame.add(this);
 		frame.setVisible(true);
 		
+		// Init. player
 		player = new PLAYER(width / 2, 10, 108 / 2, 192 / 2);
 		
+		// Init. enemies
 		lulle = new ENEMY("lulle", 0, 1 * (this.width / 6), 4 * (this.height / 6), 108 / 2, 192 / 2);
 		lkab = new ENEMY("lkab", 1, 2 * (this.width / 6), 5 * (this.height / 6), 108 / 2, 192 / 2);
 		albin = new ENEMY("albin", 3, 3 * (this.width / 6), 4 * (this.height / 6), 108 / 2, 192 / 2);
@@ -63,7 +65,6 @@ public class GAME_PANEL extends JPanel implements Runnable
 	}
 	
 	int FPS = 60;
-	int rand_speed_coeff_ticks = 0;
 	@Override
 	public void run()
 	{
@@ -72,7 +73,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 		{
 			/*
 			 * Time-to-update logic
-			 * Src: https://www.youtube.com/watch?v=VpH 33Uw-_0E&t=1906s
+			 * Src: https://www.youtube.com/watch?v=VpH33Uw-_0E&t=1906s
 			 */
 	 		double draw_interval = Math.pow(10, 9);
 	 		draw_interval /= FPS;
@@ -99,13 +100,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 					
 					checkCollision();
 					
-					delta = 0;
-				}
-				rand_speed_coeff_ticks++;
-				if(rand_speed_coeff_ticks >= 100)
-				{
-					setRandom_speed_coeff();
-					random_speed_coeff = 0;
+					delta = 0; 
 				}
 			} // End of slave game-loop			
 		} // End of master game-loop
@@ -113,10 +108,14 @@ public class GAME_PANEL extends JPanel implements Runnable
 	
 	private void updatePlayer()
 	{
+		// Get key pressed
 		int[] player_direction_arr = key_handler.getDirection_arr();
+		
+		// Get positive/negative direction of player
 		int player_dx = player_direction_arr[0];
 		int player_dy = player_direction_arr[1];
 		
+		// Get current speed of player
 		int player_speed_x = player.getPlayer_speed_x();
 		int player_speed_y = player.getPlayer_speed_y();
 		
@@ -132,9 +131,11 @@ public class GAME_PANEL extends JPanel implements Runnable
 		else if((!key_handler.UP || !key_handler.DOWN) && player_speed_y > 0)
 			player_speed_y--;
 		
+		// Get position of player
 		int player_x = player.getPlayer_x();
 		int player_y = player.getPlayer_y();
 		
+		// If within frame
 		if(moveable_x(player_x, player.player_width, player_dx))
 			player_x += player_speed_x * player_dx;
 		if(moveable_y(player_y, player.player_height, player_dy))
@@ -156,7 +157,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 		 * |____________________________________|
 		 * |       1     | Follow at 50% speed  |
 		 * |____________________________________|
-		 * |       2     | randomized direction |
+		 * |       2     | Randomized direction |
 		 * |____________________________________|
 		 * |       3     |  Opposite direction  |
 		 * |____________________________________|
@@ -167,11 +168,14 @@ public class GAME_PANEL extends JPanel implements Runnable
 		int player_y = player.getPlayer_y();
 		int[] direction_arr;
 		double angle;
-		double speed_coeff = 0;
+		float speed_coeff = 0;
+		
+		// Loop through all enemies
 		for(int enemy_index = 0; enemy_index < enemies.length; enemy_index++)
 		{
 			ENEMY current_enemy = enemies[enemy_index];
 			
+			// Assign speed-coefficient depending on "enemy-type"
 			switch(current_enemy.follow_type)
 			{
 				case 0:
@@ -188,8 +192,14 @@ public class GAME_PANEL extends JPanel implements Runnable
 					speed_coeff = -1;
 					break;
 			}
-			int delta_x = player_x - current_enemy.x;
-			int delta_y = player_y - current_enemy.y;
+			
+			double enemy_x = current_enemy.getEnemy_x();
+			double enemy_y = current_enemy.getEnemy_y();
+			
+			int delta_x = player_x - (int) enemy_x;
+			int delta_y = player_y - (int) enemy_y;
+			
+			// Get direction need to reach player
 			try
 			{			
 				direction_arr = new int[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
@@ -205,9 +215,6 @@ public class GAME_PANEL extends JPanel implements Runnable
 			double speed_x = direction_arr[0] * speed_coeff * current_enemy.max_speed * Math.cos(angle);
 			double speed_y = direction_arr[1] * speed_coeff * current_enemy.max_speed * Math.sin(angle);
 			
-			double enemy_x = (double) current_enemy.getEnemy_x();
-			double enemy_y = (double) current_enemy.getEnemy_y();
-			
 			// Regular moveable-check for enemies
 			if(current_enemy.follow_type < 3)
 			{
@@ -216,12 +223,12 @@ public class GAME_PANEL extends JPanel implements Runnable
 				if(moveable_y((int) enemy_y, current_enemy.height, direction_arr[1]))
 					enemy_y += speed_y;
 			}
-			// Special case moveable check for opposite movement
+			// Special case moveable-check for follow-type 3
 			else if(current_enemy.follow_type == 3)
 			{
-				if(moveable_x((int) enemy_x, current_enemy.width, -direction_arr[0]))
+				if(moveable_x( (int) enemy_x, current_enemy.width, -direction_arr[0]))
 					enemy_x += speed_x;
-				if(moveable_y((int) enemy_y, current_enemy.height, -direction_arr[1]))
+				if(moveable_y( (int) enemy_y, current_enemy.height, -direction_arr[1]))
 					enemy_y += speed_y;
 			}
 			
@@ -229,7 +236,8 @@ public class GAME_PANEL extends JPanel implements Runnable
 			current_enemy.setEnemy_y((int) enemy_y);
 		}
 	}
-
+	
+	// Methods to check if entity is within frame
 	private boolean moveable_x(int x, int width, int dx)
 	{
 		if(dx > 0 && x + width < this.width - (width / 2))
@@ -249,6 +257,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 			return false;
 	}
 	
+	// Check if player collided with any enemy
 	private void checkCollision()
 	{
 		int player_x = player.getPlayer_x();
@@ -279,7 +288,9 @@ public class GAME_PANEL extends JPanel implements Runnable
 			else if(player_y < enemy_y && enemy_y < player_mid_y)
 				y_crossed = true;
 			
-			// Mini game
+			/*
+			 * Mini game
+			 */
 			if(x_crossed && y_crossed)
 				System.err.println(current_enemy.id_string);
 		}
@@ -289,10 +300,12 @@ public class GAME_PANEL extends JPanel implements Runnable
 	{
 		super.paintComponent(g_1d);
 		
+		// Paint player
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		g_2d.setColor(Color.PINK);
 		g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height);
 		
+		// Paint enemies
 		for(int i = 0; i < enemies.length; i++)
 		{
 			ENEMY current_enemy = enemies[i];
@@ -306,11 +319,11 @@ public class GAME_PANEL extends JPanel implements Runnable
 		g_2d.dispose();
 	}
 
-	private double getRandom_speed_coeff()
+	private float getRandom_speed_coeff()
 	{
-		return random_speed_coeff;
+		return (float) random_speed_coeff;
 	}
-	private void setRandom_speed_coeff()
+	public void setRandom_speed_coeff()
 	{
 		random_speed_coeff = (Math.random() * (1 - (-1))) + (-1);
 	}

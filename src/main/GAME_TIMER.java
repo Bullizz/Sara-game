@@ -1,6 +1,8 @@
 package main;
 
-public class GAME_TIMER
+import java.util.Timer;
+
+public class GAME_TIMER extends Timer
 {
 
 }

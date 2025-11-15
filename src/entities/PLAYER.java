@@ -3,10 +3,13 @@ package entities;
 public class PLAYER
 {
 	int player_x, player_y;
+	
 	final public int player_width, player_height;
 	final public int max_speed = 10;
+	
 	int player_speed_x = 0;
 	int player_speed_y = 0;
+	
 	public int player_dx = 1;
 	public int player_dy = 1;
 
