@@ -1,0 +1,38 @@
+- MENU
+   - Play
+   - Options
+      - Song choice
+      - Screen size: half, 3/4, full
+   - Exit
+- GAME
+   - Kiruna --> Italy
+      - Can only go on land
+   - Enemies along the road
+      - Enemy_list:
+         - Manske
+            - Need to bong
+         - Lulle
+            - Need to clean up after him
+         - Albin (hero?)
+            - Gain HP from going in car
+            - RNG amount of HP restored
+         - LKAB
+            - Need to go through swamp
+         - Pauline
+            - Organize rockethouse sittning
+         - Attila
+         	- Need to catch him??
+         - SSC
+            - Need to avoid rocket engines
+
+
+      - Enemies have "path-finding"
+      - Loose HP during minigames
+   - Have
+- FINISH
+   - IF win
+      - Show completion time
+      - Log and disp. leaderboard?
+   - ELSE IF loose
+      - "Problema di abilita"
+      - No completion time logged
