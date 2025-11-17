@@ -11,7 +11,7 @@ public class MAIN
 	public static void main(String[] args)
 	{
 		JFrame frame = new JFrame();
-		frame.setUndecorated(true);
+		frame.setUndecorated(false);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setSize(1920, 1080);
 		frame.setLocationRelativeTo(null);

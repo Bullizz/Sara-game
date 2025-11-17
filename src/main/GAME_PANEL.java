@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import entities.ENEMY;
@@ -107,7 +108,16 @@ public class GAME_PANEL extends JPanel implements Runnable
 					
 					repaint();
 					
-					checkCollision();
+					// Player-enemy collision
+					if(checkCollision(player.getPlayer_x(),
+									  player.getPlayer_y(),
+									  player.player_width,
+									  player.player_height,
+									  -1))
+					{
+//						 JOptionPane.showMessageDialog(null, "Collision");
+//						 System.exit(0);
+					}
 					
 					delta = 0;
 					
@@ -152,9 +162,9 @@ public class GAME_PANEL extends JPanel implements Runnable
 		int player_y = player.getPlayer_y();
 		
 		// If within frame
-		if(moveable_x(player_x, player.player_width, player_dx))
+		if(moveableX(player_x, player.player_width, player_dx))
 			player_x += player_speed_x * player_dx;
-		if(moveable_y(player_y, player.player_height, player_dy))
+		if(moveableY(player_y, player.player_height, player_dy))
 			player_y += player_speed_y * player_dy;
 		
 		player.setPlayer_x(player_x);
@@ -182,7 +192,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 		
 		int player_x = player.getPlayer_x();
 		int player_y = player.getPlayer_y();
-		int[] direction_arr;
+		double[] direction_arr;
 		double angle;
 		float speed_coeff = 0;
 		
@@ -195,17 +205,20 @@ public class GAME_PANEL extends JPanel implements Runnable
 			switch(current_enemy.follow_type)
 			{
 				case 0:
-					speed_coeff = 0;
+					speed_coeff = 1;
+//					speed_coeff = 0;
 					break;
 				case 1:
-					speed_coeff = 0;
+					speed_coeff = (float) 0.5;
+//					speed_coeff = 0;
 					break;
 				case 2:
-					// Later implement that it changes every second
 					speed_coeff = game_timer.getRandom_speed_coeff();
+//					speed_coeff = 0;
 					break;
 				case 3:
 					speed_coeff = -1;
+//					speed_coeff = 0;
 					break;
 			}
 			
@@ -215,46 +228,65 @@ public class GAME_PANEL extends JPanel implements Runnable
 			int delta_x = player_x - (int) enemy_x;
 			int delta_y = player_y - (int) enemy_y;
 			
-			// Get direction need to reach player
+			// Get direction needed to reach player
 			try
 			{			
-				direction_arr = new int[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
+				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
 				angle = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
 			} catch(Exception e)
 			{
 				delta_x = 1;
 				delta_y = 1;
-				direction_arr = new int[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
+				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
 				angle = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
 			}
 			
-			double speed_x = direction_arr[0] * speed_coeff * current_enemy.max_speed * Math.cos(angle);
-			double speed_y = direction_arr[1] * speed_coeff * current_enemy.max_speed * Math.sin(angle);
+			direction_arr[0] *= speed_coeff;
+			direction_arr[1] *= speed_coeff;
 			
-			// Regular moveable-check for enemies
-			if(current_enemy.follow_type < 3)
-			{
-				if(moveable_x((int) enemy_x, current_enemy.width, direction_arr[0]))
-					enemy_x += speed_x;
-				if(moveable_y((int) enemy_y, current_enemy.height, direction_arr[1]))
-					enemy_y += speed_y;
+			double speed_x = direction_arr[0] * current_enemy.max_speed * Math.cos(angle);
+			double speed_y = direction_arr[1] * current_enemy.max_speed * Math.sin(angle);
+			
+			// Check enemy-enemy collision
+			if(!checkCollision( (int) (enemy_x + speed_x),
+							    (int) (enemy_y + speed_y),
+							     current_enemy.width,
+							     current_enemy.height,
+							     enemy_index))
+			{				
+				enemy_x += speed_x;
+				enemy_y += speed_y;
 			}
-			// Special case moveable-check for follow-type 3
-			else if(current_enemy.follow_type == 3)
-			{
-				if(moveable_x( (int) enemy_x, current_enemy.width, -direction_arr[0]))
-					enemy_x += speed_x;
-				if(moveable_y( (int) enemy_y, current_enemy.height, -direction_arr[1]))
-					enemy_y += speed_y;
+			else
+			{				
+//				enemy_x -= speed_x;
+//				enemy_y -= speed_y;
 			}
 			
-			current_enemy.setEnemy_x((int) enemy_x);
-			current_enemy.setEnemy_y((int) enemy_y);
+			// Enemy stays within frame
+			if(moveableX( (int) enemy_x, current_enemy.width, direction_arr[0]))
+				current_enemy.setEnemy_x((int) enemy_x);
+			if(moveableY( (int) enemy_y, current_enemy.height, direction_arr[1]))
+				current_enemy.setEnemy_y((int) enemy_y);
+
+			if(current_enemy.id_string.equals("pauline") || current_enemy.id_string.equals("ssc"))
+			{
+				if(0 > current_enemy.getEnemy_x() || current_enemy.getEnemy_x() > this.width)
+				{
+					frame.setTitle("BRUH");
+					System.out.println();
+				}
+				if(0 > current_enemy.getEnemy_y() || current_enemy.getEnemy_y() > this.height)
+				{
+					frame.setTitle("BRUH");					
+					System.out.println();
+				}
+			}
 		}
 	}
 	
 	// Methods to check if entity is within frame
-	private boolean moveable_x(int x, int width, int dx)
+	private boolean moveableX(int x, int width, double dx)
 	{
 		if(dx > 0 && x + width < this.width - (width / 2))
 			return true;
@@ -263,7 +295,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 		else
 			return false;
 	}
-	private boolean moveable_y(int y, int height, int dy)
+	private boolean moveableY(int y, int height, double dy)
 	{
 		if(dy > 0 && y + height < this.height - (height / 2))
 			return true;
@@ -273,46 +305,94 @@ public class GAME_PANEL extends JPanel implements Runnable
 			return false;
 	}
 	
-	// Check if player collided with any enemy
-	private void checkCollision()
+	//
+/*	private boolean checkEnemiesCollisionX(int x, int width, double dx, int current_enemy_index)
 	{
-		int player_x = player.getPlayer_x();
-		int player_y = player.getPlayer_y();
-		int player_mid_x  = player_x + (player.player_width / 2);
-		int player_mid_y = player_y + (player.player_height / 2);
+		int enemy_counter = 0;
+		int valid_enemy_position = 0;
+		
+		for(int i = 0; i < enemies.length; i++)
+		{
+			if(i != current_enemy_index)
+			{
+				enemy_counter++;
+				// Check enemies right
+				if(dx > 0 && x + width < enemies[i].getEnemy_x())
+					valid_enemy_position++;
+				// Check enemies left
+				else if(dx < 0 && enemies[i].getEnemy_x() + enemies[i].width < x)
+					valid_enemy_position++;
+			}
+		}
+		if(enemy_counter == valid_enemy_position)
+			return false;
+		else
+			return true;
+	}
+*/
+	
+	//
+//	private boolean checkEnemiesCollisionY(int y, int height, double dy, int current_enemy_index)
+//	{
+//		int enemy_counter = 0;
+//		int valid_enemy_position = 0;
+//		
+//		for(int i = 0; i < enemies.length; i++)
+//		{
+//			if(i != current_enemy_index)
+//			{
+//				enemy_counter++;
+//				// Check enemies above
+//				if(dy > 0 && y + height < enemies[i].getEnemy_y())
+//					valid_enemy_position++;
+//				// Check enemies below
+//				else if(dy < 0 && enemies[i].getEnemy_y() + enemies[i].height < y)
+//					valid_enemy_position++;
+//			}
+//		}
+//		if(enemy_counter == valid_enemy_position)
+//			return false;
+//		else
+//			return true;
+//	}
+	
+	// Check if entity collided with any enemy
+	private boolean checkCollision(int entity_x, int entity_y, int entity_width, int entity_height, int current_index)
+	{
+		int entity_mid_x = entity_x + (entity_width / 2);
+		int entity_mid_y = entity_y + (entity_height / 2);
 		
 		for(int enemy_index = 0; enemy_index < enemies.length; enemy_index++)
 		{
-			ENEMY current_enemy = enemies[enemy_index];
-			
-			boolean x_crossed = false;
-			boolean y_crossed = false;
-			
-			int enemy_x = current_enemy.getEnemy_x();
-			int enemy_y = current_enemy.getEnemy_y();
-			
-			// Enemy left of player
-			if(enemy_x < player_x && player_mid_x < (enemy_x + current_enemy.width))
-				x_crossed = true;
-			// Enemy right of player
-			else if(player_x < enemy_x && enemy_x < player_mid_x)
-				x_crossed = true;
-			// Enemy above player
-			if(enemy_y < player_y && player_mid_y < (enemy_y + current_enemy.height))
-				y_crossed = true;
-			// Enemy below player
-			else if(player_y < enemy_y && enemy_y < player_mid_y)
-				y_crossed = true;
-			
-			/*
-			 * Mini game
-			 */
-			if(x_crossed && y_crossed)
-			{
-				System.err.println(current_enemy.id_string);
-				game_loop_running = false;
+			if(enemy_index != current_index)
+			{				
+				boolean x_crossed = false;
+				boolean y_crossed = false;
+				
+				ENEMY current_enemy = enemies[enemy_index];
+				
+				int enemy_x = current_enemy.getEnemy_x();
+				int enemy_y = current_enemy.getEnemy_y();
+				
+				// Enemy left of entity
+				if(enemy_x < entity_x && entity_mid_x < (enemy_x + current_enemy.width))
+					x_crossed = true;
+				// Enemy right of entity
+				else if(entity_x < enemy_x && enemy_x < entity_mid_x)
+					x_crossed = true;
+				// Enemy above entity
+				if(enemy_y < entity_y && entity_mid_y < (enemy_y + current_enemy.height))
+					y_crossed = true;
+				// Enemy below entity
+				else if(entity_y < enemy_y && enemy_y < entity_mid_y)
+					y_crossed = true;
+				
+				// Collision
+				if(x_crossed && y_crossed)
+					return true;
 			}
 		}
+		return false;
 	}
 	
 	public void paintComponent(Graphics g_1d)
