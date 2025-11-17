@@ -1,16 +1,20 @@
 package main;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import entities.ENEMY;
 import entities.PLAYER;
-import menu.GAME_MENU;
 
 public class GAME_PANEL extends JPanel implements Runnable
 {
@@ -30,23 +34,33 @@ public class GAME_PANEL extends JPanel implements Runnable
 	
 	JFrame frame;
 	
-	public GAME_PANEL(JFrame frame)
+	BufferedImage map_img;
+	boolean map_drawn = false;
+	
+	public GAME_PANEL(JFrame frame, int top_height)
 	{
-		super();	
+		super();
 			this.width = frame.getWidth();
-			this.height = frame.getHeight();
-		setSize(frame.getSize());
+			this.height = 9 * (frame.getHeight() / 10);
+		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
+		setFocusable(true);
+		
 		key_handler = new KEY_HANDLER(frame);
 		addKeyListener(key_handler);
-		setFocusable(true);
-		setBackground(Color.RED);
+		try
+		{
+			map_img = ImageIO.read(getClass().getResourceAsStream("/image_files/europe_4.png"));
+		} catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 		
 		frame.add(this);
 		frame.setVisible(true);
 		
 		// Init. player
-		player = new PLAYER(width / 2, 10, 108 / 2, 192 / 2);
+		player = new PLAYER(width / 2, this.height / 20, this.height / 40, this.width / 40);
 		
 		// Init. enemies
 		lulle = new ENEMY(	"lulle",	0,  1 * (this.width / 9), 4 * (this.height / 6), 108 / 2, 192 / 2);
@@ -104,6 +118,9 @@ public class GAME_PANEL extends JPanel implements Runnable
 				{
 					updatePlayer();
 					
+					/*
+					 * Maybe add extra thread for enemies movement
+					 */
 					updateEnemies();
 					
 					repaint();
@@ -160,6 +177,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 		// Get position of player
 		int player_x = player.getPlayer_x();
 		int player_y = player.getPlayer_y();
+		System.out.println(player_y);
 		
 		// If within frame
 		if(moveableX(player_x, player.player_width, player_dx))
@@ -206,19 +224,19 @@ public class GAME_PANEL extends JPanel implements Runnable
 			{
 				case 0:
 					speed_coeff = 1;
-//					speed_coeff = 0;
+					speed_coeff = 0;
 					break;
 				case 1:
 					speed_coeff = (float) 0.5;
-//					speed_coeff = 0;
+					speed_coeff = 0;
 					break;
 				case 2:
 					speed_coeff = game_timer.getRandom_speed_coeff();
-//					speed_coeff = 0;
+					speed_coeff = 0;
 					break;
 				case 3:
 					speed_coeff = -1;
-//					speed_coeff = 0;
+					speed_coeff = 0;
 					break;
 			}
 			
@@ -297,7 +315,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 	}
 	private boolean moveableY(int y, int height, double dy)
 	{
-		if(dy > 0 && y + height < this.height - (height / 2))
+		if(dy > 0 && y + height < this.height - (height / 1))
 			return true;
 		else if(dy < 0 && y > (height / 2))
 			return true;
@@ -305,58 +323,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 			return false;
 	}
 	
-	//
-/*	private boolean checkEnemiesCollisionX(int x, int width, double dx, int current_enemy_index)
-	{
-		int enemy_counter = 0;
-		int valid_enemy_position = 0;
-		
-		for(int i = 0; i < enemies.length; i++)
-		{
-			if(i != current_enemy_index)
-			{
-				enemy_counter++;
-				// Check enemies right
-				if(dx > 0 && x + width < enemies[i].getEnemy_x())
-					valid_enemy_position++;
-				// Check enemies left
-				else if(dx < 0 && enemies[i].getEnemy_x() + enemies[i].width < x)
-					valid_enemy_position++;
-			}
-		}
-		if(enemy_counter == valid_enemy_position)
-			return false;
-		else
-			return true;
-	}
-*/
-	
-	//
-//	private boolean checkEnemiesCollisionY(int y, int height, double dy, int current_enemy_index)
-//	{
-//		int enemy_counter = 0;
-//		int valid_enemy_position = 0;
-//		
-//		for(int i = 0; i < enemies.length; i++)
-//		{
-//			if(i != current_enemy_index)
-//			{
-//				enemy_counter++;
-//				// Check enemies above
-//				if(dy > 0 && y + height < enemies[i].getEnemy_y())
-//					valid_enemy_position++;
-//				// Check enemies below
-//				else if(dy < 0 && enemies[i].getEnemy_y() + enemies[i].height < y)
-//					valid_enemy_position++;
-//			}
-//		}
-//		if(enemy_counter == valid_enemy_position)
-//			return false;
-//		else
-//			return true;
-//	}
-	
-	// Check if entity collided with any enemy
+	// Check if entity collides with any enemy
 	private boolean checkCollision(int entity_x, int entity_y, int entity_width, int entity_height, int current_index)
 	{
 		int entity_mid_x = entity_x + (entity_width / 2);
@@ -399,8 +366,15 @@ public class GAME_PANEL extends JPanel implements Runnable
 	{
 		super.paintComponent(g_1d);
 		
-		// Paint player
 		Graphics2D g_2d = (Graphics2D) g_1d;
+		
+		if(!map_drawn)
+		{
+			map_drawn = true;
+		}
+		draw(g_2d);
+		
+		// Paint player
 		g_2d.setColor(Color.PINK);
 		g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height);
 		
@@ -416,5 +390,10 @@ public class GAME_PANEL extends JPanel implements Runnable
 		}
 		
 		g_2d.dispose();
+	}
+	
+	public void draw(Graphics2D g_2d)
+	{
+		g_2d.drawImage(map_img, 0, 0, this.width, this.height, null);
 	}
 }

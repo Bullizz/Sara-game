@@ -5,7 +5,7 @@ public class PLAYER
 	int player_x, player_y;
 	
 	final public int player_width, player_height;
-	final public int max_speed = 10;
+	final public int max_speed = 7;
 	
 	int player_speed_x = 0;
 	int player_speed_y = 0;

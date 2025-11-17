@@ -78,7 +78,7 @@ public class GAME_TIMER extends JLabel
 					time_str.append("0");
 				time_str.append((int) sub_SS);
 				
-				System.out.println(time_str.toString());
+//				System.out.println(time_str.toString());
 			}
 		};
 		timer.scheduleAtFixedRate(timer_task, 0, 10);
