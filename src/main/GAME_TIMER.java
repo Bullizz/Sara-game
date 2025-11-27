@@ -13,22 +13,25 @@ public class GAME_TIMER extends JLabel
 	double random_speed_coeff;
 	int time_coeff;
 	
+	String time_str;
+
 	GAME_TIMER()
 	{
 		
 	}
 	
+	// Game timer that's displayed in top panel
 	public void initTimer()
 	{
 		timer = new Timer();
 		
 		timer_task = new TimerTask()
 		{			
-			StringBuffer time_str;
+			StringBuffer time_str_buffer;
 			@Override
 			public void run()
 			{
-				time_str = new StringBuffer();
+				time_str_buffer = new StringBuffer();
 				double HH, MM, SS, sub_SS;
 				
 				// Get how much time to increase/decrease with
@@ -47,27 +50,27 @@ public class GAME_TIMER extends JLabel
 				time -= HH;
 				time *= 60;
 				if(HH < 10)
-					time_str.append("0");
-				time_str.append((int) HH);
-				time_str.append(":");
+					time_str_buffer.append("0");
+				time_str_buffer.append((int) HH);
+				time_str_buffer.append(":");
 				
 				// Get minutes
 				MM = Math.floor(time);
 				time -= MM;
 				time *= 60;
 				if(MM < 10)
-					time_str.append("0");
-				time_str.append((int) MM);
-				time_str.append(":");
+					time_str_buffer.append("0");
+				time_str_buffer.append((int) MM);
+				time_str_buffer.append(":");
 				
 				// Get seconds
 				SS = Math.floor(time);
 				time -= SS;
 				time *= 100;
 				if(SS < 10)
-					time_str.append("0");
-				time_str.append((int) SS);
-				time_str.append(".");
+					time_str_buffer.append("0");
+				time_str_buffer.append((int) SS);
+				time_str_buffer.append(".");
 				
 				// Get centi-seconds
 				if(time >= 99)
@@ -75,10 +78,16 @@ public class GAME_TIMER extends JLabel
 				else
 					sub_SS = Math.round(time);
 				if(sub_SS < 10)
-					time_str.append("0");
-				time_str.append((int) sub_SS);
+					time_str_buffer.append("0");
+				time_str_buffer.append((int) sub_SS);
 				
-//				System.out.println(time_str.toString());
+				if(time_str != null)
+				{
+					System.out.println(time_str_buffer.toString());
+					setTime_str(time_str_buffer.toString());
+				}
+				else
+					setTime_str("00:00:00.00");
 			}
 		};
 		timer.scheduleAtFixedRate(timer_task, 0, 10);
@@ -100,5 +109,14 @@ public class GAME_TIMER extends JLabel
 	public void setRandom_speed_coeff()
 	{
 		random_speed_coeff = (Math.random() * (1 - (-1))) + (-1);
+	}
+
+	public String getTime_str()
+	{
+		return time_str;
+	}
+	public void setTime_str(String time_str)
+	{
+		this.time_str = time_str;
 	}
 }

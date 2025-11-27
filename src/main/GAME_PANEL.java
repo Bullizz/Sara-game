@@ -5,12 +5,13 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import entities.ENEMY;
@@ -24,20 +25,25 @@ public class GAME_PANEL extends JPanel implements Runnable
 	ENEMY[] enemies;
 	GAME_TIMER game_timer = new GAME_TIMER();
 	
-	Thread game_thread;
+	Thread game_thread, enemies_thread;
 	
 	final int width;
 	final int height;
 	
-	boolean game_loop_running, game_paused;
+	boolean game_loop_running, game_paused, enemies_updating;
 	double random_speed_coeff;
 	
 	JFrame frame;
+	JLabel top;
 	
 	BufferedImage map_img;
 	boolean map_drawn = false;
 	
-	public GAME_PANEL(JFrame frame, int top_height)
+	int[][] map_constraints;
+	
+	MouseList ml;
+	
+	public GAME_PANEL(JFrame frame, /*int top_height*/ JLabel top)
 	{
 		super();
 			this.width = frame.getWidth();
@@ -63,16 +69,28 @@ public class GAME_PANEL extends JPanel implements Runnable
 		player = new PLAYER(width / 2, this.height / 20, this.height / 40, this.width / 40);
 		
 		// Init. enemies
-		lulle = new ENEMY(	"lulle",	0,  1 * (this.width / 9), 4 * (this.height / 6), 108 / 2, 192 / 2);
-		lkab = new ENEMY(	"lkab",		1,  2 * (this.width / 9), 5 * (this.height / 6), 108 / 2, 192 / 2);
-		albin = new ENEMY(	"albin",	3,  3 * (this.width / 9), 4 * (this.height / 6), 108 / 2, 192 / 2);
-		ssc = new ENEMY(	"ssc",		2,  4 * (this.width / 9), 5 * (this.height / 6), 108 / 2, 192 / 2);
-		slusk = new ENEMY(	"slusk",	1,  5 * (this.width / 9), 4 * (this.height / 6), 108 / 2, 192 / 2);
-		attila = new ENEMY(	"attila",	0,  6 * (this.width / 9), 5 * (this.height / 6), 108 / 2, 192 / 2);
-		pauline = new ENEMY("pauline",	2,  7 * (this.width / 9), 5 * (this.height / 6), 108 / 2, 192 / 2);
+		lulle = new ENEMY(	"lulle",	0,  1017,  359,  this.height / 40, this.width / 40);
+		lkab = new ENEMY(	"lkab",		1,  664,   313,  this.height / 40, this.width / 40);
+		albin = new ENEMY(	"albin",	3,  1468,  356,  this.height / 40, this.width / 40);
+		ssc = new ENEMY(	"ssc",		2,  1665,  107,  this.height / 40, this.width / 40);
+		slusk = new ENEMY(	"slusk",	1,  1402,  567,  this.height / 40, this.width / 40);
+		attila = new ENEMY(	"attila",	0,  838,   755,  this.height / 40, this.width / 40);
+		pauline = new ENEMY("pauline",	2,  504,   647,  this.height / 40, this.width / 40);
 		enemies = new ENEMY[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 		
 		this.frame = frame;
+		this.top = top;
+		map_constraints = loadMapConstraints(this.width, this.height);
+		
+//		ml = new MouseList(this.width, this.height, frame.getHeight() / 10);
+//		frame.addMouseMotionListener(ml);
+		
+//		addMouseListener(new MouseAdapter() {
+//			public void mousePressed(MouseEvent e)
+//			{
+//				JOptionPane.showMessageDialog(null, e.getX() + ", " + e.getY());
+//			}
+//		});
 		
 		initGameThread();
 	}
@@ -82,6 +100,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 		game_timer.initTimer();
 		
 		game_loop_running = true;
+		
 		game_thread = new Thread(this);
 		game_thread.start();
 	}
@@ -121,8 +140,10 @@ public class GAME_PANEL extends JPanel implements Runnable
 					/*
 					 * Maybe add extra thread for enemies movement
 					 */
-					updateEnemies();
+//					updateEnemies();
 					
+					top.setText(game_timer.getTime_str());
+
 					repaint();
 					
 					// Player-enemy collision
@@ -144,6 +165,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 						game_timer.setTime_coeff(0);
 //						GAME_MENU game_menu = new GAME_MENU(frame);
 					}
+					
 				}
 			} // End of slave game-loop	
 		} // End of master game-loop
@@ -177,12 +199,11 @@ public class GAME_PANEL extends JPanel implements Runnable
 		// Get position of player
 		int player_x = player.getPlayer_x();
 		int player_y = player.getPlayer_y();
-		System.out.println(player_y);
 		
-		// If within frame
-		if(moveableX(player_x, player.player_width, player_dx))
+		// If within map constraints
+		if(moveableX2(player_x, player_y, player.player_width, player.player_height, player_dx))
 			player_x += player_speed_x * player_dx;
-		if(moveableY(player_y, player.player_height, player_dy))
+		if(moveableY2(player_x, player_y, player.player_width, player.player_height, player_dy))
 			player_y += player_speed_y * player_dy;
 		
 		player.setPlayer_x(player_x);
@@ -190,7 +211,44 @@ public class GAME_PANEL extends JPanel implements Runnable
 		player.setPlayer_speed_x(player_speed_x);
 		player.setPlayer_speed_y(player_speed_y);
 	}
-	
+
+	private boolean moveableX2(double enemy_x, double enemy_y, int player_width, int player_height, double direction_arr)
+	{
+		if(direction_arr > 0)
+			enemy_x += player_width;
+		
+		
+		for(int i = 1; i <= 13; i++)
+		{
+			enemy_x += direction_arr;
+			if(map_constraints[(int) enemy_y][(int) enemy_x] == 1 || map_constraints[(int) enemy_y + player_height][(int) enemy_x] == 1)
+				return false;
+		}
+		
+		return true;
+	}
+	private boolean moveableY2(double enemy_x, double enemy_y, int player_width, int player_height, double direction_arr)
+	{
+		if(direction_arr > 0)
+			enemy_y += player_height;
+		
+		for(int i = 1; i <= 13; i++)
+		{
+			enemy_y += direction_arr;
+			try
+			{
+				if(map_constraints[(int) enemy_y][(int) enemy_x] == 1 || map_constraints[(int) enemy_y][(int) enemy_x + player_width] == 1)
+					return false;
+			} catch(Exception e)
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
+
 	private void updateEnemies()
 	{
 		/*
@@ -224,19 +282,19 @@ public class GAME_PANEL extends JPanel implements Runnable
 			{
 				case 0:
 					speed_coeff = 1;
-					speed_coeff = 0;
+//					speed_coeff = 0;
 					break;
 				case 1:
 					speed_coeff = (float) 0.5;
-					speed_coeff = 0;
+//					speed_coeff = 0;
 					break;
 				case 2:
 					speed_coeff = game_timer.getRandom_speed_coeff();
-					speed_coeff = 0;
+//					speed_coeff = 0;
 					break;
 				case 3:
 					speed_coeff = -1;
-					speed_coeff = 0;
+//					speed_coeff = 0;
 					break;
 			}
 			
@@ -271,21 +329,14 @@ public class GAME_PANEL extends JPanel implements Runnable
 							     current_enemy.width,
 							     current_enemy.height,
 							     enemy_index))
-			{				
-				enemy_x += speed_x;
-				enemy_y += speed_y;
-			}
-			else
-			{				
-//				enemy_x -= speed_x;
-//				enemy_y -= speed_y;
+			{
+				// Enemy stays within map constraints
+				if(moveableX2( enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]))
+					current_enemy.setEnemy_x((int) (enemy_x + speed_x));
+				if(moveableY2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]))
+					current_enemy.setEnemy_y((int) (enemy_y + speed_y));
 			}
 			
-			// Enemy stays within frame
-			if(moveableX( (int) enemy_x, current_enemy.width, direction_arr[0]))
-				current_enemy.setEnemy_x((int) enemy_x);
-			if(moveableY( (int) enemy_y, current_enemy.height, direction_arr[1]))
-				current_enemy.setEnemy_y((int) enemy_y);
 
 			if(current_enemy.id_string.equals("pauline") || current_enemy.id_string.equals("ssc"))
 			{
@@ -362,6 +413,46 @@ public class GAME_PANEL extends JPanel implements Runnable
 		return false;
 	}
 	
+	private int[][] loadMapConstraints(int cols, int rows)
+	{
+		int[][] map = new int[rows][cols];
+		int i = 0;
+		int j = 0;
+		
+		try
+		{
+			File file = new File("map-1.txt");
+			Scanner reader = new Scanner(file);
+			while(reader.hasNextLine())
+			{
+				String curr_line = reader.nextLine();
+				char[] ch_curr_line = curr_line.toCharArray();
+				for(int k = 0; k < ch_curr_line.length; k++)
+				{
+					if(ch_curr_line[k] == '0')// && j < this.width)
+					{
+						map[i][j] = 0;
+						j++;
+					}
+					else if(ch_curr_line[k] == '1')// && j < this.width)
+					{
+						map[i][j] = 1;
+						j++;
+					}
+//					System.out.println(ch_curr_line[k]);
+				}
+				i++;
+				j = 0;
+			}
+			reader.close();
+		} catch(Exception file_except)
+		{
+			file_except.printStackTrace();
+		}
+		
+		return map;
+	}
+
 	public void paintComponent(Graphics g_1d)
 	{
 		super.paintComponent(g_1d);

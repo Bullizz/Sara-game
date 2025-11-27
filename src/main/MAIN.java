@@ -37,6 +37,6 @@ public class MAIN
 		top.setOpaque(true);
 		frame.add(top);
 	
-		GAME_PANEL game_panel = new GAME_PANEL(frame, top.getHeight());
+		GAME_PANEL game_panel = new GAME_PANEL(frame, top);
 	}
 }
