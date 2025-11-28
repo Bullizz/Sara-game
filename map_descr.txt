@@ -15,3 +15,4 @@
   - User-'marked' map
   - Implemented 'inverted median filter' during mouse-marking [public void mouseDragged()]
   - Weird spaces between rows, [1, 1, 1, 1, 1; 0, 0, 0, 0, 0; 1, 1, 1, 1, 1]
+  - Seems to work good

@@ -12,7 +12,7 @@ public class KEY_HANDLER implements KeyListener
 	public boolean UP, LEFT, DOWN, RIGHT;
 	int[] direction_arr = {0, 0};
 	
-	KEY_HANDLER(JFrame frame)
+	public KEY_HANDLER(JFrame frame)
 	{
 		this.frame = frame;
 	}

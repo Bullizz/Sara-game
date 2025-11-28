@@ -21,7 +21,7 @@ public class GAME_TIMER extends JLabel
 	}
 	
 	// Game timer that's displayed in top panel
-	public void initTimer()
+	public void initTimer(JLabel top)
 	{
 		timer = new Timer();
 		
@@ -85,6 +85,7 @@ public class GAME_TIMER extends JLabel
 				{
 					System.out.println(time_str_buffer.toString());
 					setTime_str(time_str_buffer.toString());
+					top.setText(time_str_buffer.toString());
 				}
 				else
 					setTime_str("00:00:00.00");

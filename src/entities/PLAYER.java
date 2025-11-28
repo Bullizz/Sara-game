@@ -1,6 +1,6 @@
 package entities;
 
-public class PLAYER
+public class PLAYER 
 {
 	int player_x, player_y;
 	

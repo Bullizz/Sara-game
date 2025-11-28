@@ -37,6 +37,8 @@ public class MAIN
 		top.setOpaque(true);
 		frame.add(top);
 	
-		GAME_PANEL game_panel = new GAME_PANEL(frame, top);
+		GAME_TIMER game_timer = null;
+		/*GAME_PANEL game_panel = */new GAME_PANEL(frame, top, game_timer, 972, 101);
+		
 	}
 }

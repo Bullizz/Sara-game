@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,10 +14,18 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import entities.ENEMY;
 import entities.PLAYER;
+import mini_games.ALBIN;
+import mini_games.ATTILA;
+import mini_games.LKAB;
+import mini_games.LULLE;
+import mini_games.PAULINE;
+import mini_games.SLUSK;
+import mini_games.SSC;
 
 public class GAME_PANEL extends JPanel implements Runnable
 {
@@ -23,7 +33,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 	PLAYER player;
 	ENEMY lulle, albin, lkab, ssc, slusk, attila, pauline;
 	ENEMY[] enemies;
-	GAME_TIMER game_timer = new GAME_TIMER();
+	GAME_TIMER game_timer;
 	
 	Thread game_thread, enemies_thread;
 	
@@ -43,7 +53,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 	
 	MouseList ml;
 	
-	public GAME_PANEL(JFrame frame, /*int top_height*/ JLabel top)
+	public GAME_PANEL(JFrame frame, /*int top_height*/ JLabel top, GAME_TIMER game_timer, int player_x0, int player_y0)
 	{
 		super();
 			this.width = frame.getWidth();
@@ -66,16 +76,17 @@ public class GAME_PANEL extends JPanel implements Runnable
 		frame.setVisible(true);
 		
 		// Init. player
-		player = new PLAYER(width / 2, this.height / 20, this.height / 40, this.width / 40);
+		player = new PLAYER(972, 101, this.height / 40, this.width / 40);
 		
 		// Init. enemies
 		lulle = new ENEMY(	"lulle",	0,  1017,  359,  this.height / 40, this.width / 40);
-		lkab = new ENEMY(	"lkab",		1,  664,   313,  this.height / 40, this.width / 40);
 		albin = new ENEMY(	"albin",	3,  1468,  356,  this.height / 40, this.width / 40);
+		lkab = new ENEMY(	"lkab",		1,  664,   313,  this.height / 40, this.width / 40);
 		ssc = new ENEMY(	"ssc",		2,  1665,  107,  this.height / 40, this.width / 40);
 		slusk = new ENEMY(	"slusk",	1,  1402,  567,  this.height / 40, this.width / 40);
 		attila = new ENEMY(	"attila",	0,  838,   755,  this.height / 40, this.width / 40);
 		pauline = new ENEMY("pauline",	2,  504,   647,  this.height / 40, this.width / 40);
+		
 		enemies = new ENEMY[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 		
 		this.frame = frame;
@@ -97,7 +108,11 @@ public class GAME_PANEL extends JPanel implements Runnable
 
 	private void initGameThread()
 	{
-		game_timer.initTimer();
+		if(game_timer == null)
+		{
+			game_timer = new GAME_TIMER();
+			game_timer.initTimer(top);
+		}
 		
 		game_loop_running = true;
 		
@@ -123,7 +138,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 			long current_time;
 			
 			boolean game_paused = key_handler.isGame_paused();
-			if(!game_paused)
+			if(!game_paused && game_loop_running)
 				game_timer.setTime_coeff(1);
 			
 			// Slave game-loop
@@ -142,20 +157,19 @@ public class GAME_PANEL extends JPanel implements Runnable
 					 */
 //					updateEnemies();
 					
-					top.setText(game_timer.getTime_str());
+//					top.setText(game_timer.getTime_str());
 
 					repaint();
 					
 					// Player-enemy collision
-					if(checkCollision(player.getPlayer_x(),
-									  player.getPlayer_y(),
-									  player.player_width,
-									  player.player_height,
-									  -1))
-					{
-//						 JOptionPane.showMessageDialog(null, "Collision");
-//						 System.exit(0);
-					}
+					int[] collision_params = checkCollision( player.getPlayer_x(),
+															 player.getPlayer_y(),
+															 player.player_width,
+															 player.player_height,
+															 -1);
+					// Collision
+					if(collision_params[0] == 1)
+						initMiniGame(collision_params[1]);
 					
 					delta = 0;
 					
@@ -165,12 +179,12 @@ public class GAME_PANEL extends JPanel implements Runnable
 						game_timer.setTime_coeff(0);
 //						GAME_MENU game_menu = new GAME_MENU(frame);
 					}
-					
+					System.out.println("game-loop running");
 				}
 			} // End of slave game-loop	
 		} // End of master game-loop
 	}
-	
+
 	private void updatePlayer()
 	{
 		// Get key pressed
@@ -324,11 +338,12 @@ public class GAME_PANEL extends JPanel implements Runnable
 			double speed_y = direction_arr[1] * current_enemy.max_speed * Math.sin(angle);
 			
 			// Check enemy-enemy collision
-			if(!checkCollision( (int) (enemy_x + speed_x),
-							    (int) (enemy_y + speed_y),
-							     current_enemy.width,
-							     current_enemy.height,
-							     enemy_index))
+			int[] enemy__collision_params = checkCollision( (int) (enemy_x + speed_x),
+														    (int) (enemy_y + speed_y),
+														     current_enemy.width,
+														     current_enemy.height,
+														     enemy_index);
+			if(enemy__collision_params[0] == 1)
 			{
 				// Enemy stays within map constraints
 				if(moveableX2( enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]))
@@ -375,8 +390,10 @@ public class GAME_PANEL extends JPanel implements Runnable
 	}
 	
 	// Check if entity collides with any enemy
-	private boolean checkCollision(int entity_x, int entity_y, int entity_width, int entity_height, int current_index)
+	private int[] checkCollision(int entity_x, int entity_y, int entity_width, int entity_height, int current_index)
 	{
+		int[] ret_arr = {0, 0};
+		
 		int entity_mid_x = entity_x + (entity_width / 2);
 		int entity_mid_y = entity_y + (entity_height / 2);
 		
@@ -407,12 +424,80 @@ public class GAME_PANEL extends JPanel implements Runnable
 				
 				// Collision
 				if(x_crossed && y_crossed)
-					return true;
+				{
+					ret_arr[0] = 1;
+					ret_arr[1] = enemy_index;
+					
+					return ret_arr;
+				}
 			}
 		}
-		return false;
+		return ret_arr;
 	}
 	
+	private void initMiniGame(int enemy_index)
+	{
+		frame.remove(this);
+		frame.repaint();
+		clearChildren();
+			String s = null;
+		int player_x = player.getPlayer_x();
+		int player_y = player.getPlayer_y();
+		game_loop_running = false;
+		switch(enemy_index)
+		{
+			case 0:		// lulle
+				s = "lulle";
+				new LULLE(frame, player_x, player_y);
+				break;
+			case 1:		// albin
+				s = "albin";
+				game_timer.setTime_coeff(-1);
+				new ALBIN(player_x, player_y);
+				break;
+			case 2:		// lkab
+				s = "lkab";
+//				game_timer.setTime_coeff(10);
+				new LKAB(player_x, player_y);
+				break;
+			case 3:		// ssc
+				s = "ssc";
+				new SSC(player_x, player_y);
+				break;
+			case 4:		// slusk
+				s = "slusk";
+				game_timer.setTime_coeff(200);
+				new SLUSK(player_x, player_y);
+				break;
+			case 5:		// attila
+				s = "attila";
+				int random_time = 10 * ((int) game_timer.getRandom_speed_coeff() + 1);
+				game_timer.setTime_coeff(random_time);
+				new ATTILA(player_x, player_y);
+				break;
+			case 6:		// pauline
+				s = "pauline";
+				new PAULINE(player_x, player_y);
+				break;
+		}
+		JOptionPane.showMessageDialog(null, s);
+	}
+	
+	// Nullify all to then becollected by the garbage collector,
+	// clears memory
+	private void clearChildren()
+	{
+		player 	= null;
+		lulle 	= null;
+		albin 	= null;
+		lkab 	= null;
+		ssc 	= null;
+		slusk 	= null;
+		attila 	= null;
+		pauline = null;
+		enemies = null;
+	}
+
 	private int[][] loadMapConstraints(int cols, int rows)
 	{
 		int[][] map = new int[rows][cols];
@@ -453,6 +538,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 		return map;
 	}
 
+	@Override
 	public void paintComponent(Graphics g_1d)
 	{
 		super.paintComponent(g_1d);
@@ -479,7 +565,6 @@ public class GAME_PANEL extends JPanel implements Runnable
 			g_2d.setColor(Color.WHITE);
 			g_2d.drawString(current_enemy.id_string, current_enemy.x, current_enemy.y + 15);
 		}
-		
 		g_2d.dispose();
 	}
 	
