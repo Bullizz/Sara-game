@@ -30,7 +30,17 @@ public class MouseList implements /*MouseListener, */MouseMotionListener
 	{
 		int x = e.getX();
 		int y = e.getY() - top_diff;
-		matrix[y][x] = 1;
+		int[] diff_arr = {-1, 0, -1};
+		for(int dy = 0; dy < diff_arr.length; dy++)
+		{
+			for(int dx = 0; dx < diff_arr.length; dx++)
+			{
+				try
+				{					
+					matrix[y + diff_arr[dy]][x + diff_arr[dx]] = 1;
+				} catch(Exception exc){}
+			}
+		}
 //		System.out.println(x + ", " + y);
 //		System.out.println(map_constraints_index);
 	}
@@ -43,11 +53,11 @@ public class MouseList implements /*MouseListener, */MouseMotionListener
 			BufferedWriter writer;
 			try
 			{			
-				File file = new File("map-1.txt");
+				File file = new File("map-4.txt");
 				if(!file.exists())
 					file.createNewFile();
 				
-				writer = new BufferedWriter(new FileWriter("map-1.txt", false));
+				writer = new BufferedWriter(new FileWriter("map-4.txt", false));
 				for(int i = 0; i < matrix.length; i++)
 				{
 					for(int j = 0; j < matrix[0].length; j++)
@@ -62,6 +72,7 @@ public class MouseList implements /*MouseListener, */MouseMotionListener
 					writer.append("\n");
 				}
 				writer.close();
+				System.out.println("Written");
 			}
 			catch(Exception ex)
 			{

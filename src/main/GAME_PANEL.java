@@ -421,7 +421,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 		
 		try
 		{
-			File file = new File("map-1.txt");
+			File file = new File("map-4.txt");
 			Scanner reader = new Scanner(file);
 			while(reader.hasNextLine())
 			{
