@@ -1,6 +1,6 @@
 package entities;
 
-public class PLAYER 
+public class Player
 {
 	int player_x, player_y;
 	
@@ -13,7 +13,7 @@ public class PLAYER
 	public int player_dx = 1;
 	public int player_dy = 1;
 
-	public PLAYER(int x, int y, int width, int height)
+	public Player(int x, int y, int width, int height)
 	{
 		player_x = x;
 		player_y = y;

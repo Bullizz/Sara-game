@@ -1,6 +1,6 @@
 package mini_games;
 
-public class LKAB
+public class Lkab
 {
-	public LKAB(int player_x, int player_y){}
+	public Lkab(int player_x, int player_y){}
 }

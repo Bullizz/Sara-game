@@ -1,6 +1,6 @@
 package mini_games;
 
-public class SLUSK
+public class Slusk
 {
-	public SLUSK(int player_x, int player_y){}
+	public Slusk(int player_x, int player_y){}
 }

@@ -1,6 +1,6 @@
 package mini_games;
 
-public class PAULINE
+public class Pauline
 {
-	public PAULINE(int player_x, int player_y){}
+	public Pauline(int player_x, int player_y){}
 }

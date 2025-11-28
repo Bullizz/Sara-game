@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 import javax.swing.JLabel;
 
-public class GAME_TIMER extends JLabel
+public class GameTimer extends JLabel
 {
 	Timer timer;
 	TimerTask timer_task;
@@ -15,10 +15,10 @@ public class GAME_TIMER extends JLabel
 	
 	String time_str;
 
-	GAME_TIMER()
-	{
-		
-	}
+//	GAME_TIMER()
+//	{
+//		
+//	}
 	
 	// Game timer that's displayed in top panel
 	public void initTimer(JLabel top)

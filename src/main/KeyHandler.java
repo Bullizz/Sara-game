@@ -5,14 +5,14 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 
-public class KEY_HANDLER implements KeyListener
+public class KeyHandler implements KeyListener
 {
 	JFrame frame;
 	boolean game_paused = false;
 	public boolean UP, LEFT, DOWN, RIGHT;
 	int[] direction_arr = {0, 0};
 	
-	public KEY_HANDLER(JFrame frame)
+	public KeyHandler(JFrame frame)
 	{
 		this.frame = frame;
 	}

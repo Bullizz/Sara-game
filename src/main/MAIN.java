@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class MAIN
+public class Main
 {
 	public static void main(String[] args)
 	{
@@ -37,8 +37,8 @@ public class MAIN
 		top.setOpaque(true);
 		frame.add(top);
 	
-		GAME_TIMER game_timer = null;
-		/*GAME_PANEL game_panel = */new GAME_PANEL(frame, top, game_timer, 972, 101);
+		GameTimer game_timer = null;
+		/*GAME_PANEL game_panel = */new GamePanel(frame, top, game_timer, 972, 101);
 		
 	}
 }

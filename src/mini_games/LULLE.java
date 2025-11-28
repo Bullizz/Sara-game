@@ -7,15 +7,15 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import main.KEY_HANDLER;
+import main.KeyHandler;
 
-public class LULLE extends JPanel implements Runnable
+public class Lulle extends JPanel implements Runnable
 {
-	KEY_HANDLER key_handler;
+	KeyHandler key_handler;
 	
 	int width, height;
 	
-	public LULLE(JFrame frame, int player_x, int player_y)
+	public Lulle(JFrame frame, int player_x, int player_y)
 	{
 		super();
 			this.width = frame.getWidth();
@@ -24,7 +24,7 @@ public class LULLE extends JPanel implements Runnable
 		setLocation(0, 0);
 		setFocusable(true);
 		
-		key_handler = new KEY_HANDLER(frame);
+		key_handler = new KeyHandler(frame);
 		addKeyListener(key_handler);
 		
 		frame.add(this);

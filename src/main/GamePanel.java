@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,23 +15,23 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import entities.ENEMY;
-import entities.PLAYER;
-import mini_games.ALBIN;
-import mini_games.ATTILA;
-import mini_games.LKAB;
-import mini_games.LULLE;
-import mini_games.PAULINE;
-import mini_games.SLUSK;
+import entities.Enemy;
+import entities.Player;
+import mini_games.Albin;
+import mini_games.Attila;
+import mini_games.Lkab;
+import mini_games.Lulle;
+import mini_games.Pauline;
 import mini_games.SSC;
+import mini_games.Slusk;
 
-public class GAME_PANEL extends JPanel implements Runnable
+public class GamePanel extends JPanel implements Runnable
 {
-	KEY_HANDLER key_handler;
-	PLAYER player;
-	ENEMY lulle, albin, lkab, ssc, slusk, attila, pauline;
-	ENEMY[] enemies;
-	GAME_TIMER game_timer;
+	KeyHandler KeyHandler;
+	Player Player;
+	Enemy lulle, albin, lkab, ssc, slusk, attila, pauline;
+	Enemy[] enemies;
+	GameTimer game_timer;
 	
 	Thread game_thread, enemies_thread;
 	
@@ -53,7 +51,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 	
 	MouseList ml;
 	
-	public GAME_PANEL(JFrame frame, /*int top_height*/ JLabel top, GAME_TIMER game_timer, int player_x0, int player_y0)
+	public GamePanel(JFrame frame, /*int top_height*/ JLabel top, GameTimer game_timer, int Player_x0, int Player_y0)
 	{
 		super();
 			this.width = frame.getWidth();
@@ -62,8 +60,8 @@ public class GAME_PANEL extends JPanel implements Runnable
 		setLocation(0, 0);
 		setFocusable(true);
 		
-		key_handler = new KEY_HANDLER(frame);
-		addKeyListener(key_handler);
+		KeyHandler = new KeyHandler(frame);
+		addKeyListener(KeyHandler);
 		try
 		{
 			map_img = ImageIO.read(getClass().getResourceAsStream("/image_files/europe_4.png"));
@@ -75,19 +73,19 @@ public class GAME_PANEL extends JPanel implements Runnable
 		frame.add(this);
 		frame.setVisible(true);
 		
-		// Init. player
-		player = new PLAYER(972, 101, this.height / 40, this.width / 40);
+		// Init. Player
+		Player = new Player(972, 101, this.height / 40, this.width / 40);
 		
 		// Init. enemies
-		lulle = new ENEMY(	"lulle",	0,  1017,  359,  this.height / 40, this.width / 40);
-		albin = new ENEMY(	"albin",	3,  1468,  356,  this.height / 40, this.width / 40);
-		lkab = new ENEMY(	"lkab",		1,  664,   313,  this.height / 40, this.width / 40);
-		ssc = new ENEMY(	"ssc",		2,  1665,  107,  this.height / 40, this.width / 40);
-		slusk = new ENEMY(	"slusk",	1,  1402,  567,  this.height / 40, this.width / 40);
-		attila = new ENEMY(	"attila",	0,  838,   755,  this.height / 40, this.width / 40);
-		pauline = new ENEMY("pauline",	2,  504,   647,  this.height / 40, this.width / 40);
+		lulle = new Enemy(	"lulle",	0,  1017,  359,  this.height / 40, this.width / 40);
+		albin = new Enemy(	"albin",	3,  1468,  356,  this.height / 40, this.width / 40);
+		lkab = new Enemy(	"lkab",		1,  664,   313,  this.height / 40, this.width / 40);
+		ssc = new Enemy(	"ssc",		2,  1665,  107,  this.height / 40, this.width / 40);
+		slusk = new Enemy(	"slusk",	1,  1402,  567,  this.height / 40, this.width / 40);
+		attila = new Enemy(	"attila",	0,  838,   755,  this.height / 40, this.width / 40);
+		pauline = new Enemy("pauline",	2,  504,   647,  this.height / 40, this.width / 40);
 		
-		enemies = new ENEMY[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
+		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 		
 		this.frame = frame;
 		this.top = top;
@@ -110,7 +108,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 	{
 		if(game_timer == null)
 		{
-			game_timer = new GAME_TIMER();
+			game_timer = new GameTimer();
 			game_timer.initTimer(top);
 		}
 		
@@ -137,7 +135,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 			long last_time = System.nanoTime();
 			long current_time;
 			
-			boolean game_paused = key_handler.isGame_paused();
+			boolean game_paused = KeyHandler.isGame_paused();
 			if(!game_paused && game_loop_running)
 				game_timer.setTime_coeff(1);
 			
@@ -161,11 +159,11 @@ public class GAME_PANEL extends JPanel implements Runnable
 
 					repaint();
 					
-					// Player-enemy collision
-					int[] collision_params = checkCollision( player.getPlayer_x(),
-															 player.getPlayer_y(),
-															 player.player_width,
-															 player.player_height,
+					// Player-Enemy collision
+					int[] collision_params = checkCollision( Player.getPlayer_x(),
+															 Player.getPlayer_y(),
+															 Player.player_width,
+															 Player.player_height,
 															 -1);
 					// Collision
 					if(collision_params[0] == 1)
@@ -173,7 +171,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 					
 					delta = 0;
 					
-					game_paused = key_handler.isGame_paused();
+					game_paused = KeyHandler.isGame_paused();
 					if(game_paused)
 					{
 						game_timer.setTime_coeff(0);
@@ -188,70 +186,70 @@ public class GAME_PANEL extends JPanel implements Runnable
 	private void updatePlayer()
 	{
 		// Get key pressed
-		int[] player_direction_arr = key_handler.getDirection_arr();
+		int[] Player_direction_arr = KeyHandler.getDirection_arr();
 		
-		// Get positive/negative direction of player
-		int player_dx = player_direction_arr[0];
-		int player_dy = player_direction_arr[1];
+		// Get positive/negative direction of Player
+		int Player_dx = Player_direction_arr[0];
+		int Player_dy = Player_direction_arr[1];
 		
-		// Get current speed of player
-		int player_speed_x = player.getPlayer_speed_x();
-		int player_speed_y = player.getPlayer_speed_y();
+		// Get current speed of Player
+		int Player_speed_x = Player.getPlayer_speed_x();
+		int Player_speed_y = Player.getPlayer_speed_y();
 		
 		// Horizontal acceleration
-		if((key_handler.LEFT || key_handler.RIGHT) && player_speed_x < player.max_speed)
-			player_speed_x++;
-		else if((!key_handler.LEFT || !key_handler.RIGHT) && player_speed_x > 0)
-			player_speed_x--;
+		if((KeyHandler.LEFT || KeyHandler.RIGHT) && Player_speed_x < Player.max_speed)
+			Player_speed_x++;
+		else if((!KeyHandler.LEFT || !KeyHandler.RIGHT) && Player_speed_x > 0)
+			Player_speed_x--;
 
 		// Vertical acceleration
-		if((key_handler.UP || key_handler.DOWN) && player_speed_y < player.max_speed)
-			player_speed_y++;
-		else if((!key_handler.UP || !key_handler.DOWN) && player_speed_y > 0)
-			player_speed_y--;
+		if((KeyHandler.UP || KeyHandler.DOWN) && Player_speed_y < Player.max_speed)
+			Player_speed_y++;
+		else if((!KeyHandler.UP || !KeyHandler.DOWN) && Player_speed_y > 0)
+			Player_speed_y--;
 		
-		// Get position of player
-		int player_x = player.getPlayer_x();
-		int player_y = player.getPlayer_y();
+		// Get position of Player
+		int Player_x = Player.getPlayer_x();
+		int Player_y = Player.getPlayer_y();
 		
 		// If within map constraints
-		if(moveableX2(player_x, player_y, player.player_width, player.player_height, player_dx))
-			player_x += player_speed_x * player_dx;
-		if(moveableY2(player_x, player_y, player.player_width, player.player_height, player_dy))
-			player_y += player_speed_y * player_dy;
+		if(moveableX2(Player_x, Player_y, Player.player_width, Player.player_height, Player_dx))
+			Player_x += Player_speed_x * Player_dx;
+		if(moveableY2(Player_x, Player_y, Player.player_width, Player.player_height, Player_dy))
+			Player_y += Player_speed_y * Player_dy;
 		
-		player.setPlayer_x(player_x);
-		player.setPlayer_y(player_y);
-		player.setPlayer_speed_x(player_speed_x);
-		player.setPlayer_speed_y(player_speed_y);
+		Player.setPlayer_x(Player_x);
+		Player.setPlayer_y(Player_y);
+		Player.setPlayer_speed_x(Player_speed_x);
+		Player.setPlayer_speed_y(Player_speed_y);
 	}
 
-	private boolean moveableX2(double enemy_x, double enemy_y, int player_width, int player_height, double direction_arr)
+	private boolean moveableX2(double Enemy_x, double Enemy_y, int Player_width, int Player_height, double direction_arr)
 	{
 		if(direction_arr > 0)
-			enemy_x += player_width;
+			Enemy_x += Player_width;
 		
 		
 		for(int i = 1; i <= 13; i++)
 		{
-			enemy_x += direction_arr;
-			if(map_constraints[(int) enemy_y][(int) enemy_x] == 1 || map_constraints[(int) enemy_y + player_height][(int) enemy_x] == 1)
+			Enemy_x += direction_arr;
+			if(map_constraints[(int) Enemy_y][(int) Enemy_x] == 1 || map_constraints[(int) Enemy_y + Player_height][(int) Enemy_x] == 1)
 				return false;
 		}
 		
 		return true;
 	}
-	private boolean moveableY2(double enemy_x, double enemy_y, int player_width, int player_height, double direction_arr)
+	private boolean moveableY2(double Enemy_x, double Enemy_y, int Player_width, int Player_height, double direction_arr)
 	{
 		if(direction_arr > 0)
-			enemy_y += player_height;
+			Enemy_y += Player_height;
 		
 		for(int i = 1; i <= 13; i++)
 		{
-			enemy_y += direction_arr;
+			Enemy_y += direction_arr;
 			try
 			{
-				if(map_constraints[(int) enemy_y][(int) enemy_x] == 1 || map_constraints[(int) enemy_y][(int) enemy_x + player_width] == 1)
+				if(map_constraints[(int) Enemy_y][(int) Enemy_x] == 1 || map_constraints[(int) Enemy_y][(int) Enemy_x + Player_width] == 1)
 					return false;
 			} catch(Exception e)
 			{
@@ -280,19 +278,19 @@ public class GAME_PANEL extends JPanel implements Runnable
 		 * 
 		 */
 		
-		int player_x = player.getPlayer_x();
-		int player_y = player.getPlayer_y();
+		int Player_x = Player.getPlayer_x();
+		int Player_y = Player.getPlayer_y();
 		double[] direction_arr;
 		double angle;
 		float speed_coeff = 0;
 		
 		// Loop through all enemies
-		for(int enemy_index = 0; enemy_index < enemies.length; enemy_index++)
+		for(int Enemy_index = 0; Enemy_index < enemies.length; Enemy_index++)
 		{
-			ENEMY current_enemy = enemies[enemy_index];
+			Enemy current_Enemy = enemies[Enemy_index];
 			
-			// Assign speed-coefficient depending on "enemy-type"
-			switch(current_enemy.follow_type)
+			// Assign speed-coefficient depending on "Enemy-type"
+			switch(current_Enemy.follow_type)
 			{
 				case 0:
 					speed_coeff = 1;
@@ -312,13 +310,13 @@ public class GAME_PANEL extends JPanel implements Runnable
 					break;
 			}
 			
-			double enemy_x = current_enemy.getEnemy_x();
-			double enemy_y = current_enemy.getEnemy_y();
+			double Enemy_x = current_Enemy.getEnemy_x();
+			double Enemy_y = current_Enemy.getEnemy_y();
 			
-			int delta_x = player_x - (int) enemy_x;
-			int delta_y = player_y - (int) enemy_y;
+			int delta_x = Player_x - (int) Enemy_x;
+			int delta_y = Player_y - (int) Enemy_y;
 			
-			// Get direction needed to reach player
+			// Get direction needed to reach Player
 			try
 			{			
 				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
@@ -334,33 +332,33 @@ public class GAME_PANEL extends JPanel implements Runnable
 			direction_arr[0] *= speed_coeff;
 			direction_arr[1] *= speed_coeff;
 			
-			double speed_x = direction_arr[0] * current_enemy.max_speed * Math.cos(angle);
-			double speed_y = direction_arr[1] * current_enemy.max_speed * Math.sin(angle);
+			double speed_x = direction_arr[0] * current_Enemy.max_speed * Math.cos(angle);
+			double speed_y = direction_arr[1] * current_Enemy.max_speed * Math.sin(angle);
 			
-			// Check enemy-enemy collision
-			int[] enemy__collision_params = checkCollision( (int) (enemy_x + speed_x),
-														    (int) (enemy_y + speed_y),
-														     current_enemy.width,
-														     current_enemy.height,
-														     enemy_index);
-			if(enemy__collision_params[0] == 1)
+			// Check Enemy-Enemy collision
+			int[] Enemy__collision_params = checkCollision( (int) (Enemy_x + speed_x),
+														    (int) (Enemy_y + speed_y),
+														     current_Enemy.width,
+														     current_Enemy.height,
+														     Enemy_index);
+			if(Enemy__collision_params[0] == 1)
 			{
 				// Enemy stays within map constraints
-				if(moveableX2( enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]))
-					current_enemy.setEnemy_x((int) (enemy_x + speed_x));
-				if(moveableY2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]))
-					current_enemy.setEnemy_y((int) (enemy_y + speed_y));
+				if(moveableX2( Enemy_x, Enemy_y, current_Enemy.width, current_Enemy.height, direction_arr[0]))
+					current_Enemy.setEnemy_x((int) (Enemy_x + speed_x));
+				if(moveableY2(Enemy_x, Enemy_y, current_Enemy.width, current_Enemy.height, direction_arr[0]))
+					current_Enemy.setEnemy_y((int) (Enemy_y + speed_y));
 			}
 			
 
-			if(current_enemy.id_string.equals("pauline") || current_enemy.id_string.equals("ssc"))
+			if(current_Enemy.id_string.equals("pauline") || current_Enemy.id_string.equals("ssc"))
 			{
-				if(0 > current_enemy.getEnemy_x() || current_enemy.getEnemy_x() > this.width)
+				if(0 > current_Enemy.getEnemy_x() || current_Enemy.getEnemy_x() > this.width)
 				{
 					frame.setTitle("BRUH");
 					System.out.println();
 				}
-				if(0 > current_enemy.getEnemy_y() || current_enemy.getEnemy_y() > this.height)
+				if(0 > current_Enemy.getEnemy_y() || current_Enemy.getEnemy_y() > this.height)
 				{
 					frame.setTitle("BRUH");					
 					System.out.println();
@@ -389,7 +387,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 			return false;
 	}
 	
-	// Check if entity collides with any enemy
+	// Check if entity collides with any Enemy
 	private int[] checkCollision(int entity_x, int entity_y, int entity_width, int entity_height, int current_index)
 	{
 		int[] ret_arr = {0, 0};
@@ -397,36 +395,36 @@ public class GAME_PANEL extends JPanel implements Runnable
 		int entity_mid_x = entity_x + (entity_width / 2);
 		int entity_mid_y = entity_y + (entity_height / 2);
 		
-		for(int enemy_index = 0; enemy_index < enemies.length; enemy_index++)
+		for(int Enemy_index = 0; Enemy_index < enemies.length; Enemy_index++)
 		{
-			if(enemy_index != current_index)
+			if(Enemy_index != current_index)
 			{				
 				boolean x_crossed = false;
 				boolean y_crossed = false;
 				
-				ENEMY current_enemy = enemies[enemy_index];
+				Enemy current_Enemy = enemies[Enemy_index];
 				
-				int enemy_x = current_enemy.getEnemy_x();
-				int enemy_y = current_enemy.getEnemy_y();
+				int Enemy_x = current_Enemy.getEnemy_x();
+				int Enemy_y = current_Enemy.getEnemy_y();
 				
 				// Enemy left of entity
-				if(enemy_x < entity_x && entity_mid_x < (enemy_x + current_enemy.width))
+				if(Enemy_x < entity_x && entity_mid_x < (Enemy_x + current_Enemy.width))
 					x_crossed = true;
 				// Enemy right of entity
-				else if(entity_x < enemy_x && enemy_x < entity_mid_x)
+				else if(entity_x < Enemy_x && Enemy_x < entity_mid_x)
 					x_crossed = true;
 				// Enemy above entity
-				if(enemy_y < entity_y && entity_mid_y < (enemy_y + current_enemy.height))
+				if(Enemy_y < entity_y && entity_mid_y < (Enemy_y + current_Enemy.height))
 					y_crossed = true;
 				// Enemy below entity
-				else if(entity_y < enemy_y && enemy_y < entity_mid_y)
+				else if(entity_y < Enemy_y && Enemy_y < entity_mid_y)
 					y_crossed = true;
 				
 				// Collision
 				if(x_crossed && y_crossed)
 				{
 					ret_arr[0] = 1;
-					ret_arr[1] = enemy_index;
+					ret_arr[1] = Enemy_index;
 					
 					return ret_arr;
 				}
@@ -435,49 +433,49 @@ public class GAME_PANEL extends JPanel implements Runnable
 		return ret_arr;
 	}
 	
-	private void initMiniGame(int enemy_index)
+	private void initMiniGame(int Enemy_index)
 	{
 		frame.remove(this);
 		frame.repaint();
 		clearChildren();
 			String s = null;
-		int player_x = player.getPlayer_x();
-		int player_y = player.getPlayer_y();
+		int Player_x = Player.getPlayer_x();
+		int Player_y = Player.getPlayer_y();
 		game_loop_running = false;
-		switch(enemy_index)
+		switch(Enemy_index)
 		{
 			case 0:		// lulle
 				s = "lulle";
-				new LULLE(frame, player_x, player_y);
+				new Lulle(frame, Player_x, Player_y);
 				break;
 			case 1:		// albin
 				s = "albin";
 				game_timer.setTime_coeff(-1);
-				new ALBIN(player_x, player_y);
+				new Albin(Player_x, Player_y);
 				break;
 			case 2:		// lkab
 				s = "lkab";
 //				game_timer.setTime_coeff(10);
-				new LKAB(player_x, player_y);
+				new Lkab(Player_x, Player_y);
 				break;
 			case 3:		// ssc
 				s = "ssc";
-				new SSC(player_x, player_y);
+				new SSC(Player_x, Player_y);
 				break;
 			case 4:		// slusk
 				s = "slusk";
 				game_timer.setTime_coeff(200);
-				new SLUSK(player_x, player_y);
+				new Slusk(Player_x, Player_y);
 				break;
 			case 5:		// attila
 				s = "attila";
 				int random_time = 10 * ((int) game_timer.getRandom_speed_coeff() + 1);
 				game_timer.setTime_coeff(random_time);
-				new ATTILA(player_x, player_y);
+				new Attila(Player_x, Player_y);
 				break;
 			case 6:		// pauline
 				s = "pauline";
-				new PAULINE(player_x, player_y);
+				new Pauline(Player_x, Player_y);
 				break;
 		}
 		JOptionPane.showMessageDialog(null, s);
@@ -487,7 +485,7 @@ public class GAME_PANEL extends JPanel implements Runnable
 	// clears memory
 	private void clearChildren()
 	{
-		player 	= null;
+		Player 	= null;
 		lulle 	= null;
 		albin 	= null;
 		lkab 	= null;
@@ -551,19 +549,19 @@ public class GAME_PANEL extends JPanel implements Runnable
 		}
 		draw(g_2d);
 		
-		// Paint player
+		// Paint Player
 		g_2d.setColor(Color.PINK);
-		g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height);
+		g_2d.fillRect(Player.getPlayer_x(), Player.getPlayer_y(), Player.player_width, Player.player_height);
 		
 		// Paint enemies
 		for(int i = 0; i < enemies.length; i++)
 		{
-			ENEMY current_enemy = enemies[i];
+			Enemy current_Enemy = enemies[i];
 			
 			g_2d.setColor(Color.BLACK);
-			g_2d.fillRect(current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height);
+			g_2d.fillRect(current_Enemy.getEnemy_x(), current_Enemy.getEnemy_y(), current_Enemy.width, current_Enemy.height);
 			g_2d.setColor(Color.WHITE);
-			g_2d.drawString(current_enemy.id_string, current_enemy.x, current_enemy.y + 15);
+			g_2d.drawString(current_Enemy.id_string, current_Enemy.x, current_Enemy.y + 15);
 		}
 		g_2d.dispose();
 	}

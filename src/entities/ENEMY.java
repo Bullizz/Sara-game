@@ -1,6 +1,6 @@
 package entities;
 
-public class ENEMY
+public class Enemy
 {
 	public int x, y;
 
@@ -10,7 +10,7 @@ public class ENEMY
 	
 	public final int max_speed = 8;
 	
-	public ENEMY(String id_string, int follow_type, int x, int y, int width, int height)
+	public Enemy(String id_string, int follow_type, int x, int y, int width, int height)
 	{
 		this.id_string = id_string;
 		this.follow_type = follow_type;
