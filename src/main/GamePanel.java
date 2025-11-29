@@ -27,7 +27,7 @@ import mini_games.Slusk;
 
 public class GamePanel extends JPanel implements Runnable
 {
-	KeyHandler KeyHandler;
+	KeyHandler key_handler;
 	Player Player;
 	Enemy lulle, albin, lkab, ssc, slusk, attila, pauline;
 	Enemy[] enemies;
@@ -60,8 +60,8 @@ public class GamePanel extends JPanel implements Runnable
 		setLocation(0, 0);
 		setFocusable(true);
 		
-		KeyHandler = new KeyHandler(frame);
-		addKeyListener(KeyHandler);
+		key_handler = new KeyHandler(frame);
+		addKeyListener(key_handler);
 		try
 		{
 			map_img = ImageIO.read(getClass().getResourceAsStream("/image_files/europe_4.png"));
@@ -135,7 +135,7 @@ public class GamePanel extends JPanel implements Runnable
 			long last_time = System.nanoTime();
 			long current_time;
 			
-			boolean game_paused = KeyHandler.isGame_paused();
+			boolean game_paused = key_handler.isGame_paused();
 			if(!game_paused && game_loop_running)
 				game_timer.setTime_coeff(1);
 			
@@ -171,7 +171,7 @@ public class GamePanel extends JPanel implements Runnable
 					
 					delta = 0;
 					
-					game_paused = KeyHandler.isGame_paused();
+					game_paused = key_handler.isGame_paused();
 					if(game_paused)
 					{
 						game_timer.setTime_coeff(0);
@@ -186,7 +186,7 @@ public class GamePanel extends JPanel implements Runnable
 	private void updatePlayer()
 	{
 		// Get key pressed
-		int[] Player_direction_arr = KeyHandler.getDirection_arr();
+		int[] Player_direction_arr = key_handler.getDirection_arr();
 		
 		// Get positive/negative direction of Player
 		int Player_dx = Player_direction_arr[0];
@@ -197,15 +197,15 @@ public class GamePanel extends JPanel implements Runnable
 		int Player_speed_y = Player.getPlayer_speed_y();
 		
 		// Horizontal acceleration
-		if((KeyHandler.LEFT || KeyHandler.RIGHT) && Player_speed_x < Player.max_speed)
+		if((key_handler.LEFT || key_handler.RIGHT) && Player_speed_x < Player.max_speed)
 			Player_speed_x++;
-		else if((!KeyHandler.LEFT || !KeyHandler.RIGHT) && Player_speed_x > 0)
+		else if((!key_handler.LEFT || !key_handler.RIGHT) && Player_speed_x > 0)
 			Player_speed_x--;
 
 		// Vertical acceleration
-		if((KeyHandler.UP || KeyHandler.DOWN) && Player_speed_y < Player.max_speed)
+		if((key_handler.UP || key_handler.DOWN) && Player_speed_y < Player.max_speed)
 			Player_speed_y++;
-		else if((!KeyHandler.UP || !KeyHandler.DOWN) && Player_speed_y > 0)
+		else if((!key_handler.UP || !key_handler.DOWN) && Player_speed_y > 0)
 			Player_speed_y--;
 		
 		// Get position of Player
@@ -437,10 +437,10 @@ public class GamePanel extends JPanel implements Runnable
 	{
 		frame.remove(this);
 		frame.repaint();
-		clearChildren();
 			String s = null;
 		int Player_x = Player.getPlayer_x();
 		int Player_y = Player.getPlayer_y();
+		clearChildren();
 		game_loop_running = false;
 		switch(Enemy_index)
 		{
