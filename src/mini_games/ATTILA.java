@@ -1,6 +1,6 @@
 package mini_games;
 
-public class ATTILA
+public class Attila
 {
-
+	public Attila(int player_x, int player_y){}
 }

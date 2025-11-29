@@ -31,6 +31,7 @@
          	- #### Need to catch him??
          - #### SSC
             - #### Need to avoid rocket engines
+            - #### While player and rocket cross, time increase by x
         
       - ### Enemies have "path-finding"
 - ## FINISH

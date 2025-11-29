@@ -1,6 +1,6 @@
 package mini_games;
 
-public class ALBIN
+public class Albin
 {
-
+	public Albin(int player_x, int player_y){}
 }

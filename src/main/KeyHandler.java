@@ -5,14 +5,14 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 
-public class KEY_HANDLER implements KeyListener
+public class KeyHandler implements KeyListener
 {
 	JFrame frame;
 	boolean game_paused = false;
 	public boolean UP, LEFT, DOWN, RIGHT;
 	int[] direction_arr = {0, 0};
 	
-	KEY_HANDLER(JFrame frame)
+	public KeyHandler(JFrame frame)
 	{
 		this.frame = frame;
 	}
@@ -39,12 +39,12 @@ public class KEY_HANDLER implements KeyListener
 		if(user_inp == KeyEvent.VK_ESCAPE && !game_paused)
 		{
 			setGame_paused(true);
-//			System.exit(0);
+			System.exit(0);
 		}
 		else if(user_inp == KeyEvent.VK_ESCAPE && game_paused)
 		{
 			setGame_paused(false);
-//			System.exit(0);
+			System.exit(0);
 		}
 		
 		else

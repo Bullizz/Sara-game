@@ -1,11 +1,11 @@
 package entities;
 
-public class PLAYER
+public class Player
 {
 	int player_x, player_y;
 	
 	final public int player_width, player_height;
-	final public int max_speed = 10;
+	final public int max_speed = 5;
 	
 	int player_speed_x = 0;
 	int player_speed_y = 0;
@@ -13,7 +13,7 @@ public class PLAYER
 	public int player_dx = 1;
 	public int player_dy = 1;
 
-	public PLAYER(int x, int y, int width, int height)
+	public Player(int x, int y, int width, int height)
 	{
 		player_x = x;
 		player_y = y;

@@ -1,0 +1,18 @@
+- map-1
+  - Initial map
+  - Holes in places
+  - Good outline
+- map-2
+  - First extended version
+  - Based on map-1
+  - 'Inverted median filter'
+  - Very thick, result very bad
+  - Might be because reading map-1.txt did not work properly
+- map-3
+  - Manual hole 'patch-up'
+  - Not done, a loooooooooot of 0 --> 1
+- map-4
+  - User-'marked' map
+  - Implemented 'inverted median filter' during mouse-marking [public void mouseDragged()]
+  - Weird spaces between rows, [1, 1, 1, 1, 1; 0, 0, 0, 0, 0; 1, 1, 1, 1, 1]
+  - Seems to work good
