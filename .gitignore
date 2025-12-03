@@ -1,2 +1,6 @@
 # bin files
 bin/
+
+# Machine specifics, different JRE vers. on different machnines
+.classpath
+.settings/
