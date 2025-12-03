@@ -15,9 +15,9 @@ public class Player
 
 	public Player(int x, int y, int width, int height)
 	{
-		player_x = x;
-		player_y = y;
-		player_width = width;
+		player_x	  = x;
+		player_y 	  = y;
+		player_width  = width;
 		player_height = height;
 	}
 	

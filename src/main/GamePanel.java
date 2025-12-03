@@ -79,13 +79,13 @@ public class GamePanel extends JPanel implements Runnable
 		player = new Player(972, 101, this.height / 40, this.width / 40);
 		
 		// Init. enemies
-		lulle = new Enemy(	"lulle",	0,  1017,  359,  this.height / 40, this.width / 40);
-		albin = new Enemy(	"albin",	3,  1468,  356,  this.height / 40, this.width / 40);
-		lkab = new Enemy(	"lkab",		1,  664,   313,  this.height / 40, this.width / 40);
-		ssc = new Enemy(	"ssc",		2,  1665,  107,  this.height / 40, this.width / 40);
-		slusk = new Enemy(	"slusk",	1,  1402,  567,  this.height / 40, this.width / 40);
-		attila = new Enemy(	"attila",	0,  838,   755,  this.height / 40, this.width / 40);
-		pauline = new Enemy("pauline",	2,  504,   647,  this.height / 40, this.width / 40);
+		lulle = new Enemy(	 "lulle",	0,  1017,  359,  this.height / 40, this.width / 40);
+		albin = new Enemy(   "albin",	3,  1468,  356,  this.height / 40, this.width / 40);
+		lkab = new Enemy(	 "lkab",		1,  664,   313,  this.height / 40, this.width / 40);
+		ssc = new Enemy(	 "ssc",		2,  1665,  107,  this.height / 40, this.width / 40);
+		slusk = new Enemy(	 "slusk",	1,  1402,  567,  this.height / 40, this.width / 40);
+		attila = new Enemy(	 "attila",	0,  838,   755,  this.height / 40, this.width / 40);
+		pauline = new Enemy( "pauline",	2,  504,   647,  this.height / 40, this.width / 40);
 		
 		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 		
@@ -186,14 +186,21 @@ public class GamePanel extends JPanel implements Runnable
 			} // End of slave game-loop
 			if(enemy_collision_index > -1)
 			{
+				game_loop_running = false;
+				game_thread = null;
+
 				int player_x = player.getPlayer_x();
 				int player_y = player.getPlayer_y();
 				clearChildren();
-				game_loop_running = false;
+				
+				removeKeyListener(key_handler);
+				frame.remove(this);
+				
 				switch(enemy_collision_index)
 				{
 					case 0:		// lulle
-						new Lulle(frame, this, top, game_timer, player_y, player_y);
+						new Lulle(frame, top, game_timer, player_x, player_y);
+//						new Lulle(this, player_x, player_y);
 						break;
 					case 1:		// albin
 						game_timer.setTime_coeff(-1);
@@ -216,7 +223,7 @@ public class GamePanel extends JPanel implements Runnable
 //						new Attila(player_x, player_y);
 						break;
 					case 6:		// pauline
-						new Pauline(player_x, player_y);
+//						new Pauline(player_x, player_y);
 						break;
 				}
 			}
@@ -519,26 +526,36 @@ public class GamePanel extends JPanel implements Runnable
 		
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
-		if(!map_drawn)
-		{
-			map_drawn = true;
-		}
-		draw(g_2d);
+		if(game_loop_running)
+			draw(g_2d);
 		
-		// Paint player
-		g_2d.setColor(Color.PINK);
-		g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height);
-		
-		// Paint enemies
-		for(int i = 0; i < enemies.length; i++)
-		{
-			Enemy current_Enemy = enemies[i];
-			
-			g_2d.setColor(Color.BLACK);
-			g_2d.fillRect(current_Enemy.getEnemy_x(), current_Enemy.getEnemy_y(), current_Enemy.width, current_Enemy.height);
-			g_2d.setColor(Color.WHITE);
-			g_2d.drawString(current_Enemy.id_string, current_Enemy.x, current_Enemy.y + 15);
+		if(game_loop_running)
+		{			
+			// Paint player
+			try
+			{			
+				g_2d.setColor(Color.PINK);
+				g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height);
+			} catch(Exception e)
+			{
+				System.out.println(e.getCause());
+			}
 		}
+
+		if(game_loop_running)
+		{
+			// Paint enemies
+			for(int i = 0; i < enemies.length; i++)
+			{
+				Enemy current_Enemy = enemies[i];
+				
+				g_2d.setColor(Color.BLACK);
+				g_2d.fillRect(current_Enemy.getEnemy_x(), current_Enemy.getEnemy_y(), current_Enemy.width, current_Enemy.height);
+				g_2d.setColor(Color.WHITE);
+				g_2d.drawString(current_Enemy.id_string, current_Enemy.x, current_Enemy.y + 15);
+			}
+		}
+		
 		g_2d.dispose();
 	}
 	

@@ -83,7 +83,7 @@ public class GameTimer extends JLabel
 				
 				if(time_str != null)
 				{
-					System.out.println(time_str_buffer.toString());
+//					System.out.println(time_str_buffer.toString());
 					setTime_str(time_str_buffer.toString());
 					top.setText(time_str_buffer.toString());
 				}

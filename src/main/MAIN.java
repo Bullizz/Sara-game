@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 public class Main
 {
@@ -19,14 +19,14 @@ public class Main
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setSize(1920, 1080);
 		frame.setLocationRelativeTo(null);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
 //		frame.setLayout(new GridLayout(1, 1));
 		FlowLayout flow = new FlowLayout(FlowLayout.CENTER, 0, 0);
 		frame.setLayout(flow);
-//		flow.setHgap(-5);
 		
-		System.out.println(frame.getSize());
+//		WindowFocusListener window_focus_listener = new WindowFocusListener();		
+		
 		JLabel top = new JLabel("00:00:00.00", JLabel.CENTER);
 		top.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight() / 10));
 		top.setLocation(0, 0);

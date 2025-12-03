@@ -12,6 +12,8 @@ public class KeyHandler implements KeyListener
 	public boolean UP, LEFT, DOWN, RIGHT;
 	int[] direction_arr = {0, 0};
 	
+	boolean space_pressed;
+
 	public KeyHandler(JFrame frame)
 	{
 		this.frame = frame;
@@ -46,6 +48,8 @@ public class KeyHandler implements KeyListener
 			setGame_paused(false);
 			System.exit(0);
 		}
+		else if(user_inp == KeyEvent.VK_SPACE)
+			setSpace_pressed(true);
 		
 		else
 		{
@@ -120,5 +124,15 @@ public class KeyHandler implements KeyListener
 	public void setDirection_arr(int[] direction_arr)
 	{
 		this.direction_arr = direction_arr;
+	}
+	
+		
+	public boolean isSpace_pressed()
+	{
+		return space_pressed;
+	}
+	public void setSpace_pressed(boolean space_pressed)
+	{
+		this.space_pressed = space_pressed;
 	}
 }
