@@ -27,6 +27,7 @@
             - #### Player speed ~50%
          - #### Pauline
             - #### Organize rockethouse sittning
+            - #### Catch falling stuff (songbooks, hats, food, etc.) and bring to table
          - #### Attila
          	- #### Need to catch him??
          - #### SSC

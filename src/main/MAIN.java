@@ -21,11 +21,10 @@ public class Main
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
-//		frame.setLayout(new GridLayout(1, 1));
 		FlowLayout flow = new FlowLayout(FlowLayout.CENTER, 0, 0);
 		frame.setLayout(flow);
-		
-//		WindowFocusListener window_focus_listener = new WindowFocusListener();		
+		KeyHandler key_handler = new KeyHandler();
+		frame.addKeyListener(key_handler);
 		
 		JLabel top = new JLabel("00:00:00.00", JLabel.CENTER);
 		top.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight() / 10));
@@ -33,12 +32,9 @@ public class Main
 		top.setFont(new Font("Arial", Font.BOLD, 50));
 		top.setBackground(Color.RED);
 		top.setForeground(Color.BLUE);
-//		top.setBorder(BorderFactory.createMatteBorder(0, 0, 50, 0, Color.BLACK));
 		top.setOpaque(true);
 		frame.add(top);
-	
-		GameTimer game_timer = null;
-		/*GAME_PANEL game_panel = */new GamePanel(frame, top, game_timer, 972, 101);
 		
+		new GamePanel(frame, top, null, key_handler, 972, 101);
 	}
 }

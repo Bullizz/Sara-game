@@ -14,11 +14,6 @@ public class KeyHandler implements KeyListener
 	
 	boolean space_pressed;
 
-	public KeyHandler(JFrame frame)
-	{
-		this.frame = frame;
-	}
-
 	public boolean isGame_paused()
 	{
 		return game_paused;
