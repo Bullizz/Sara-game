@@ -12,7 +12,6 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import entities.Enemy;
@@ -53,17 +52,15 @@ public class GamePanel extends JPanel implements Runnable
 	
 	MouseList ml;
 	
-	public GamePanel(JFrame frame, /*int top_height*/ JLabel top, GameTimer game_timer, int player_x0, int player_y0)
+	public GamePanel(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x0, int player_y0)
 	{
 		super();
 			this.width = frame.getWidth();
 			this.height = 9 * (frame.getHeight() / 10);
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
-		setFocusable(true);
+		setFocusable(false);
 		
-		key_handler = new KeyHandler(frame);
-		addKeyListener(key_handler);
 		try
 		{
 			map_img = ImageIO.read(getClass().getResourceAsStream("/image_files/europe_4.png"));
@@ -73,24 +70,29 @@ public class GamePanel extends JPanel implements Runnable
 		}
 		
 		frame.add(this);
-		frame.setVisible(true);
+		if(!frame.isVisible())
+			frame.setVisible(true);
 		
 		// Init. player
-		player = new Player(972, 101, this.height / 40, this.width / 40);
+		player	= new Player(972, 101, this.height / 40, this.width / 40);
 		
 		// Init. enemies
-		lulle = new Enemy(	 "lulle",	0,  1017,  359,  this.height / 40, this.width / 40);
-		albin = new Enemy(   "albin",	3,  1468,  356,  this.height / 40, this.width / 40);
-		lkab = new Enemy(	 "lkab",		1,  664,   313,  this.height / 40, this.width / 40);
-		ssc = new Enemy(	 "ssc",		2,  1665,  107,  this.height / 40, this.width / 40);
-		slusk = new Enemy(	 "slusk",	1,  1402,  567,  this.height / 40, this.width / 40);
-		attila = new Enemy(	 "attila",	0,  838,   755,  this.height / 40, this.width / 40);
-		pauline = new Enemy( "pauline",	2,  504,   647,  this.height / 40, this.width / 40);
+		lulle 	= new Enemy("lulle",	0,  1017,  359,  this.height / 40, this.width / 40);
+		albin	= new Enemy("albin",	3,  1468,  356,  this.height / 40, this.width / 40);
+		lkab	= new Enemy("lkab",		1,  664,   313,  this.height / 40, this.width / 40);
+		ssc		= new Enemy("ssc",		2,  1665,  107,  this.height / 40, this.width / 40);
+		slusk	= new Enemy("slusk",	1,  1402,  567,  this.height / 40, this.width / 40);
+		attila	= new Enemy("attila",	0,  838,   755,  this.height / 40, this.width / 40);
+		pauline = new Enemy("pauline",	2,  504,   647,  this.height / 40, this.width / 40);
 		
 		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 		
-		this.frame = frame;
-		this.top = top;
+		this.frame 		 = frame;
+		this.top 		 = top;
+		this.key_handler = key_handler;
+		this.game_timer  = game_timer;
+		
+		// Integer matrix with map boundaries
 		map_constraints = loadMapConstraints(this.width, this.height);
 		
 //		ml = new MouseList(this.width, this.height, frame.getHeight() / 10);
@@ -155,7 +157,7 @@ public class GamePanel extends JPanel implements Runnable
 					/*
 					 * Maybe add extra thread for enemies movement
 					 */
-//					updateEnemies();
+					updateEnemies();
 					
 //					top.setText(game_timer.getTime_str());
 
@@ -171,7 +173,7 @@ public class GamePanel extends JPanel implements Runnable
 					if(collision_params[0] == 1)
 					{
 						enemy_collision_index = collision_params[1];
-						break;
+//						break;
 					}
 					
 					delta = 0;
@@ -193,13 +195,12 @@ public class GamePanel extends JPanel implements Runnable
 				int player_y = player.getPlayer_y();
 				clearChildren();
 				
-				removeKeyListener(key_handler);
 				frame.remove(this);
 				
 				switch(enemy_collision_index)
 				{
 					case 0:		// lulle
-						new Lulle(frame, top, game_timer, player_x, player_y);
+						new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
 //						new Lulle(this, player_x, player_y);
 						break;
 					case 1:		// albin
@@ -271,31 +272,70 @@ public class GamePanel extends JPanel implements Runnable
 		player.setPlayer_speed_y(player_speed_y);
 	}
 
+	// Moveable within x-direction
 	private boolean moveableX2(double Enemy_x, double Enemy_y, int player_width, int player_height, double direction_arr)
 	{
 		if(direction_arr > 0)
 			Enemy_x += player_width;
 		
+		/* 
+		 * 	  enemy_x	  enemy_x + player_width
+		 * 	 		<--- --->
+		 * 			
+		 * (x, y1)  --------
+		 *   		|      |
+		 *   		|	   |
+		 *   		|	   |
+		 *   		|	   |
+		 *   		|	   |
+		 *  		|	   |
+		 * (x, y2)  --------
+		 * 
+		 */
+		
+//		int y1 = map_constraints[(int) Enemy_y][(int) Enemy_x];
+//		int y2 = map_constraints[(int) Enemy_y + player_height][(int) Enemy_x];
 		
 		for(int i = 1; i <= 13; i++)
 		{
 			Enemy_x += direction_arr;
+			// 				  			(x, y1)																	(x, y2)
 			if(map_constraints[(int) Enemy_y][(int) Enemy_x] == 1 || map_constraints[(int) Enemy_y + player_height][(int) Enemy_x] == 1)
 				return false;
 		}
 		
 		return true;
 	}
+
+	// Moveable within y-direction
 	private boolean moveableY2(double Enemy_x, double Enemy_y, int player_width, int player_height, double direction_arr)
 	{
 		if(direction_arr > 0)
 			Enemy_y += player_height;
+		
+		/* 
+		 * 			
+		 *		   (x1, y)  --------- (x2, y)
+		 *  				|		|
+		 *    			/\	|       |
+		 *    			|	|	    |
+		 *     player  	|	|	    |
+		 *     height  	|	|	    |
+		 *    			|	|	    |
+		 *    			\/	|	    |
+		 *          		----------
+		 * 
+		 */
+		
+//		int x1 = map_constraints[(int) Enemy_y][(int) Enemy_x];
+//		int x2 = map_constraints[(int) Enemy_y][(int) Enemy_x + player_width];
 		
 		for(int i = 1; i <= 13; i++)
 		{
 			Enemy_y += direction_arr;
 			try
 			{
+				// 				  			(x1, y)																	(x2, y)
 				if(map_constraints[(int) Enemy_y][(int) Enemy_x] == 1 || map_constraints[(int) Enemy_y][(int) Enemy_x + player_width] == 1)
 					return false;
 			} catch(Exception e)
@@ -332,7 +372,7 @@ public class GamePanel extends JPanel implements Runnable
 		float speed_coeff = 0;
 		
 		// Loop through all enemies
-		for(int Enemy_index = 0; Enemy_index < enemies.length; Enemy_index++)
+		for(int Enemy_index = 0; Enemy_index < 1/*enemies.length*/; Enemy_index++)
 		{
 			Enemy current_Enemy = enemies[Enemy_index];
 			
@@ -360,8 +400,8 @@ public class GamePanel extends JPanel implements Runnable
 			double Enemy_x = current_Enemy.getEnemy_x();
 			double Enemy_y = current_Enemy.getEnemy_y();
 			
-			int delta_x = player_x - (int) Enemy_x;
-			int delta_y = player_y - (int) Enemy_y;
+			int delta_x	   = player_x - (int) Enemy_x;
+			int delta_y    = player_y - (int) Enemy_y;
 			
 			// Get direction needed to reach player
 			try
@@ -370,10 +410,10 @@ public class GamePanel extends JPanel implements Runnable
 				angle = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
 			} catch(Exception e)
 			{
-				delta_x = 1;
-				delta_y = 1;
+				delta_x		  = 1;
+				delta_y		  = 1;
 				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
-				angle = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
+				angle 		  = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
 			}
 			
 			direction_arr[0] *= speed_coeff;
@@ -393,33 +433,13 @@ public class GamePanel extends JPanel implements Runnable
 				// Enemy stays within map constraints
 				if(moveableX2( Enemy_x, Enemy_y, current_Enemy.width, current_Enemy.height, direction_arr[0]))
 					current_Enemy.setEnemy_x((int) (Enemy_x + speed_x));
-				if(moveableY2(Enemy_x, Enemy_y, current_Enemy.width, current_Enemy.height, direction_arr[0]))
+				if(moveableY2(Enemy_x, Enemy_y, current_Enemy.width, current_Enemy.height, direction_arr[1]))
 					current_Enemy.setEnemy_y((int) (Enemy_y + speed_y));
 			}
 		}
 	}
 	
-	// Methods to check if entity is within frame
-	private boolean moveableX(int x, int width, double dx)
-	{
-		if(dx > 0 && x + width < this.width - (width / 2))
-			return true;
-		else if(dx < 0 && (width / 2) < x)
-			return true;
-		else
-			return false;
-	}
-	private boolean moveableY(int y, int height, double dy)
-	{
-		if(dy > 0 && y + height < this.height - (height / 1))
-			return true;
-		else if(dy < 0 && y > (height / 2))
-			return true;
-		else
-			return false;
-	}
-	
-	// Check if entity collides with any Enemy
+	// Check if entity collides with any enemy
 	private int[] checkCollision(int entity_x, int entity_y, int entity_width, int entity_height, int current_index)
 	{
 		int[] ret_arr = {0, 0};
@@ -427,36 +447,36 @@ public class GamePanel extends JPanel implements Runnable
 		int entity_mid_x = entity_x + (entity_width / 2);
 		int entity_mid_y = entity_y + (entity_height / 2);
 		
-		for(int Enemy_index = 0; Enemy_index < enemies.length; Enemy_index++)
+		for(int enemy_index = 0; enemy_index < enemies.length; enemy_index++)
 		{
-			if(Enemy_index != current_index)
+			if(enemy_index != current_index)
 			{				
 				boolean x_crossed = false;
 				boolean y_crossed = false;
 				
-				Enemy current_Enemy = enemies[Enemy_index];
+				Enemy current_enemy = enemies[enemy_index];
 				
-				int Enemy_x = current_Enemy.getEnemy_x();
-				int Enemy_y = current_Enemy.getEnemy_y();
+				int enemy_x = current_enemy.getEnemy_x();
+				int enemy_y = current_enemy.getEnemy_y();
 				
 				// Enemy left of entity
-				if(Enemy_x < entity_x && entity_mid_x < (Enemy_x + current_Enemy.width))
+				if(enemy_x < entity_x && entity_mid_x < (enemy_x + current_enemy.width))
 					x_crossed = true;
 				// Enemy right of entity
-				else if(entity_x < Enemy_x && Enemy_x < entity_mid_x)
+				else if(entity_x < enemy_x && enemy_x < entity_mid_x)
 					x_crossed = true;
 				// Enemy above entity
-				if(Enemy_y < entity_y && entity_mid_y < (Enemy_y + current_Enemy.height))
+				if(enemy_y < entity_y && entity_mid_y < (enemy_y + current_enemy.height))
 					y_crossed = true;
 				// Enemy below entity
-				else if(entity_y < Enemy_y && Enemy_y < entity_mid_y)
+				else if(entity_y < enemy_y && enemy_y < entity_mid_y)
 					y_crossed = true;
 				
 				// Collision
 				if(x_crossed && y_crossed)
 				{
 					ret_arr[0] = 1;
-					ret_arr[1] = Enemy_index;
+					ret_arr[1] = enemy_index;
 					
 					return ret_arr;
 				}
@@ -465,8 +485,8 @@ public class GamePanel extends JPanel implements Runnable
 		return ret_arr;
 	}
 	
-	// Nullify all to then becollected by the garbage collector,
-	// clears memory
+	// Nullify all, to then be collected by the garbage collector,
+	// a.k.a. clears memory
 	private void clearChildren()
 	{
 		player 	= null;
@@ -479,7 +499,8 @@ public class GamePanel extends JPanel implements Runnable
 		pauline = null;
 		enemies = null;
 	}
-
+	
+	// Load file with map boundaries
 	private int[][] loadMapConstraints(int cols, int rows)
 	{
 		int[][] map = new int[rows][cols];
@@ -492,16 +513,19 @@ public class GamePanel extends JPanel implements Runnable
 			Scanner reader = new Scanner(file);
 			while(reader.hasNextLine())
 			{
-				String curr_line = reader.nextLine();
-				char[] ch_curr_line = curr_line.toCharArray();
-				for(int k = 0; k < ch_curr_line.length; k++)
+				String current_line = reader.nextLine();
+				char[] ch_current_line = current_line.toCharArray();
+				for(int k = 0; k < ch_current_line.length; k++)
 				{
-					if(ch_curr_line[k] == '0')// && j < this.width)
+					// Not boundary-element
+					if(ch_current_line[k] == '0')// && j < this.width)
 					{
 						map[i][j] = 0;
 						j++;
 					}
-					else if(ch_curr_line[k] == '1')// && j < this.width)
+					
+					// Boundary-element
+					else if(ch_current_line[k] == '1')// && j < this.width)
 					{
 						map[i][j] = 1;
 						j++;
@@ -527,6 +551,7 @@ public class GamePanel extends JPanel implements Runnable
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		if(game_loop_running)
+			// Draw map
 			draw(g_2d);
 		
 		if(game_loop_running)

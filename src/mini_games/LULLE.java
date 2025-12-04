@@ -19,21 +19,21 @@ import main.KeyHandler;
 
 public class Lulle extends JPanel implements Runnable
 {
-	KeyHandler key_handler;
-	
 	// Arguments
 	JFrame frame;
 	JLabel top;
 	GameTimer game_timer;
+	KeyHandler key_handler;
 	int player_x_passing;
 	int player_y_passing;
 	
 	Thread lulle_thread;
 	int width, height;
-	boolean game_paused = false;
-	boolean dirt_placed = false;
+	boolean game_paused 	  = false;
+	boolean dirt_placed 	  = false;
 	boolean game_loop_running = true;
-	final int RNG = 100;
+	final int RNG 			  = 100;
+	// 1 in <RNG> chance that dirt is generated ~every millisecond
 	
 	int MAX_POINTS = 10;
 	int points 		= 0;
@@ -67,81 +67,25 @@ public class Lulle extends JPanel implements Runnable
 	int npc_speed_y 		  = speed_direction_arr[index2];
 	ImageIcon npc_img;
 	
-/*
-	public Lulle(GamePanel game_panel, int player_x, int player_y)
-	{
-		super();
-		
-		JPanel p = this;
-		
-		this.game_panel = game_panel;
-		this.player_x = player_x;
-		this.player_y = player_y;
-		
-		this.requestFocusInWindow()
-	}
-*/
-	public Lulle(JFrame frame, JLabel top, GameTimer game_timer, int player_x, int player_y)
+	public Lulle(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x0, int player_y0)
 	{
 		super();
 			this.width = frame.getWidth();
 			this.height = 9 * (frame.getHeight() / 10);
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
-		requestFocusInWindow();
-		setFocusable(true);
+		setFocusable(false);
 		setBackground(new Color(32, 89, 255));
 		
-		key_handler = new KeyHandler(frame);
-		addKeyListener(key_handler);
-		
-		this.frame = frame;
-//		this.game_panel = game_panel;
-		this.top = top;
-		this.game_timer = game_timer;
-//		this.key_handler = key_handler;
-		this.player_x_passing = player_x;
-		this.player_y_passing = player_y;
-		/*
-			int rows = 5;
-			int cols = 17;
-			setLayout(new GridLayout(rows, cols));
-			JPanel p2 = null;
-			for(int i = 0; i < rows; i++)
-			{
-				for(int j = 0; j < cols; j++)
-				{
-					int top 	= 1;
-					int left	= 1;
-					int bot 	= 1;
-					int right 	= 1;
-					
-					if(j == 0)
-						left = 2;
-					else if(j == cols)
-						right = 2;
-					if(i == 0)
-						top = 2;
-					else if(i == rows)
-						bot = 2;
-					
-					JPanel p = new JPanel();
-					p.setBorder(BorderFactory.createMatteBorder(top, left, bot, right, Color.BLACK));
-					p.setOpaque(true);
-					this.add(p);
-				}
-			}
-			addMouseListener(new MouseAdapter()
-			{
-				public void mousePressed(MouseEvent e)
-				{
-					System.out.println(e.getX() + ", " + e.getY());
-				}
-			});
-		*/
+		this.frame				= frame;
+		this.top				= top;
+		this.game_timer			= game_timer;
+		this.key_handler		= key_handler;
+		this.player_x_passing	= player_x;
+		this.player_y_passing	= player_y;
 	
 		frame.add(this);
-		frame.setVisible(true);
+		frame.repaint();
 		
 		initLulleThread();
 	}
@@ -203,9 +147,9 @@ public class Lulle extends JPanel implements Runnable
 				}
 			} // End of slave game-loop
 		} // End of master game-loop
-		new GamePanel(frame, top, game_timer, player_x_passing, player_y_passing);
+		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
 	}
-
+	
 	private void updatePlayer()
 	{
 		int[] direction_arr = key_handler.getDirection_arr();
@@ -233,6 +177,7 @@ public class Lulle extends JPanel implements Runnable
 			player_y += player_speed_y * player_dy;
 	}
 	
+	// Moveable within x-direction
 	private boolean moveableX(int x, int dx)
 	{
 		if(dx > 0)
@@ -247,7 +192,8 @@ public class Lulle extends JPanel implements Runnable
 		
 		return false;
 	}
-	
+
+	// Moveable within y-direction
 	private boolean moveableY(int y, int dy)
 	{		
 		if(dy > 0)
@@ -289,21 +235,19 @@ public class Lulle extends JPanel implements Runnable
 			dirt_x = npc_x;
 			dirt_y = npc_y + (entity_height / 2);
 		}
-		else if(!dirt_placed)
-			dirt_placed = false;
 	}
-
+	
+	// Check if player can 'clean' dirt, a.k.a. if player intersects majority of dirt
 	private void updateCleaning()
 	{
 		boolean valid_x = false;
 		boolean valid_y = false;
 		
-		double diff = Math.abs(player_x - dirt_x);
-		double comp = (0.2 * (double) entity_width);
-		
+		// If majority of dirt-width within player-width
 		if(Math.abs(player_x - dirt_x) <= (0.2 * (double) entity_width))
 			valid_x = true;
 		
+		// If dirt-height completely within player-height
 		if(player_y < dirt_y && (dirt_y + dirt_heigth) < (player_y + entity_height))
 			valid_y = true;
 		
