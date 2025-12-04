@@ -24,7 +24,7 @@ import mini_games.Pauline;
 import mini_games.SSC;
 import mini_games.Slusk;
 
-public class GamePanel extends JPanel implements Runnable
+public class GamePanel extends JPanel
 {
 	KeyHandler key_handler;
 	Player player;
@@ -49,6 +49,7 @@ public class GamePanel extends JPanel implements Runnable
 	int[][] map_constraints;
 	
 	int enemy_collision_index = -1;
+	double delta = 0;
 	
 	MouseList ml;
 	
@@ -72,18 +73,20 @@ public class GamePanel extends JPanel implements Runnable
 		frame.add(this);
 		if(!frame.isVisible())
 			frame.setVisible(true);
-		
+
+		int entity_width  = this.width / 40;
+		int entity_height = this.height / 40;
 		// Init. player
-		player	= new Player(972, 101, this.height / 40, this.width / 40);
+		player	= new Player(972, 101, entity_height, this.width / 40);
 		
 		// Init. enemies
-		lulle 	= new Enemy("lulle",	0,  1017,  359,  this.height / 40, this.width / 40);
-		albin	= new Enemy("albin",	3,  1468,  356,  this.height / 40, this.width / 40);
-		lkab	= new Enemy("lkab",		1,  664,   313,  this.height / 40, this.width / 40);
-		ssc		= new Enemy("ssc",		2,  1665,  107,  this.height / 40, this.width / 40);
-		slusk	= new Enemy("slusk",	1,  1402,  567,  this.height / 40, this.width / 40);
-		attila	= new Enemy("attila",	0,  838,   755,  this.height / 40, this.width / 40);
-		pauline = new Enemy("pauline",	2,  504,   647,  this.height / 40, this.width / 40);
+		lulle 	= new Enemy("lulle",	0,  /*1017,  359,*/ 1460, 259,  this.height / 40, this.width / 40);
+		albin	= new Enemy("albin",	3,  1468,  356,  entity_height, entity_width);
+		lkab	= new Enemy("lkab",		1,  664,   313,  entity_height, entity_width);
+		ssc		= new Enemy("ssc",		2,  1665,  107,  entity_height, entity_width);
+		slusk	= new Enemy("slusk",	1,  1402,  567,  entity_height, entity_width);
+		attila	= new Enemy("attila",	0,  807,   739,  entity_height, entity_width);
+		pauline = new Enemy("pauline",	2,  504,   647,  entity_height, entity_width);
 		
 		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 		
@@ -102,12 +105,16 @@ public class GamePanel extends JPanel implements Runnable
 //			public void mousePressed(MouseEvent e)
 //			{
 //				JOptionPane.showMessageDialog(null, e.getX() + ", " + e.getY());
+////				System.out.println(e.getX() + ", " + e.getY());
+////				System.exit(0);
 //			}
 //		});
 		
 		initGameThread();
+		initEnemiesThread();
 	}
 
+	int FPS = 60;
 	private void initGameThread()
 	{
 		if(game_timer == null)
@@ -117,122 +124,108 @@ public class GamePanel extends JPanel implements Runnable
 		}
 		
 		game_loop_running = true;
-		
-		game_thread = new Thread(this);
+		game_thread = new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				// Master game-loop
+				while(game_thread != null)
+				{
+					/*
+					 * Time-to-update logic
+					 * Src: https://www.youtube.com/watch?v=VpH33Uw-_0E&t=1906s
+					 */
+					double draw_interval = Math.pow(10, 9);
+					draw_interval /= FPS;
+					double delta = 0;
+					long last_time = System.nanoTime();
+					long current_time;
+					
+					// Slave game-loop
+					while(game_loop_running && !game_paused)
+					{
+						// Cont. time-to-update logic
+						current_time = System.nanoTime();
+						delta += (current_time - last_time) / draw_interval;
+						last_time = current_time;
+						if(delta >= 1)
+						{
+							updatePlayer();
+							
+							repaint();
+							
+							// player-Enemy collision
+							int[] collision_params = checkCollision( player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, -1);
+							
+							// Collision
+							if(collision_params[0] == 1)
+							{
+								enemy_collision_index = collision_params[1];
+								if(enemy_collision_index == 0)
+									break;
+							}
+							
+							delta = 0;
+						}
+						
+					} // End of slave game-loop
+					if(enemy_collision_index > -1)
+					{
+						game_loop_running = false;
+						game_thread		  = null;
+						
+						enemies_updating  = false;
+						enemies_thread	  = null;
+						
+						launchMiniGame(enemy_collision_index);
+					}
+				} // End of master game-loop	
+			}
+		});
 		game_thread.start();
 	}
 	
-	int FPS = 60;
-	@Override
-	public void run()
+	private void initEnemiesThread()
 	{
-		// Master game-loop
-		while(game_thread != null)
+		enemies_updating = true;
+		enemies_thread = new Thread(new Runnable()
 		{
-			/*
-			 * Time-to-update logic
-			 * Src: https://www.youtube.com/watch?v=VpH33Uw-_0E&t=1906s
-			 */
-	 		double draw_interval = Math.pow(10, 9);
-	 		draw_interval /= FPS;
-			double delta = 0;
-			long last_time = System.nanoTime();
-			long current_time;
-			
-			boolean game_paused = key_handler.isGame_paused();
-			if(!game_paused && game_loop_running)
-				game_timer.setTime_coeff(1);
-			
-			// Slave game-loop
-			while(game_loop_running && !game_paused)
+			@Override
+			public void run()
 			{
-				// Cont. time-to-update logic
-				current_time = System.nanoTime();
-				delta += (current_time - last_time) / draw_interval;
-				last_time = current_time;
-				if(delta >= 1)
+				// Master game-loop
+				while(enemies_thread != null)
 				{
-					updateplayer();
+					double draw_interval = Math.pow(10, 9);
+					draw_interval /= FPS;
+					double delta = 0;
+					long last_time = System.nanoTime();
+					long current_time;
 					
-					/*
-					 * Maybe add extra thread for enemies movement
-					 */
-					updateEnemies();
-					
-//					top.setText(game_timer.getTime_str());
-
-					repaint();
-					
-					// player-Enemy collision
-					int[] collision_params = checkCollision( player.getPlayer_x(),
-															 player.getPlayer_y(),
-															 player.player_width,
-															 player.player_height,
-															 -1);
-					// Collision
-					if(collision_params[0] == 1)
+					// Slave gamee-loop
+					while(enemies_updating && !game_paused)
 					{
-						enemy_collision_index = collision_params[1];
-						break;
-					}
-					
-					delta = 0;
-					
-					game_paused = key_handler.isGame_paused();
-					if(game_paused)
-					{
-						game_timer.setTime_coeff(0);
-//						GAME_MENU game_menu = new GAME_MENU(frame);
-					}
-				}
-			} // End of slave game-loop
-			if(enemy_collision_index > -1)
-			{
-				game_loop_running = false;
-				game_thread = null;
-
-				int player_x = player.getPlayer_x();
-				int player_y = player.getPlayer_y();
-				clearChildren();
-				
-				frame.remove(this);
-				
-				switch(enemy_collision_index)
-				{
-					case 0:		// lulle
-						new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
-//						new Lulle(this, player_x, player_y);
-						break;
-					case 1:		// albin
-						game_timer.setTime_coeff(-1);
-//						new Albin(player_x, player_y);
-						break;
-					case 2:		// lkab
-//						game_timer.setTime_coeff(10);
-//						new Lkab(player_x, player_y);
-						break;
-					case 3:		// ssc
-//						new SSC(player_x, player_y);
-						break;
-					case 4:		// slusk
-//						game_timer.setTime_coeff(200);
-//						new Slusk(player_x, player_y);
-						break;
-					case 5:		// attila
-//						int random_time = 10 * ((int) game_timer.getRandom_speed_coeff() + 1);
-//						game_timer.setTime_coeff(random_time);
-//						new Attila(player_x, player_y);
-						break;
-					case 6:		// pauline
-//						new Pauline(player_x, player_y);
-						break;
-				}
+						current_time = System.nanoTime();
+						delta += (current_time - last_time) / draw_interval;
+						last_time = current_time;
+						if(delta >= 1)
+						{
+							updateEnemies();
+							
+							delta = 0;
+						}
+						
+					} // End of slave game-loop
+				} // End of master game-loop
 			}
-		} // End of master game-loop
+		});
+		enemies_thread.start();
 	}
-
-	private void updateplayer()
+	
+	private void updatePlayer()
 	{
+//			System.out.println("updatePlayer");
 		// Get key pressed
 		int[] player_direction_arr = key_handler.getDirection_arr();
 		
@@ -272,11 +265,106 @@ public class GamePanel extends JPanel implements Runnable
 		player.setPlayer_speed_y(player_speed_y);
 	}
 
+	private void updateEnemies()
+	{
+		/*
+		 *  ____________________________________
+		 * | follow-type |     description      |
+		 * |____________________________________|
+		 * |       0     | Follow at full speed |
+		 * |____________________________________|
+		 * |       1     | Follow at 50% speed  |
+		 * |____________________________________|
+		 * |       2     | Randomized direction |
+		 * |____________________________________|
+		 * |       3     |  Opposite direction  |
+		 * |____________________________________|
+		 * 
+		 */
+//			System.err.println("updateEnemies");
+		int player_x = player.getPlayer_x();
+		int player_y = player.getPlayer_y();
+		double[] direction_arr;
+		double angle;
+		float speed_coeff = 0;
+		
+		// Loop through all enemies
+		for(int enemy_index = 0; enemy_index < enemies.length; enemy_index++)
+		{
+			Enemy current_enemy = enemies[enemy_index];
+			
+			// Assign speed-coefficient depending on "Enemy-type"
+			switch(current_enemy.follow_type)
+			{
+			case 0:
+				speed_coeff = 1;
+//					speed_coeff = 0;
+				break;
+			case 1:
+				speed_coeff = (float) 0.5;
+//					speed_coeff = 0;
+				break;
+			case 2:
+				speed_coeff = game_timer.getRandom_speed_coeff();
+//					speed_coeff = 0;
+				break;
+			case 3:
+				speed_coeff = -1;
+//					speed_coeff = 0;
+				break;
+			}
+			
+			double enemy_x = current_enemy.getEnemy_x();
+			double enemy_y = current_enemy.getEnemy_y();
+			
+			int delta_x	   = player_x - (int) enemy_x;
+			int delta_y    = player_y - (int) enemy_y;
+			
+			// Get direction needed to reach player
+			try
+			{			
+				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
+				angle = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
+			} catch(Exception e)
+			{
+				delta_x		  = 1;
+				delta_y		  = 1;
+				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
+				angle 		  = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
+			}
+			
+			direction_arr[0] *= speed_coeff;
+			direction_arr[1] *= speed_coeff;
+			
+			double speed_x = direction_arr[0] * current_enemy.max_speed * Math.cos(angle);
+			double speed_y = direction_arr[1] * current_enemy.max_speed * Math.sin(angle);
+			
+			// Check Enemy-Enemy collision
+			int[] enemy_collision_params = checkCollision( (int) (enemy_x + speed_x),
+														   (int) (enemy_y + speed_y),
+														   current_enemy.width,
+														   current_enemy.height,
+														   enemy_index);
+			
+			// Collision between enemies
+			if(enemy_collision_params[0] == 1)
+			{
+				speed_x *= -1;
+				speed_y *= -1;
+			}
+			// Enemy stays within map constraints
+			if(moveableX2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]))
+				current_enemy.setEnemy_x((int) (enemy_x + speed_x));
+			if(moveableY2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[1]))
+				current_enemy.setEnemy_y((int) (enemy_y + speed_y));
+		}
+	}
+
 	// Moveable within x-direction
-	private boolean moveableX2(double Enemy_x, double Enemy_y, int player_width, int player_height, double direction_arr)
+	private boolean moveableX2(double enemy_x, double enemy_y, int player_width, int player_height, double direction_arr)
 	{
 		if(direction_arr > 0)
-			Enemy_x += player_width;
+			enemy_x += player_width;
 		
 		/* 
 		 * 	  enemy_x	  enemy_x + player_width
@@ -298,9 +386,9 @@ public class GamePanel extends JPanel implements Runnable
 		
 		for(int i = 1; i <= 13; i++)
 		{
-			Enemy_x += direction_arr;
+			enemy_x += direction_arr;
 			// 				  			(x, y1)																	(x, y2)
-			if(map_constraints[(int) Enemy_y][(int) Enemy_x] == 1 || map_constraints[(int) Enemy_y + player_height][(int) Enemy_x] == 1)
+			if(map_constraints[(int) enemy_y][(int) enemy_x] == 1 || map_constraints[(int) enemy_y + player_height][(int) enemy_x] == 1)
 				return false;
 		}
 		
@@ -308,10 +396,10 @@ public class GamePanel extends JPanel implements Runnable
 	}
 
 	// Moveable within y-direction
-	private boolean moveableY2(double Enemy_x, double Enemy_y, int player_width, int player_height, double direction_arr)
+	private boolean moveableY2(double enemy_x, double enemy_y, int player_width, int player_height, double direction_arr)
 	{
 		if(direction_arr > 0)
-			Enemy_y += player_height;
+			enemy_y += player_height;
 		
 		/* 
 		 * 			
@@ -332,108 +420,16 @@ public class GamePanel extends JPanel implements Runnable
 		
 		for(int i = 1; i <= 13; i++)
 		{
-			Enemy_y += direction_arr;
+			enemy_y += direction_arr;
 			try
 			{
 				// 				  			(x1, y)																	(x2, y)
-				if(map_constraints[(int) Enemy_y][(int) Enemy_x] == 1 || map_constraints[(int) Enemy_y][(int) Enemy_x + player_width] == 1)
+				if(map_constraints[(int) enemy_y][(int) enemy_x] == 1 || map_constraints[(int) enemy_y][(int) enemy_x + player_width] == 1)
 					return false;
 			} catch(Exception e){return false;}
 		}
 		
 		return true;
-	}
-
-
-	private void updateEnemies()
-	{
-		/*
-		 *  ____________________________________
-		 * | follow-type |     description      |
-		 * |____________________________________|
-		 * |       0     | Follow at full speed |
-		 * |____________________________________|
-		 * |       1     | Follow at 50% speed  |
-		 * |____________________________________|
-		 * |       2     | Randomized direction |
-		 * |____________________________________|
-		 * |       3     |  Opposite direction  |
-		 * |____________________________________|
-		 * 
-		 */
-		
-		int player_x = player.getPlayer_x();
-		int player_y = player.getPlayer_y();
-		double[] direction_arr;
-		double angle;
-		float speed_coeff = 0;
-		
-		// Loop through all enemies
-		for(int Enemy_index = 0; Enemy_index < 1/*enemies.length*/; Enemy_index++)
-		{
-			Enemy current_Enemy = enemies[Enemy_index];
-			
-			// Assign speed-coefficient depending on "Enemy-type"
-			switch(current_Enemy.follow_type)
-			{
-				case 0:
-					speed_coeff = 1;
-//					speed_coeff = 0;
-					break;
-				case 1:
-					speed_coeff = (float) 0.5;
-//					speed_coeff = 0;
-					break;
-				case 2:
-					speed_coeff = game_timer.getRandom_speed_coeff();
-//					speed_coeff = 0;
-					break;
-				case 3:
-					speed_coeff = -1;
-//					speed_coeff = 0;
-					break;
-			}
-			
-			double Enemy_x = current_Enemy.getEnemy_x();
-			double Enemy_y = current_Enemy.getEnemy_y();
-			
-			int delta_x	   = player_x - (int) Enemy_x;
-			int delta_y    = player_y - (int) Enemy_y;
-			
-			// Get direction needed to reach player
-			try
-			{			
-				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
-				angle = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
-			} catch(Exception e)
-			{
-				delta_x		  = 1;
-				delta_y		  = 1;
-				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
-				angle 		  = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
-			}
-			
-			direction_arr[0] *= speed_coeff;
-			direction_arr[1] *= speed_coeff;
-			
-			double speed_x = direction_arr[0] * current_Enemy.max_speed * Math.cos(angle);
-			double speed_y = direction_arr[1] * current_Enemy.max_speed * Math.sin(angle);
-			
-			// Check Enemy-Enemy collision
-			int[] Enemy__collision_params = checkCollision( (int) (Enemy_x + speed_x),
-														    (int) (Enemy_y + speed_y),
-														     current_Enemy.width,
-														     current_Enemy.height,
-														     Enemy_index);
-			if(Enemy__collision_params[0] == 1)
-			{
-				// Enemy stays within map constraints
-				if(moveableX2( Enemy_x, Enemy_y, current_Enemy.width, current_Enemy.height, direction_arr[0]))
-					current_Enemy.setEnemy_x((int) (Enemy_x + speed_x));
-				if(moveableY2(Enemy_x, Enemy_y, current_Enemy.width, current_Enemy.height, direction_arr[1]))
-					current_Enemy.setEnemy_y((int) (Enemy_y + speed_y));
-			}
-		}
 	}
 	
 	// Check if entity collides with any enemy
@@ -480,6 +476,41 @@ public class GamePanel extends JPanel implements Runnable
 			}
 		}
 		return ret_arr;
+	}
+	
+	// Call and init. mini-game class
+	private void launchMiniGame(int enemy_collision_index)
+	{
+		int player_x = player.getPlayer_x();
+		int player_y = player.getPlayer_y();
+		
+		clearChildren();
+		frame.remove(this);
+		
+		switch(enemy_collision_index)
+		{
+		case 0:
+			new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
+			break;
+		case 1:
+			//			new Albin(player_x, player_y);
+			break;
+		case 2:
+			//			new Lkab(player_x, player_y);
+			break;
+		case 3:
+			//			new SSC(player_x, player_y);
+			break;
+		case 4:
+			//			new Slusk(player_x, player_y);
+			break;
+		case 5:
+			//			new Attila(player_x, player_y);
+			break;
+		case 6:
+			//			new Pauline(player_x, player_y);
+			break;
+		}
 	}
 	
 	// Nullify all, to then be collected by the garbage collector,
@@ -564,7 +595,7 @@ public class GamePanel extends JPanel implements Runnable
 			}
 		}
 
-		if(game_loop_running)
+		if(enemies_updating)
 		{
 			// Paint enemies
 			for(int i = 0; i < enemies.length; i++)

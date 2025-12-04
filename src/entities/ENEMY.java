@@ -8,7 +8,7 @@ public class Enemy
 	final public String id_string;
 	final public int follow_type;
 	
-	public final int max_speed = 8;
+	public final int max_speed = 5;
 	
 	public Enemy(String id_string, int follow_type, int x, int y, int width, int height)
 	{
