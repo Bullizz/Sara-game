@@ -369,12 +369,12 @@ public class GamePanel extends JPanel implements Runnable
 		float speed_coeff = 0;
 		
 		// Loop through all enemies
-		for(int Enemy_index = 0; Enemy_index < 1/*enemies.length*/; Enemy_index++)
+		for(int enemy_index = 0; enemy_index < 1/*enemies.length*/; enemy_index++)
 		{
-			Enemy current_Enemy = enemies[Enemy_index];
+			Enemy current_enemy = enemies[enemy_index];
 			
 			// Assign speed-coefficient depending on "Enemy-type"
-			switch(current_Enemy.follow_type)
+			switch(current_enemy.follow_type)
 			{
 				case 0:
 					speed_coeff = 1;
@@ -394,11 +394,11 @@ public class GamePanel extends JPanel implements Runnable
 					break;
 			}
 			
-			double Enemy_x = current_Enemy.getEnemy_x();
-			double Enemy_y = current_Enemy.getEnemy_y();
+			double enemy_x = current_enemy.getEnemy_x();
+			double enemy_y = current_enemy.getEnemy_y();
 			
-			int delta_x	   = player_x - (int) Enemy_x;
-			int delta_y    = player_y - (int) Enemy_y;
+			int delta_x	   = player_x - (int) enemy_x;
+			int delta_y    = player_y - (int) enemy_y;
 			
 			// Get direction needed to reach player
 			try
@@ -416,23 +416,26 @@ public class GamePanel extends JPanel implements Runnable
 			direction_arr[0] *= speed_coeff;
 			direction_arr[1] *= speed_coeff;
 			
-			double speed_x = direction_arr[0] * current_Enemy.max_speed * Math.cos(angle);
-			double speed_y = direction_arr[1] * current_Enemy.max_speed * Math.sin(angle);
+			double speed_x = direction_arr[0] * current_enemy.max_speed * Math.cos(angle);
+			double speed_y = direction_arr[1] * current_enemy.max_speed * Math.sin(angle);
 			
 			// Check Enemy-Enemy collision
-			int[] Enemy__collision_params = checkCollision( (int) (Enemy_x + speed_x),
-														    (int) (Enemy_y + speed_y),
-														     current_Enemy.width,
-														     current_Enemy.height,
-														     Enemy_index);
-			if(Enemy__collision_params[0] == 1)
+			int[] enemy_collision_params = checkCollision( (int) (enemy_x + speed_x),
+														    (int) (enemy_y + speed_y),
+														     current_enemy.width,
+														     current_enemy.height,
+														     enemy_index);
+			// Collision between enemies
+			if(enemy_collision_params[0] == 1)
 			{
-				// Enemy stays within map constraints
-				if(moveableX2( Enemy_x, Enemy_y, current_Enemy.width, current_Enemy.height, direction_arr[0]))
-					current_Enemy.setEnemy_x((int) (Enemy_x + speed_x));
-				if(moveableY2(Enemy_x, Enemy_y, current_Enemy.width, current_Enemy.height, direction_arr[1]))
-					current_Enemy.setEnemy_y((int) (Enemy_y + speed_y));
+				speed_x *= -1;
+				speed_y *= -1;
 			}
+			// Enemy stays within map constraints
+			if(moveableX2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]))
+				current_enemy.setEnemy_x((int) (enemy_x + speed_x));
+			if(moveableY2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[1]))
+				current_enemy.setEnemy_y((int) (enemy_y + speed_y));
 		}
 	}
 	
