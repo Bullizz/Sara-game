@@ -76,11 +76,12 @@ public class GamePanel extends JPanel
 
 		int entity_width  = this.width / 40;
 		int entity_height = this.height / 40;
+		
 		// Init. player
 		player	= new Player(972, 101, entity_height, this.width / 40);
 		
 		// Init. enemies
-		lulle 	= new Enemy("lulle",	0,  /*1017,  359,*/ 1460, 259,  this.height / 40, this.width / 40);
+		lulle 	= new Enemy("lulle",	0,  1460,  259,  entity_height, entity_width);
 		albin	= new Enemy("albin",	3,  1468,  356,  entity_height, entity_width);
 		lkab	= new Enemy("lkab",		1,  664,   313,  entity_height, entity_width);
 		ssc		= new Enemy("ssc",		2,  1665,  107,  entity_height, entity_width);
@@ -142,6 +143,13 @@ public class GamePanel extends JPanel
 					long last_time = System.nanoTime();
 					long current_time;
 					
+					boolean game_paused = key_handler.isGame_paused();
+					
+					// Assign timer first value to start it
+					// (only when master loop is started)
+					if(!game_paused && game_loop_running)
+						game_timer.setTime_coeff(1);
+					
 					// Slave game-loop
 					while(game_loop_running && !game_paused)
 					{
@@ -155,15 +163,14 @@ public class GamePanel extends JPanel
 							
 							repaint();
 							
-							// player-Enemy collision
+							// player-enemy collision
 							int[] collision_params = checkCollision( player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, -1);
 							
 							// Collision
 							if(collision_params[0] == 1)
 							{
 								enemy_collision_index = collision_params[1];
-								if(enemy_collision_index == 0)
-									break;
+								break;
 							}
 							
 							delta = 0;
@@ -293,25 +300,25 @@ public class GamePanel extends JPanel
 		{
 			Enemy current_enemy = enemies[enemy_index];
 			
-			// Assign speed-coefficient depending on "Enemy-type"
+			// Assign speed-coefficient depending on "enemy-type"
 			switch(current_enemy.follow_type)
 			{
-			case 0:
-				speed_coeff = 1;
-//					speed_coeff = 0;
-				break;
-			case 1:
-				speed_coeff = (float) 0.5;
-//					speed_coeff = 0;
-				break;
-			case 2:
-				speed_coeff = game_timer.getRandom_speed_coeff();
-//					speed_coeff = 0;
-				break;
-			case 3:
-				speed_coeff = -1;
-//					speed_coeff = 0;
-				break;
+				case 0:
+					speed_coeff = 1;
+	//					speed_coeff = 0;
+					break;
+				case 1:
+					speed_coeff = (float) 0.5;
+	//					speed_coeff = 0;
+					break;
+				case 2:
+					speed_coeff = game_timer.getRandom_speed_coeff();
+	//					speed_coeff = 0;
+					break;
+				case 3:
+					speed_coeff = -1;
+	//					speed_coeff = 0;
+					break;
 			}
 			
 			double enemy_x = current_enemy.getEnemy_x();
@@ -339,7 +346,7 @@ public class GamePanel extends JPanel
 			double speed_x = direction_arr[0] * current_enemy.max_speed * Math.cos(angle);
 			double speed_y = direction_arr[1] * current_enemy.max_speed * Math.sin(angle);
 			
-			// Check Enemy-Enemy collision
+			// Check enemy-enemy collision
 			int[] enemy_collision_params = checkCollision( (int) (enemy_x + speed_x),
 														   (int) (enemy_y + speed_y),
 														   current_enemy.width,
@@ -493,6 +500,7 @@ public class GamePanel extends JPanel
 			new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
 			break;
 		case 1:
+			game_timer.setTime_coeff(-1);
 			//			new Albin(player_x, player_y);
 			break;
 		case 2:
