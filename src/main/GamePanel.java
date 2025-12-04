@@ -173,7 +173,7 @@ public class GamePanel extends JPanel implements Runnable
 					if(collision_params[0] == 1)
 					{
 						enemy_collision_index = collision_params[1];
-//						break;
+						break;
 					}
 					
 					delta = 0;
@@ -338,10 +338,7 @@ public class GamePanel extends JPanel implements Runnable
 				// 				  			(x1, y)																	(x2, y)
 				if(map_constraints[(int) Enemy_y][(int) Enemy_x] == 1 || map_constraints[(int) Enemy_y][(int) Enemy_x + player_width] == 1)
 					return false;
-			} catch(Exception e)
-			{
-				return false;
-			}
+			} catch(Exception e){return false;}
 		}
 		
 		return true;
