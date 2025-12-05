@@ -2,7 +2,7 @@ package entities;
 
 public class Enemy
 {
-	public int x, y;
+	int x, y;
 
 	final public int width, height;
 	final public String id_string;
@@ -12,12 +12,12 @@ public class Enemy
 	
 	public Enemy(String id_string, int follow_type, int x, int y, int width, int height)
 	{
-		this.id_string = id_string;
+		this.id_string 	 = id_string;
 		this.follow_type = follow_type;
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		this.x 			 = x;
+		this.y			 = y;
+		this.width		 = width;
+		this.height		 = height;
 	}
 
 	public int getEnemy_x()

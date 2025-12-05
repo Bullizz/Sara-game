@@ -29,6 +29,8 @@ public class GamePanel extends JPanel
 	KeyHandler key_handler;
 	Player player;
 	Enemy lulle, albin, lkab, ssc, slusk, attila, pauline;
+	final int enemy_amount  = 7;
+	
 	Enemy[] enemies;
 	GameTimer game_timer;
 	
@@ -163,7 +165,7 @@ public class GamePanel extends JPanel
 							
 							repaint();
 							
-							// player-enemy collision
+							// Player-enemy collision
 							int[] collision_params = checkCollision( player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, -1);
 							
 							// Collision
@@ -177,6 +179,8 @@ public class GamePanel extends JPanel
 						}
 						
 					} // End of slave game-loop
+					
+					// Collision detected
 					if(enemy_collision_index > -1)
 					{
 						game_loop_running = false;
@@ -187,7 +191,7 @@ public class GamePanel extends JPanel
 						
 						launchMiniGame(enemy_collision_index);
 					}
-				} // End of master game-loop	
+				} // End of master game-loop
 			}
 		});
 		game_thread.start();
@@ -210,7 +214,7 @@ public class GamePanel extends JPanel
 					long last_time = System.nanoTime();
 					long current_time;
 					
-					// Slave gamee-loop
+					// Slave game-loop
 					while(enemies_updating && !game_paused)
 					{
 						current_time = System.nanoTime();
@@ -222,7 +226,6 @@ public class GamePanel extends JPanel
 							
 							delta = 0;
 						}
-						
 					} // End of slave game-loop
 				} // End of master game-loop
 			}
@@ -232,7 +235,6 @@ public class GamePanel extends JPanel
 	
 	private void updatePlayer()
 	{
-//			System.out.println("updatePlayer");
 		// Get key pressed
 		int[] player_direction_arr = key_handler.getDirection_arr();
 		
@@ -288,7 +290,7 @@ public class GamePanel extends JPanel
 		 * |____________________________________|
 		 * 
 		 */
-//			System.err.println("updateEnemies");
+		
 		int player_x = player.getPlayer_x();
 		int player_y = player.getPlayer_y();
 		double[] direction_arr;
@@ -296,7 +298,7 @@ public class GamePanel extends JPanel
 		float speed_coeff = 0;
 		
 		// Loop through all enemies
-		for(int enemy_index = 0; enemy_index < enemies.length; enemy_index++)
+		for(int enemy_index = 0; enemy_index < enemy_amount; enemy_index++)
 		{
 			Enemy current_enemy = enemies[enemy_index];
 			
@@ -359,6 +361,7 @@ public class GamePanel extends JPanel
 				speed_x *= -1;
 				speed_y *= -1;
 			}
+			
 			// Enemy stays within map constraints
 			if(moveableX2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]))
 				current_enemy.setEnemy_x((int) (enemy_x + speed_x));
@@ -447,7 +450,7 @@ public class GamePanel extends JPanel
 		int entity_mid_x = entity_x + (entity_width / 2);
 		int entity_mid_y = entity_y + (entity_height / 2);
 		
-		for(int enemy_index = 0; enemy_index < enemies.length; enemy_index++)
+		for(int enemy_index = 0; enemy_index < enemy_amount; enemy_index++)
 		{
 			if(enemy_index != current_index)
 			{				
@@ -482,6 +485,7 @@ public class GamePanel extends JPanel
 				}
 			}
 		}
+		
 		return ret_arr;
 	}
 	
@@ -496,28 +500,28 @@ public class GamePanel extends JPanel
 		
 		switch(enemy_collision_index)
 		{
-		case 0:
-			new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
-			break;
-		case 1:
-			game_timer.setTime_coeff(-1);
-			//			new Albin(player_x, player_y);
-			break;
-		case 2:
-			//			new Lkab(player_x, player_y);
-			break;
-		case 3:
-			//			new SSC(player_x, player_y);
-			break;
-		case 4:
-			//			new Slusk(player_x, player_y);
-			break;
-		case 5:
-			//			new Attila(player_x, player_y);
-			break;
-		case 6:
-			//			new Pauline(player_x, player_y);
-			break;
+			case 0:
+				new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
+				break;
+			case 1:
+				game_timer.setTime_coeff(-1);
+				//			new Albin(player_x, player_y);
+				break;
+			case 2:
+				//			new Lkab(player_x, player_y);
+				break;
+			case 3:
+				//			new SSC(player_x, player_y);
+				break;
+			case 4:
+				//			new Slusk(player_x, player_y);
+				break;
+			case 5:
+				//			new Attila(player_x, player_y);
+				break;
+			case 6:
+				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
+				break;
 		}
 	}
 	
@@ -554,14 +558,14 @@ public class GamePanel extends JPanel
 				for(int k = 0; k < ch_current_line.length; k++)
 				{
 					// Not boundary-element
-					if(ch_current_line[k] == '0')// && j < this.width)
+					if(ch_current_line[k] == '0')
 					{
 						map[i][j] = 0;
 						j++;
 					}
 					
 					// Boundary-element
-					else if(ch_current_line[k] == '1')// && j < this.width)
+					else if(ch_current_line[k] == '1')
 					{
 						map[i][j] = 1;
 						j++;
@@ -606,14 +610,20 @@ public class GamePanel extends JPanel
 		if(enemies_updating)
 		{
 			// Paint enemies
-			for(int i = 0; i < enemies.length; i++)
+			for(int i = 0; i < enemy_amount; i++)
 			{
-				Enemy current_Enemy = enemies[i];
-				
-				g_2d.setColor(Color.BLACK);
-				g_2d.fillRect(current_Enemy.getEnemy_x(), current_Enemy.getEnemy_y(), current_Enemy.width, current_Enemy.height);
-				g_2d.setColor(Color.WHITE);
-				g_2d.drawString(current_Enemy.id_string, current_Enemy.x, current_Enemy.y + 15);
+				try
+				{					
+					Enemy current_Enemy = enemies[i];
+					
+					g_2d.setColor(Color.BLACK);
+					g_2d.fillRect(current_Enemy.getEnemy_x(), current_Enemy.getEnemy_y(), current_Enemy.width, current_Enemy.height);
+					g_2d.setColor(Color.WHITE);
+					g_2d.drawString(current_Enemy.id_string, current_Enemy.getEnemy_x(), current_Enemy.getEnemy_y() + 15);
+				} catch(Exception e)
+				{
+					System.out.println(e.getCause());
+				}
 			}
 		}
 		
