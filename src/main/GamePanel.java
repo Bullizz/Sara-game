@@ -80,7 +80,7 @@ public class GamePanel extends JPanel
 		int entity_height = this.height / 40;
 		
 		// Init. player
-		player	= new Player(972, 101, entity_height, this.width / 40);
+		player	= new Player(972, 101, entity_height, entity_width);
 		
 		// Init. enemies
 		lulle 	= new Enemy("lulle",	0,  1460,  259,  entity_height, entity_width);
