@@ -301,6 +301,7 @@ public class GamePanel extends JPanel
 		for(int enemy_index = 0; enemy_index < enemy_amount; enemy_index++)
 		{
 			Enemy current_enemy = enemies[enemy_index];
+			Enemy current_enemy = enemies[enemy_index];
 			
 			// Assign speed-coefficient depending on "enemy-type"
 			switch(current_enemy.follow_type)
@@ -325,7 +326,11 @@ public class GamePanel extends JPanel
 			
 			double enemy_x = current_enemy.getEnemy_x();
 			double enemy_y = current_enemy.getEnemy_y();
+			double enemy_x = current_enemy.getEnemy_x();
+			double enemy_y = current_enemy.getEnemy_y();
 			
+			int delta_x	   = player_x - (int) enemy_x;
+			int delta_y    = player_y - (int) enemy_y;
 			int delta_x	   = player_x - (int) enemy_x;
 			int delta_y    = player_y - (int) enemy_y;
 			
@@ -347,6 +352,8 @@ public class GamePanel extends JPanel
 			
 			double speed_x = direction_arr[0] * current_enemy.max_speed * Math.cos(angle);
 			double speed_y = direction_arr[1] * current_enemy.max_speed * Math.sin(angle);
+			double speed_x = direction_arr[0] * current_enemy.max_speed * Math.cos(angle);
+			double speed_y = direction_arr[1] * current_enemy.max_speed * Math.sin(angle);
 			
 			// Check enemy-enemy collision
 			int[] enemy_collision_params = checkCollision( (int) (enemy_x + speed_x),
@@ -354,13 +361,21 @@ public class GamePanel extends JPanel
 														   current_enemy.width,
 														   current_enemy.height,
 														   enemy_index);
+<<<<<<< HEAD
 
+=======
+			
+>>>>>>> 7358c9f4a22c624d5a4cc180e372d2b398b20edf
 			// Collision between enemies
 			if(enemy_collision_params[0] == 1)
 			{
 				speed_x *= -1;
 				speed_y *= -1;
 			}
+<<<<<<< HEAD
+=======
+			
+>>>>>>> 7358c9f4a22c624d5a4cc180e372d2b398b20edf
 			// Enemy stays within map constraints
 			if(moveableX2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]))
 				current_enemy.setEnemy_x((int) (enemy_x + speed_x));
