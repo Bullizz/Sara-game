@@ -301,6 +301,7 @@ public class GamePanel extends JPanel
 		for(int enemy_index = 0; enemy_index < enemy_amount; enemy_index++)
 		{
 			Enemy current_enemy = enemies[enemy_index];
+			Enemy current_enemy = enemies[enemy_index];
 			
 			// Assign speed-coefficient depending on "enemy-type"
 			switch(current_enemy.follow_type)
@@ -325,7 +326,11 @@ public class GamePanel extends JPanel
 			
 			double enemy_x = current_enemy.getEnemy_x();
 			double enemy_y = current_enemy.getEnemy_y();
+			double enemy_x = current_enemy.getEnemy_x();
+			double enemy_y = current_enemy.getEnemy_y();
 			
+			int delta_x	   = player_x - (int) enemy_x;
+			int delta_y    = player_y - (int) enemy_y;
 			int delta_x	   = player_x - (int) enemy_x;
 			int delta_y    = player_y - (int) enemy_y;
 			
@@ -345,6 +350,8 @@ public class GamePanel extends JPanel
 			direction_arr[0] *= speed_coeff;
 			direction_arr[1] *= speed_coeff;
 			
+			double speed_x = direction_arr[0] * current_enemy.max_speed * Math.cos(angle);
+			double speed_y = direction_arr[1] * current_enemy.max_speed * Math.sin(angle);
 			double speed_x = direction_arr[0] * current_enemy.max_speed * Math.cos(angle);
 			double speed_y = direction_arr[1] * current_enemy.max_speed * Math.sin(angle);
 			

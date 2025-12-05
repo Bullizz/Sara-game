@@ -1,13 +1,13 @@
 ## MENU
-- ### Play
-- ### Options
-   - ### Song choice
-     - ### Randomized
-   - ### Screen sizes
-     - ### 50%
-     - ### 75%
-     - ### 100%
-- ### Exit
+- ### Start Menu
+   - #### Play
+   - #### Options
+      - Song choice
+        - Randomized
+   - ##### Exit
+- ### Game Menu
+   - #### "Warning, progress won't be saved if you quit the game
+   - #### <Yes|No>
 
 - ## GAME
    -  ### Kiruna --> Italy
@@ -27,7 +27,12 @@
             - #### Player speed ~50%
          - #### Pauline
             - #### Organize rockethouse sittning
-            - #### Catch falling stuff (songbooks, hats, food, etc.) and bring to table
+            - #### Catch falling stuff and bring to table
+              - Song book
+              - Julmust
+              - Pain suprise
+              - Christmas card
+              - 
          - #### Attila
          	- #### Need to catch him??
          - #### SSC
