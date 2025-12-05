@@ -10,6 +10,8 @@ import java.awt.event.WindowFocusListener;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import mini_games.Pauline;
+
 public class Main
 {
 	public static void main(String[] args)
@@ -35,6 +37,8 @@ public class Main
 		top.setOpaque(true);
 		frame.add(top);
 		
-		new GamePanel(frame, top, null, key_handler, 972, 101);
+//		new GamePanel(frame, top, null, key_handler, 972, 101);
+			frame.setVisible(true);
+			new Pauline(frame, top, null, key_handler, 0, 0);
 	}
 }
