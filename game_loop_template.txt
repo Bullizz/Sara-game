@@ -1,0 +1,65 @@
+	// M	aster game-loop
+	while(game_thread != null)
+	{
+		/*
+		 * Time-to-update logic
+		 * Src: https://www.youtube.com/watch?v=VpH33Uw-_0E&t=1906s
+		 */
+		double draw_interval = Math.pow(10, 9);
+		draw_interval /= FPS;
+//		double delta = 0;
+		long last_time = System.nanoTime();
+		long current_time;
+		
+		game_paused = key_handler.isGame_paused();
+		if(!game_paused && game_loop_running)
+			game_timer.setTime_coeff(1);
+		
+		// Slave game-loop
+		while(game_loop_running && !game_paused)
+		{
+			// Cont. time-to-update logic
+			current_time = System.nanoTime();
+			delta += (current_time - last_time) / draw_interval;
+			last_time = current_time;
+			if(delta >= 1)
+			{
+				updateplayer();
+	
+				updateEnemies();
+				
+				repaint();
+							
+				// player-Enemy collision
+				int[] collision_params = checkCollision( player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, -1);
+				
+				// Collision
+				if(collision_params[0] == 1)
+				{
+					enemy_collision_index = collision_params[1];
+					break;
+				}
+				
+				delta = 0;
+				
+				game_paused = key_handler.isGame_paused();
+				if(game_paused)
+				{
+					game_timer.setTime_coeff(0);
+	//				GAME_MENU game_menu = new GAME_MENU(frame);
+				}
+			}
+					
+		} // End of slave game-loop
+		if(enemy_collision_index > -1)
+		{
+			game_loop_running = false;
+			game_thread = null;
+			
+			int player_x = player.getPlayer_x();
+			int player_y = player.getPlayer_y();
+			clearChildren();
+			
+			launchMiniGame(enemy_collision_index, player_x, player_y);
+		}
+	} // End of master game-loop

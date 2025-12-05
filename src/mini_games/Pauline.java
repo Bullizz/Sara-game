@@ -1,6 +1,162 @@
 package mini_games;
 
-public class Pauline
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import main.GameTimer;
+import main.KeyHandler;
+
+public class Pauline extends JPanel implements Runnable
 {
-	public Pauline(int player_x, int player_y){}
+	int width, height;
+	Thread pauline_thread;
+	boolean game_loop_running, game_paused = false;
+	
+	// Player parameters
+	int player_max_speed = 6;
+	int player_x 		 = 1689;
+	int player_y 		 = 584;
+	int player_width	 = 112;
+	int player_height	 = 194;
+	int player_speed_x 	 = 0;
+	int player_speed_y 	 = 0;
+	boolean carrying	 = false;
+	ImageIcon player_img;
+	
+	// Item rain parameters
+	String[] item_array = {"song_book", "julmust", "pain_suprise", "christmas_card"};
+	String[] status_array = {"default", "default", "default", "default"};
+	int rng_lim = item_array.length;
+	
+	// Arguments
+	JFrame frame;
+	JLabel top;
+	GameTimer game_timer;
+	KeyHandler key_handler;
+	int player_x_passing;
+	int player_y_passing;
+	
+	public Pauline(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
+	{
+		super();
+			this.width = frame.getWidth();
+			this.height = 9 * (frame.getHeight() / 10);
+		setPreferredSize(new Dimension(width, height));
+		setLocation(0, 0);
+		setFocusable(false);
+		setBackground(new Color(0, 128, 0));
+		
+		this.frame				= frame;
+		this.top				= top;
+		this.game_timer			= game_timer;
+		this.key_handler		= key_handler;
+		this.player_x_passing	= player_x;
+		this.player_y_passing	= player_y;
+	
+		frame.add(this);
+		frame.repaint();
+		
+		initPaulineThread();
+	}
+
+	private void initPaulineThread()
+	{
+		game_loop_running = true;
+		pauline_thread = new Thread(this);
+		pauline_thread.start();
+	}
+
+	int FPS = 60;
+	@Override
+	public void run()
+	{
+		// Master game-loop
+		while(pauline_thread != null)
+		{
+			double draw_interval = Math.pow(10, 9);
+			draw_interval /= FPS;
+			double delta = 0;
+			long last_time = System.nanoTime();
+			long current_time;
+			
+			boolean game_paused = key_handler.isGame_paused();
+			
+			// Slave game-loop
+			while(game_loop_running && !game_paused)
+			{
+				current_time = System.nanoTime();
+				delta += (current_time - last_time) / draw_interval;
+				last_time = current_time;
+				if(delta >= 0)
+				{					
+					updatePlayer();
+					
+					updateItemRain();
+					
+					repaint();
+					
+					delta = 0;
+				}
+			}
+		}
+	}
+
+	private void updatePlayer()
+	{
+		int[] direction_arr = key_handler.getDirection_arr();
+		
+		// Get positive/negative direction of player
+		int player_dx = direction_arr[0];
+		
+		// Horizontal acceleration
+		if((key_handler.LEFT || key_handler.RIGHT) && player_speed_x < player_max_speed)
+			player_speed_x++;
+		else if((!key_handler.LEFT || !key_handler.RIGHT) && player_speed_x > 0)
+			player_speed_x--;
+		
+		// If within map constraints
+		if(moveable(player_x, player_dx))
+			player_x += player_speed_x * player_dx;
+	}
+
+
+	private void updateItemRain()
+	{
+		int falling_position = (int) (Math.random() * rng_lim);
+		
+		System.out.println();
+	}
+	
+	
+	private boolean moveable(int player_x, int player_dx)
+	{
+		
+		
+		return false;
+	}
+
+	
+	@Override
+	public void paintComponent(Graphics g_1d)
+	{
+		super.paintComponent(g_1d);
+		
+		Graphics2D g_2d = (Graphics2D) g_1d;
+		
+		// Paint table
+		
+		// Paint player
+
+		// Paint items <falling|carrying>
+		
+		g_2d.dispose();
+		
+	}
 }
