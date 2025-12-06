@@ -2,5 +2,8 @@
 bin/
 
 # Machine specifics, different JRE vers. on different machnines
-classpath
+
+# JDT-specific (Eclipse Java Development Tools)     
+.classpath
+
 settings/
