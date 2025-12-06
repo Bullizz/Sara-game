@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -19,22 +20,6 @@ public class Pauline extends JPanel implements Runnable
 	Thread pauline_thread;
 	boolean game_loop_running, game_paused = false;
 	
-	// Player parameters
-	int player_max_speed = 6;
-	int player_x 		 = 1689;
-	int player_y 		 = 584;
-	int player_width	 = 112;
-	int player_height	 = 194;
-	int player_speed_x 	 = 0;
-	int player_speed_y 	 = 0;
-	boolean carrying	 = false;
-	ImageIcon player_img;
-	
-	// Item rain parameters
-	String[] item_array = {"song_book", "julmust", "pain_suprise", "christmas_card"};
-	String[] status_array = {"default", "default", "default", "default"};
-	int rng_lim = item_array.length;
-	
 	// Arguments
 	JFrame frame;
 	JLabel top;
@@ -42,6 +27,21 @@ public class Pauline extends JPanel implements Runnable
 	KeyHandler key_handler;
 	int player_x_passing;
 	int player_y_passing;
+
+	// Player parameters
+	int player_max_speed = 7;
+	int player_x 		 = 0;
+	int player_y 		 = 0;
+	int player_width	 = 112;
+	int player_height	 = 194;
+	int player_speed_x 	 = 0;
+	boolean carrying	 = false;
+	ImageIcon player_img;
+	
+	// Item rain parameters
+	String[] item_array   = {"song_book", "julmust", "pain_suprise", "christmas_card"};
+	String[] status_array = {"default", "default", "default", "default"};
+	int rng_lim = item_array.length;
 	
 	public Pauline(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
 	{
@@ -50,8 +50,10 @@ public class Pauline extends JPanel implements Runnable
 			this.height = 9 * (frame.getHeight() / 10);
 		setPreferredSize(new Dimension(width, height));
 		setLocation(0, 0);
-		setFocusable(false);
-		setBackground(new Color(0, 128, 0));
+//		setBackground(new Color(0, 128, 0));
+		
+		this.player_y = this.height - player_height;
+		this.player_x = 3 * (this.width / 5); 
 		
 		this.frame				= frame;
 		this.top				= top;
@@ -59,7 +61,26 @@ public class Pauline extends JPanel implements Runnable
 		this.key_handler		= key_handler;
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
-	
+		
+		this.setLayout(new GridLayout(1, 9));
+		
+		for(int i = 0; i < 9; i++)
+		{
+			JPanel p = new JPanel();
+			if(i < 3)
+				p.setBackground(new Color(0, 128, 0));
+			else
+			{
+				int r = (int) (Math.random() * 256);
+				int g = (int) (Math.random() * 256);
+				int b = (int) (Math.random() * 256);
+				p.setBackground(new Color(r, g, b));
+			}
+			p.setOpaque(true);
+			this.add(p);
+		}
+		
+		this.setOpaque(true);
 		frame.add(this);
 		frame.repaint();
 		
@@ -70,6 +91,7 @@ public class Pauline extends JPanel implements Runnable
 	{
 		game_loop_running = true;
 		pauline_thread = new Thread(this);
+		
 		pauline_thread.start();
 	}
 
@@ -94,7 +116,7 @@ public class Pauline extends JPanel implements Runnable
 				current_time = System.nanoTime();
 				delta += (current_time - last_time) / draw_interval;
 				last_time = current_time;
-				if(delta >= 0)
+				if(delta >= 1)
 				{					
 					updatePlayer();
 					
@@ -135,14 +157,22 @@ public class Pauline extends JPanel implements Runnable
 	}
 	
 	
-	private boolean moveable(int player_x, int player_dx)
+	private boolean moveable(int player_x, int dx)
 	{
+		if(dx > 0)
+			player_x += player_width;
 		
+		// Left
+		if(dx < 0 && player_x > this.width / 3)
+			return true;
+		// Right
+		else if(dx > 0 && player_x < this.width)
+			return true;
 		
 		return false;
 	}
 
-	
+	/*
 	@Override
 	public void paintComponent(Graphics g_1d)
 	{
@@ -153,10 +183,13 @@ public class Pauline extends JPanel implements Runnable
 		// Paint table
 		
 		// Paint player
+		g_2d.setColor(Color.PINK);
+		g_2d.fillRect(player_x, player_y, player_width, player_height);
 
 		// Paint items <falling|carrying>
 		
 		g_2d.dispose();
 		
 	}
+	*/
 }
