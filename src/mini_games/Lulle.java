@@ -212,16 +212,16 @@ public class Lulle extends JPanel implements Runnable
 	private void updateNPC()
 	{
 		// Left
-		if(npc_x <= 0)
+		if(npc_x < 0)
 			npc_speed_x = 1;
 		// Right
-		else if(this.width <= (npc_x + entity_width))
+		else if(this.width < (npc_x + entity_width))
 			npc_speed_x = -1;
 		// Up
-		if(npc_y <= 0)
+		if(npc_y < 0)
 			npc_speed_y = 1;
 		// Down
-		else if(this.height <= (npc_y + entity_height))
+		else if(this.height < (npc_y + entity_height))
 			npc_speed_y = -1;
 		
 		npc_x += npc_speed_x * npc_max_speed;
