@@ -25,6 +25,7 @@
          - #### LKAB
             - #### Need to go through swamp
             - #### Player speed ~50%
+            - #### Lay cable, like wores in amogus
          - #### Pauline
             - #### Organize rockethouse sittning
             - #### Catch falling stuff and bring to table
