@@ -33,7 +33,7 @@
               - Julmust
               - Pain suprise
               - Christmas card
-              - 
+            - #### Currently trash bin implemented, but items stop falling after placed on table
          - #### Attila
          	- #### Need to catch him??
          - #### SSC
