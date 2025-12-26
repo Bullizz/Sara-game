@@ -4,17 +4,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
 
@@ -44,12 +41,6 @@ public class Pauline extends JPanel implements Runnable
 	ImageIcon player_img;
 	
 	// Item rain parameters
-/*
-	String[] item_array   = {"song_book", "julmust", "pain_suprise", "christmas_card"};
-	String[] status_array = {"default", "default", "default", "default"};
-	int[]	 item_x_array = {0, 0, 0, 0};
-*/
-	
 	String default_str = "default";
 	String falling_str = "falling";
 	String holding_str = "holding";
@@ -82,7 +73,6 @@ public class Pauline extends JPanel implements Runnable
 			this.height = 9 * (frame.getHeight() / 10);
 		setPreferredSize(new Dimension(width, height));
 		setLocation(0, 0);
-//		setBackground(new Color(0, 128, 0));
 		
 		this.player_x = 3 * (this.width / 5); 
 		this.player_y = this.height - player_height;
@@ -101,54 +91,8 @@ public class Pauline extends JPanel implements Runnable
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 		
-		this.setLayout(new GridLayout(1, 12));
-		
-		int bruh = 0;
-		int r = 0, g = 0, b = 0;
-		for(int i = 0; i < 12; i++)
-		{
-			JPanel p = new JPanel();
-			if(i < 4)
-				p.setBackground(new Color(0, 128, 0));
-			else
-			{
-				if(bruh == 0)
-				{					
-					r = (int) (Math.random() * 256);
-					g = (int) (Math.random() * 256);
-					b = (int) (Math.random() * 256);
-				}
-				p.setBackground(new Color(r, g, b));
-				bruh++;
-				if(bruh == 2)
-					bruh = 0;
-			}
-			p.setOpaque(true);
-			this.add(p);
-		}
-		
-		this.setOpaque(true);
 		frame.add(this);
 		frame.repaint();
-		
-		frame.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent me)
-			{
-				int x = me.getX();
-				int y = me.getY();
-				
-				System.out.print("\n\n");
-				System.out.print(x + ", " + y);
-				System.out.print("    ");
-				System.out.print((x + item_width) + ", " + y);
-				y += item_height;
-				System.out.print("\n\n");
-				System.out.print(x + ", " + y);
-				System.out.print("    ");
-				System.out.print((x + item_width) + ", " + y);
-			}
-			
-		});
 		
 		initPaulineThread();
 	}
@@ -189,11 +133,15 @@ public class Pauline extends JPanel implements Runnable
 					updateItemRain();
 					
 					repaint();
+															
+					// Check if all items are placed
+					checkPlacedStatus();
 					
 					delta = 0;
 				}
 			} // End of slave loop
 		} // End of master-loop
+		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
 	}
 
 	private void updatePlayer()
@@ -209,7 +157,7 @@ public class Pauline extends JPanel implements Runnable
 		else if((!key_handler.LEFT || !key_handler.RIGHT) && player_speed_x > 0)
 			player_speed_x--;
 		
-		// If within map constraints
+		// If within table and trash bin
 		if(moveable(player_x, player_dx))
 			player_x += player_speed_x * player_dx;
 	}
@@ -218,12 +166,13 @@ public class Pauline extends JPanel implements Runnable
 	{
 		for(int i = 0; i < rng_lim; i++)
 		{
+			// Default
 			if(item_array[1][i].equals(default_str))
 			{
 				int init_fall_num = (int) (Math.random() * rng_lim);
 				if(init_fall_num == i)
 				{
-					int falling_index = getValidFallingIndex(i);
+					int falling_index = getValidFallingIndex();
 					
 					// Assign falling info to item_array
 					item_array[1][i] = falling_str;
@@ -235,7 +184,9 @@ public class Pauline extends JPanel implements Runnable
 					item_array[2][i] = String.valueOf(item_x);
 				}				
 			}
-			if(item_array[1][i].equals(falling_str))
+			
+			// Falling
+			else if(item_array[1][i].equals(falling_str))
 			{
 				// Check if player holds any item
 				boolean item_held = Arrays.asList(item_array[1]).contains(holding_str);
@@ -252,6 +203,8 @@ public class Pauline extends JPanel implements Runnable
 					int item_y = Integer.valueOf(item_array[3][i]);
 					item_y += item_speed;
 					item_array[3][i] = String.valueOf(item_y);
+				
+					// If item below screen
 					if(item_y > this.height)
 					{
 						item_array[1][i] = default_str;
@@ -259,64 +212,51 @@ public class Pauline extends JPanel implements Runnable
 					}
 				}
 			}
-			if(item_array[1][i].equals(holding_str))
+			
+			// Holding
+			else if(item_array[1][i].equals(holding_str))
 			{
 				// Trashing held item
 				if(trash_x - (player_x + player_width) < 2)
 				{
 					item_array[1][i] = default_str;
+					item_array[2][i] = "-1";
 					item_array[3][i] = String.valueOf(-item_height);
 				}
 				
 				// Placing held item on table
 				if(player_x - (2 * falling_column) < 5)
-				{
 					item_array[1][i] = placed_str;
-//					item_array[2][i] = String.valueOf(item_table_pos[i][0]);
-//					item_array[3][i] = String.valueOf(item_table_pos[i][1]);
-				}
 				
 				item_array[2][i] = String.valueOf(player_x - item_width);
-			}
-			if(item_array[1][i].equals(placed_str))
-			{
-				
 			}
 		}
 	}
 
 	// Go through items and look for a falling column that isn't occupied
-	private int getValidFallingIndex(int item_index)
+	private int getValidFallingIndex()
 	{
-		boolean valid_index = false;
+		int valid_index_counter = 0;
 		int falling_index = 0;
-		/*
-		while(!valid_index)
-		{			
-			// Randomized index for current item
-			falling_index = (int) (Math.random() * rng_lim);
-			for(int i = 0; i < rng_lim; i++)
-			{
-				// Falling index of current item_array element
-				int current_falling_position = Integer.valueOf(item_array[2][i]);
-				int current_falling_index = ((2 * current_falling_position) - falling_column + item_width) / (2 * falling_column);
-				
-				if(falling_index != current_falling_index)
-				{
-					valid_index = true;
-					break;
-				}
-			}
-		}
-		*/
 		
-		while(!valid_index)
+		// Randomized index for current item
+		falling_index = (int) (Math.random() * rng_lim);
+		int i;
+		for(i = 0; i < rng_lim; i++)
 		{
-			// Randomized index for current item
-			falling_index = (int) (Math.random() * rng_lim);
-			if(!item_array[1][falling_index].equals(falling_str))
-				valid_index = true;
+			// Falling index of current item_array element
+			int current_falling_position = Integer.valueOf(item_array[2][i]);
+			int current_falling_index = ((2 * current_falling_position) - falling_column + item_width) / (2 * falling_column);
+			current_falling_index -= 2;
+			
+			if(falling_index != current_falling_index)
+				valid_index_counter++;
 		}
+		
+		// If generated column has item in it, init. item fall outside of game panel
+		if(valid_index_counter != i)
+			falling_index = rng_lim;
+		
 		
 		return falling_index;
 	}
@@ -329,7 +269,6 @@ public class Pauline extends JPanel implements Runnable
 		
 		int x0 = Integer.valueOf(item_array[2][item_index]);
 		int x1 = x0 + item_width;
-		int mid_x = (x0 + x1) / 2;
 		
 		int y0 = Integer.valueOf(item_array[3][item_index]);
 		int y1 = y0 + item_height;
@@ -342,8 +281,8 @@ public class Pauline extends JPanel implements Runnable
 
 		if(x_crossed && y_crossed)
 			return true;
-		
-		return false;
+		else
+			return false;
 	}
 
 	private boolean moveable(int player_x, int dx)
@@ -359,6 +298,24 @@ public class Pauline extends JPanel implements Runnable
 			return true;
 		
 		return false;
+	}
+	
+	private void checkPlacedStatus()
+	{
+		int item_placed = 0;
+		for(int i = 0; i < rng_lim; i++)
+		{
+			if(item_array[1][i].equals(placed_str))
+				item_placed++;
+		}
+		
+		// All items are placed on table
+		if(item_placed == rng_lim)
+		{
+			pauline_thread = null;
+			frame.remove(this);
+			game_loop_running = false;
+		}
 	}
 	
 	@Override
@@ -410,6 +367,5 @@ public class Pauline extends JPanel implements Runnable
 		}
 		
 		g_2d.dispose();
-		
 	}
 }

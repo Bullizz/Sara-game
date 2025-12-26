@@ -140,7 +140,6 @@ public class Lulle extends JPanel implements Runnable
 						lulle_thread = null;
 						frame.remove(this);
 						game_loop_running = false;
-//						new GamePanel(frame, top, game_timer, player_x_passing, player_y_passing);
 					}
 						
 					delta = 0;

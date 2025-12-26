@@ -501,7 +501,7 @@ public class GamePanel extends JPanel
 		switch(enemy_collision_index)
 		{
 			case 0:
-				new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
+//				new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 1:
 				game_timer.setTime_coeff(-1);
