@@ -5,10 +5,14 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import main.GameTimer;
@@ -19,6 +23,7 @@ public class Pauline extends JPanel implements Runnable
 	int width, height;
 	Thread pauline_thread;
 	boolean game_loop_running, game_paused = false;
+	int falling_column;
 	
 	// Arguments
 	JFrame frame;
@@ -39,9 +44,36 @@ public class Pauline extends JPanel implements Runnable
 	ImageIcon player_img;
 	
 	// Item rain parameters
+/*
 	String[] item_array   = {"song_book", "julmust", "pain_suprise", "christmas_card"};
 	String[] status_array = {"default", "default", "default", "default"};
-	int rng_lim = item_array.length;
+	int[]	 item_x_array = {0, 0, 0, 0};
+*/
+	
+	String default_str = "default";
+	String falling_str = "falling";
+	String holding_str = "holding";
+	String placed_str  = "placed";
+	
+	String[][] item_array  = {{"song_book", "julmust", "pain_suprise", "christmas_card"}, // Item type
+							 {default_str, default_str, default_str, default_str}, 		 // Item status: <default | falling | holding | placed>
+							 {"-1", "-1", "-1", "-1"},									 // Item x-position
+							 {"0", "0", "0", "0"}};										 // Item y-position
+	int rng_lim            = 4;
+	int item_width		   = 100;
+	int item_height		   = 100;
+	int item_held_y		   = 23;
+	int item_speed		   = 5;
+	int[][] item_table_pos = {{251, 0},
+							  {251, 276},
+							  {251, 552},
+							  {251, 828}};
+	
+	// Trash bin parameters
+	int trash_x;
+	int trash_y;
+	int trash_width  = player_width;
+	int trash_height = player_height / 2;
 	
 	public Pauline(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
 	{
@@ -52,8 +84,15 @@ public class Pauline extends JPanel implements Runnable
 		setLocation(0, 0);
 //		setBackground(new Color(0, 128, 0));
 		
-		this.player_y = this.height - player_height;
 		this.player_x = 3 * (this.width / 5); 
+		this.player_y = this.height - player_height;
+		
+		this.item_held_y += this.player_y;
+		
+		this.trash_x  = this.width - player_width;
+		this.trash_y  = this.player_y + trash_height;
+		
+		falling_column = this.width / 6;
 		
 		this.frame				= frame;
 		this.top				= top;
@@ -62,19 +101,27 @@ public class Pauline extends JPanel implements Runnable
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 		
-		this.setLayout(new GridLayout(1, 9));
+		this.setLayout(new GridLayout(1, 12));
 		
-		for(int i = 0; i < 9; i++)
+		int bruh = 0;
+		int r = 0, g = 0, b = 0;
+		for(int i = 0; i < 12; i++)
 		{
 			JPanel p = new JPanel();
-			if(i < 3)
+			if(i < 4)
 				p.setBackground(new Color(0, 128, 0));
 			else
 			{
-				int r = (int) (Math.random() * 256);
-				int g = (int) (Math.random() * 256);
-				int b = (int) (Math.random() * 256);
+				if(bruh == 0)
+				{					
+					r = (int) (Math.random() * 256);
+					g = (int) (Math.random() * 256);
+					b = (int) (Math.random() * 256);
+				}
 				p.setBackground(new Color(r, g, b));
+				bruh++;
+				if(bruh == 2)
+					bruh = 0;
 			}
 			p.setOpaque(true);
 			this.add(p);
@@ -83,6 +130,25 @@ public class Pauline extends JPanel implements Runnable
 		this.setOpaque(true);
 		frame.add(this);
 		frame.repaint();
+		
+		frame.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent me)
+			{
+				int x = me.getX();
+				int y = me.getY();
+				
+				System.out.print("\n\n");
+				System.out.print(x + ", " + y);
+				System.out.print("    ");
+				System.out.print((x + item_width) + ", " + y);
+				y += item_height;
+				System.out.print("\n\n");
+				System.out.print(x + ", " + y);
+				System.out.print("    ");
+				System.out.print((x + item_width) + ", " + y);
+			}
+			
+		});
 		
 		initPaulineThread();
 	}
@@ -126,8 +192,8 @@ public class Pauline extends JPanel implements Runnable
 					
 					delta = 0;
 				}
-			}
-		}
+			} // End of slave loop
+		} // End of master-loop
 	}
 
 	private void updatePlayer()
@@ -147,16 +213,139 @@ public class Pauline extends JPanel implements Runnable
 		if(moveable(player_x, player_dx))
 			player_x += player_speed_x * player_dx;
 	}
-
-
+	
 	private void updateItemRain()
 	{
-		int falling_position = (int) (Math.random() * rng_lim);
+		for(int i = 0; i < rng_lim; i++)
+		{
+			if(item_array[1][i].equals(default_str))
+			{
+				int init_fall_num = (int) (Math.random() * rng_lim);
+				if(init_fall_num == i)
+				{
+					int falling_index = getValidFallingIndex(i);
+					
+					// Assign falling info to item_array
+					item_array[1][i] = falling_str;
+					
+					falling_index += 2;
+					
+					// X-position of item
+					int item_x = (falling_column * falling_index) + ((falling_column - item_width) / 2);
+					item_array[2][i] = String.valueOf(item_x);
+				}				
+			}
+			if(item_array[1][i].equals(falling_str))
+			{
+				// Check if player holds any item
+				boolean item_held = Arrays.asList(item_array[1]).contains(holding_str);
+				
+				// Item catched
+				if(!item_held && itemCatched(i))
+				{
+					item_array[1][i] = holding_str;
+					item_array[2][i] = String.valueOf(player_x - item_width);
+					item_array[3][i] = String.valueOf(item_held_y);
+				}
+				else
+				{
+					int item_y = Integer.valueOf(item_array[3][i]);
+					item_y += item_speed;
+					item_array[3][i] = String.valueOf(item_y);
+					if(item_y > this.height)
+					{
+						item_array[1][i] = default_str;
+						item_array[3][i] = String.valueOf(-item_height);
+					}
+				}
+			}
+			if(item_array[1][i].equals(holding_str))
+			{
+				// Trashing held item
+				if(trash_x - (player_x + player_width) < 2)
+				{
+					item_array[1][i] = default_str;
+					item_array[3][i] = String.valueOf(-item_height);
+				}
+				
+				// Placing held item on table
+				if(player_x - (2 * falling_column) < 5)
+				{
+					item_array[1][i] = placed_str;
+//					item_array[2][i] = String.valueOf(item_table_pos[i][0]);
+//					item_array[3][i] = String.valueOf(item_table_pos[i][1]);
+				}
+				
+				item_array[2][i] = String.valueOf(player_x - item_width);
+			}
+			if(item_array[1][i].equals(placed_str))
+			{
+				
+			}
+		}
+	}
+
+	// Go through items and look for a falling column that isn't occupied
+	private int getValidFallingIndex(int item_index)
+	{
+		boolean valid_index = false;
+		int falling_index = 0;
+		/*
+		while(!valid_index)
+		{			
+			// Randomized index for current item
+			falling_index = (int) (Math.random() * rng_lim);
+			for(int i = 0; i < rng_lim; i++)
+			{
+				// Falling index of current item_array element
+				int current_falling_position = Integer.valueOf(item_array[2][i]);
+				int current_falling_index = ((2 * current_falling_position) - falling_column + item_width) / (2 * falling_column);
+				
+				if(falling_index != current_falling_index)
+				{
+					valid_index = true;
+					break;
+				}
+			}
+		}
+		*/
 		
-		System.out.println();
+		while(!valid_index)
+		{
+			// Randomized index for current item
+			falling_index = (int) (Math.random() * rng_lim);
+			if(!item_array[1][falling_index].equals(falling_str))
+				valid_index = true;
+		}
+		
+		return falling_index;
 	}
 	
-	
+	// If player "covers" falling item
+	private boolean itemCatched(int item_index)
+	{
+		boolean x_crossed = false;
+		boolean y_crossed = false;
+		
+		int x0 = Integer.valueOf(item_array[2][item_index]);
+		int x1 = x0 + item_width;
+		int mid_x = (x0 + x1) / 2;
+		
+		int y0 = Integer.valueOf(item_array[3][item_index]);
+		int y1 = y0 + item_height;
+		
+		if(Math.abs(x0 - player_x) < (item_width / 2) || Math.abs(x1 - (player_x + player_width)) < (item_width / 2))
+			x_crossed = true;
+			
+		if(player_y < y0 && y1 < (player_y + player_height))
+			y_crossed = true;
+
+		if(x_crossed && y_crossed)
+			return true;
+		
+		return false;
+	}
+
 	private boolean moveable(int player_x, int dx)
 	{
 		if(dx > 0)
@@ -166,13 +355,12 @@ public class Pauline extends JPanel implements Runnable
 		if(dx < 0 && player_x > this.width / 3)
 			return true;
 		// Right
-		else if(dx > 0 && player_x < this.width)
+		else if(dx > 0 && player_x < this.trash_x)
 			return true;
 		
 		return false;
 	}
-
-	/*
+	
 	@Override
 	public void paintComponent(Graphics g_1d)
 	{
@@ -180,16 +368,48 @@ public class Pauline extends JPanel implements Runnable
 		
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
+		// Paint room
+		g_2d.setColor(Color.BLUE);
+		g_2d.fillRect(0, 0, width, height);
+		
 		// Paint table
+		g_2d.setColor(Color.DARK_GRAY);
+		g_2d.fillRect(0, 0, 2 * falling_column, height);
+		
+		// Paint "containers" on table
+		for(int i = 0; i < 4; i++)
+		{
+			g_2d.setColor(Color.WHITE);
+			if(item_array[1][i].equals(placed_str))
+				g_2d.setColor(Color.BLACK);
+			g_2d.fillRect(item_table_pos[i][0], item_table_pos[i][1], 138, 138);
+		}
+		
+		// Paint trash bin
+		g_2d.setColor(Color.CYAN);
+		g_2d.fillRect(trash_x, trash_y, trash_width, trash_height);
 		
 		// Paint player
 		g_2d.setColor(Color.PINK);
 		g_2d.fillRect(player_x, player_y, player_width, player_height);
 
-		// Paint items <falling|carrying>
+		// Paint items
+		for(int i = 0; i < rng_lim; i++)
+		{
+			if(!item_array[1][i].equals(placed_str))
+			{				
+				g_2d.setColor(Color.BLACK);
+				int x = Integer.valueOf(item_array[2][i]);
+				int y = Integer.valueOf(item_array[3][i]);
+				
+				g_2d.fillRect(x, y, item_width, item_height);
+
+				g_2d.setColor(Color.WHITE);
+				g_2d.drawString(item_array[0][i], x, y + 15);
+			}
+		}
 		
 		g_2d.dispose();
 		
 	}
-	*/
 }
