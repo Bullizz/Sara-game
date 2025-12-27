@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.stream.IntStream;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,7 +23,7 @@ public class Lkab extends JPanel implements Runnable
 	int width, height;
 	Thread lkab_thread;
 	boolean game_loop_running, game_paused = false;
-	boolean background_painted = false;
+	BufferedImage background_img;
 	
 	// Arguments
 	JFrame frame;
@@ -42,7 +41,7 @@ public class Lkab extends JPanel implements Runnable
 	double player_speed_y = 0;
 	int player_width	  = 112;
 	int player_height	  = 145;
-	ImageIcon player_img;
+	BufferedImage player_img;
 
 	// Wires parameters
 	Color active_color;
@@ -90,6 +89,15 @@ public class Lkab extends JPanel implements Runnable
 		wire_src_width  = width / 40;
 		wire_src_height = height / 7;
 		wire_width		= wire_src_height / 5;
+
+		try
+		{
+			background_img = ImageIO.read(getClass().getResourceAsStream("/image_files/gallivare_swamp.png"));
+			player_img = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_right_float-transp.png"));
+		} catch(IOException e)
+		{
+			
+		}
 		
 		initLkabThread();
 	}
@@ -189,7 +197,24 @@ public class Lkab extends JPanel implements Runnable
 		
 		// If within map constraints
 		if(moveableX(player_x, player_dx))
+		{
 			player_x += player_speed_x * player_dx;
+			
+			// Get right or left -facing player image
+			String img_name = null;
+			if(player_dx < 0)
+				img_name = "/image_files/minigame_imgs/lkab/player_left_float-transp.png";
+			else if(player_dx > 0)
+				img_name = "/image_files/minigame_imgs/lkab/player_right_float-transp.png";
+			try
+			{
+				player_img = ImageIO.read(getClass().getResourceAsStream(img_name));
+			} catch(IOException e)
+			{
+				System.err.println("mini_games/Lkab - ImageIO.read()");
+				e.printStackTrace();
+			}
+		}
 		if(moveableY(player_y, player_dy))
 			player_y += player_speed_y * player_dy;
 	}
@@ -453,20 +478,21 @@ public class Lkab extends JPanel implements Runnable
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Paint swamp
-		BufferedImage background_img = null;
+//		BufferedImage background_img = null;
 		try
 		{
-			background_img = ImageIO.read(getClass().getResourceAsStream("/image_files/gallivare_swamp.png"));
+//			background_img = ImageIO.read(getClass().getResourceAsStream("/image_files/gallivare_swamp.png"));
 			g_2d.drawImage(background_img, 0, 0, this.width, this.height, null);
-		} catch(IOException e)
+		} catch(Exception e)
 		{
 			e.printStackTrace();
 			
 		}
 		
 		// Paint player
-		g_2d.setColor(Color.PINK);
-		g_2d.fillRect(player_x, player_y, player_width, player_height);
+//		g_2d.setColor(Color.PINK);
+//		g_2d.fillRect(player_x, player_y, player_width, player_height);
+		g_2d.drawImage(player_img, player_x, player_y, player_width, player_height, null);
 		
 		// Paint wire sources
 		for(int i = 0; i < len; i++)
