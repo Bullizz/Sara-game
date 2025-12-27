@@ -452,7 +452,7 @@ public class Lkab extends JPanel implements Runnable
 		BufferedImage background_img = null;
 		try
 		{
-			background_img = ImageIO.read(getClass().getResourceAsStream("/image_files/gallivare_swamp.jpg"));
+			background_img = ImageIO.read(getClass().getResourceAsStream("/image_files/gallivare_swamp.png"));
 			g_2d.drawImage(background_img, 0, 0, this.width, this.height, null);
 		} catch(IOException e)
 		{
