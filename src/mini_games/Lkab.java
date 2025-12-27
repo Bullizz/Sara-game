@@ -35,7 +35,7 @@ public class Lkab extends JPanel implements Runnable
 	int player_y_passing;
 	
 	// Player parameters
-	int player_max_speed  = 3;
+	int player_max_speed  = 2;
 	int player_x 		  = 1689;
 	int player_y 		  = 584;
 	double player_speed_x = 0;
@@ -51,6 +51,10 @@ public class Lkab extends JPanel implements Runnable
 	int wire_x;
 	int wire_y;
 	boolean wire_grabbed = false;
+	
+	Color RED	= Color.RED;
+	Color GREEN = Color.GREEN;
+	Color BLUE	= Color.BLUE;
 	
 	// Wire sources parameters
 	char[] wire_src_1 = new char[3]; // Left side src
@@ -118,7 +122,7 @@ public class Lkab extends JPanel implements Runnable
 		lkab_thread.start();
 	}
 
-	int FPS = 60;
+	int FPS = 90;
 	@Override
 	public void run()
 	{
@@ -375,15 +379,15 @@ public class Lkab extends JPanel implements Runnable
 					switch(wire_src_1[i])
 					{
 						case 'r':
-							active_color = Color.RED;
+							active_color = RED;
 							active_color_ch = 'r';
 							break;
 						case 'g':								
-							active_color = Color.GREEN;
+							active_color = GREEN;
 							active_color_ch = 'g';
 							break;
 						case 'b':
-							active_color = Color.BLUE;
+							active_color = BLUE;
 							active_color_ch = 'b';
 							break;
 					}
@@ -397,15 +401,15 @@ public class Lkab extends JPanel implements Runnable
 					switch(wire_src_2[i])
 					{
 						case 'r':
-							active_color = Color.RED;
+							active_color = RED;
 							active_color_ch = 'r';
 							break;
 						case 'g':								
-							active_color = Color.GREEN;
+							active_color = GREEN;
 							active_color_ch = 'g';
 							break;
 						case 'b':
-							active_color = Color.BLUE;
+							active_color = BLUE;
 							active_color_ch = 'b';
 							break;
 					}
@@ -472,13 +476,13 @@ public class Lkab extends JPanel implements Runnable
 			switch(color_1)
 			{
 				case 'r':
-					g_2d.setColor(Color.RED);
+					g_2d.setColor(RED);
 					break;
 				case 'g':
-					g_2d.setColor(Color.GREEN);
+					g_2d.setColor(GREEN);
 					break;
 				case 'b':
-					g_2d.setColor(Color.BLUE);
+					g_2d.setColor(BLUE);
 					break;
 			}
 			g_2d.fillRect(0, ((i * 2) + 1) * wire_src_height, wire_src_width, wire_src_height);
@@ -488,13 +492,13 @@ public class Lkab extends JPanel implements Runnable
 			switch(color_2)
 			{
 				case 'r':
-					g_2d.setColor(Color.RED);
+					g_2d.setColor(RED);
 					break;
 				case 'g':
-					g_2d.setColor(Color.GREEN);
+					g_2d.setColor(GREEN);
 					break;
 				case 'b':
-					g_2d.setColor(Color.BLUE);
+					g_2d.setColor(BLUE);
 					break;
 			}
 			g_2d.fillRect(this.width - wire_src_width, ((i * 2) + 1) * wire_src_height, wire_src_width, wire_src_height);
@@ -528,13 +532,13 @@ public class Lkab extends JPanel implements Runnable
 					switch(active_color_ch)
 					{
 						case 'r':
-							g_2d.setColor(Color.RED);
+							g_2d.setColor(RED);
 							break;
 						case 'g':
-							g_2d.setColor(Color.GREEN);
+							g_2d.setColor(GREEN);
 							break;
 						case 'b':
-							g_2d.setColor(Color.BLUE);
+							g_2d.setColor(BLUE);
 							break;
 					}
 
