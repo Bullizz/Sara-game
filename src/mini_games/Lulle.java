@@ -39,8 +39,8 @@ public class Lulle extends JPanel implements Runnable
 	int points 		= 0;
 	
 	// General entity parameters
-	int entity_height = 194;
 	int entity_width  = 112;
+	int entity_height = 194;
 	
 	int dirt_width 	= entity_width;
 	int dirt_heigth = entity_height / 2;

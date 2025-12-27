@@ -4,13 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import mini_games.Pauline;
+import mini_games.Lkab;
 
 public class Main
 {
@@ -37,6 +35,8 @@ public class Main
 		top.setOpaque(true);
 		frame.add(top);
 		
-		new GamePanel(frame, top, null, key_handler, 972, 101);
+//		new GamePanel(frame, top, null, key_handler, 972, 101);
+			frame.setVisible(true);
+			new Lkab(frame, top, null, key_handler, 0, 0);
 	}
 }

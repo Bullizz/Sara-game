@@ -520,9 +520,10 @@ public class GamePanel extends JPanel
 				//			new Attila(player_x, player_y);
 				break;
 			case 6:
-				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
+//				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 		}
+		new Lkab(frame, top, game_timer, key_handler, player_x, player_y);
 	}
 	
 	// Nullify all, to then be collected by the garbage collector,
