@@ -58,7 +58,7 @@ public class GamePanel extends JPanel
 	public GamePanel(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x0, int player_y0)
 	{
 		super();
-			this.width = frame.getWidth();
+			this.width 	= frame.getWidth();
 			this.height = 9 * (frame.getHeight() / 10);
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
@@ -80,7 +80,7 @@ public class GamePanel extends JPanel
 		int entity_height = this.height / 40;
 		
 		// Init. player
-		player	= new Player(972, 101, entity_height, entity_width);
+		player	= new Player(player_x0, player_y0, entity_height, entity_width);
 		
 		// Init. enemies
 		lulle 	= new Enemy("lulle",	0,  1460,  259,  entity_height, entity_width);
@@ -501,14 +501,14 @@ public class GamePanel extends JPanel
 		switch(enemy_collision_index)
 		{
 			case 0:
-//				new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
+				new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 1:
 				game_timer.setTime_coeff(-1);
 				//			new Albin(player_x, player_y);
 				break;
 			case 2:
-				//			new Lkab(player_x, player_y);
+				new Lkab(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 3:
 				//			new SSC(player_x, player_y);
@@ -520,10 +520,9 @@ public class GamePanel extends JPanel
 				//			new Attila(player_x, player_y);
 				break;
 			case 6:
-//				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
+				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 		}
-		new Lkab(frame, top, game_timer, key_handler, player_x, player_y);
 	}
 	
 	// Nullify all, to then be collected by the garbage collector,

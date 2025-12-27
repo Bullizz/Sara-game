@@ -57,11 +57,11 @@ public class Lkab extends JPanel implements Runnable
 	Color BLUE	= Color.BLUE;
 	
 	// Wire sources parameters
-	char[] wire_src_1 = new char[3]; // Left side src
-	int[] wire_src_1_placed = {0, 0, 0};
-	char[] wire_src_2 = new char[3]; // Right side src
-	int[] wire_src_2_placed = {0, 0, 0};
 	int len = 3; // Length all arrays
+	char[] wire_src_1 = new char[len]; // Left side src
+	int[] wire_src_1_placed = {0, 0, 0};
+	char[] wire_src_2 = new char[len]; // Right side src
+	int[] wire_src_2_placed = {0, 0, 0};
 	int wire_src_width;
 	int wire_src_height;
 	

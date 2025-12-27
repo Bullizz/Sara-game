@@ -35,7 +35,7 @@ public class Lulle extends JPanel implements Runnable
 	final int RNG 			  = 100;
 	// 1 in <RNG> chance that dirt is generated ~every millisecond
 	
-	int MAX_POINTS = 10;
+	int MAX_POINTS = 4;
 	int points 		= 0;
 	
 	// General entity parameters
@@ -67,7 +67,7 @@ public class Lulle extends JPanel implements Runnable
 	int npc_speed_y 		  = speed_direction_arr[index2];
 	ImageIcon npc_img;
 	
-	public Lulle(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x0, int player_y0)
+	public Lulle(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
 	{
 		super();
 			this.width = frame.getWidth();

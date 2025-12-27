@@ -35,8 +35,6 @@ public class Main
 		top.setOpaque(true);
 		frame.add(top);
 		
-//		new GamePanel(frame, top, null, key_handler, 972, 101);
-			frame.setVisible(true);
-			new Lkab(frame, top, null, key_handler, 0, 0);
+		new GamePanel(frame, top, null, key_handler, 972, 101);
 	}
 }
