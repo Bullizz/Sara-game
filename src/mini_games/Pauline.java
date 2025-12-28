@@ -4,9 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Arrays;
 
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,6 +24,7 @@ public class Pauline extends JPanel implements Runnable
 	Thread pauline_thread;
 	boolean game_loop_running, game_paused = false;
 	int falling_column;
+	BufferedImage background_img;
 	
 	// Arguments
 	JFrame frame;
@@ -33,40 +36,39 @@ public class Pauline extends JPanel implements Runnable
 
 	// Player parameters
 	Player player;
+	BufferedImage player_img;
 	int player_max_speed = 7;
-//	int player_x 		 = 0;
-//	int player_y 		 = 0;
-//	int player_width	 = 112;
-//	int player_height	 = 194;
-//	int player_speed_x 	 = 0;
 	boolean carrying	 = false;
-	ImageIcon player_img;
 	
 	// Item rain parameters
 	String default_str = "default";
 	String falling_str = "falling";
 	String holding_str = "holding";
-	String placed_str  = "placed";
 	
 	String[][] item_array  = {{"song_book", "julmust", "pain_suprise", "christmas_card"}, // Item type
-							 {default_str, default_str, default_str, default_str}, 		 // Item status: <default | falling | holding | placed>
-							 {"-1", "-1", "-1", "-1"},									 // Item x-position
-							 {"0", "0", "0", "0"}};										 // Item y-position
+							 {default_str, default_str, default_str, default_str}, 		  // Item status: <default | falling | holding | placed>
+							 {"-1", "-1", "-1", "-1"},									  // Item x-position
+							 {"0", "0", "0", "0"},										  // Item y-position
+							 {"0", "0", "0", "0"}};										  // Item placed status
 	int rng_lim            = 4;
 	int item_width		   = 100;
 	int item_height		   = 100;
 	int item_held_y		   = 23;
 	int item_speed		   = 5;
 	int[][] item_table_pos = {{251, 0},
-							  {251, 276},
-							  {251, 552},
-							  {251, 828}};
+							  {251, 200},
+							  {251, 400},
+							  {251, 600}};
+	BufferedImage[] item_imgs = new BufferedImage[rng_lim];
 	
 	// Trash bin parameters
 	int trash_x;
 	int trash_y;
-	int trash_width;//  = player_width;
-	int trash_height;// = player_height / 2;
+	int trash_width;
+	int trash_height;
+	BufferedImage trash_img;
+	
+	BufferedImage table_img;
 	
 	public Pauline(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
 	{
@@ -80,12 +82,28 @@ public class Pauline extends JPanel implements Runnable
 
 		item_held_y += player.getPlayer_y();
 		
+		trash_width    = player.getPlayer_width();
+		trash_height   = player.getPlayer_height() / 2;
 		trash_x  	   = this.width - player.getPlayer_width();
 		trash_y  	   = player.getPlayer_y() + trash_height;
-		trash_width    = player.getPlayer_width();
-		trash_height   = player.getPlayer_height();
 		
 		falling_column = this.width / 6;
+		
+		try
+		{
+			player_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/player-transp.png"));
+			trash_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/trashbin-transp.png"));
+			table_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/table-transp.png"));
+			
+			
+			item_imgs[0] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmax_songbook-transp.png"));
+			item_imgs[1] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/julmust-transp.png")); 
+			item_imgs[2] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/pain_suprise-transp.png")); 
+			item_imgs[3] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmas_card_2-transp.png")); 
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 		
 		
 		this.frame				= frame;
@@ -237,8 +255,13 @@ public class Pauline extends JPanel implements Runnable
 				}
 				
 				// Placing held item on table
-				if(player_x - (2 * falling_column) < 5)
-					item_array[1][i] = placed_str;
+				if(player_x - (2 * falling_column) < 5 && item_array[4][i].equals("0"))
+				{
+					item_array[4][i] = "1";
+					item_array[1][i] = default_str;
+					item_array[2][i] = "-1";
+					item_array[3][i] = String.valueOf(-item_height); 
+				}
 				
 				item_array[2][i] = String.valueOf(player_x - item_width);
 			}
@@ -318,15 +341,15 @@ public class Pauline extends JPanel implements Runnable
 	
 	private void checkPlacedStatus()
 	{
-		int item_placed = 0;
+		int item_placed_counter = 0;
 		for(int i = 0; i < rng_lim; i++)
 		{
-			if(item_array[1][i].equals(placed_str))
-				item_placed++;
+			if(item_array[4][i].equals("1"))
+				item_placed_counter++;
 		}
 		
 		// All items are placed on table
-		if(item_placed == rng_lim)
+		if(item_placed_counter == rng_lim)
 		{
 			pauline_thread = null;
 			frame.remove(this);
@@ -346,40 +369,33 @@ public class Pauline extends JPanel implements Runnable
 		g_2d.fillRect(0, 0, width, height);
 		
 		// Paint table
-		g_2d.setColor(Color.DARK_GRAY);
-		g_2d.fillRect(0, 0, 2 * falling_column, height);
+		g_2d.drawImage(table_img, 0, 0, 2 * falling_column, height, null);
 		
 		// Paint "containers" on table
 		for(int i = 0; i < 4; i++)
 		{
-			g_2d.setColor(Color.WHITE);
-			if(item_array[1][i].equals(placed_str))
-				g_2d.setColor(Color.BLACK);
-			g_2d.fillRect(item_table_pos[i][0], item_table_pos[i][1], 138, 138);
+			// If items placed
+			if(item_array[4][i].equals("1"))
+				g_2d.drawImage(item_imgs[i], item_table_pos[i][0], item_table_pos[i][1], 100, 100, null);
+			else
+			{				
+				g_2d.setColor(Color.WHITE);
+				g_2d.fillRect(item_table_pos[i][0], item_table_pos[i][1], 100, 100);
+			}
 		}
 		
 		// Paint trash bin
-		g_2d.setColor(Color.CYAN);
-		g_2d.fillRect(trash_x, trash_y, trash_width, trash_height);
+		g_2d.drawImage(trash_img, trash_x, trash_y, trash_width, trash_height, null);
 		
 		// Paint player
-		g_2d.setColor(Color.PINK);
-		g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height);
+		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
 
-		// Paint items
+		// Paint falling items
 		for(int i = 0; i < rng_lim; i++)
 		{
-			if(!item_array[1][i].equals(placed_str))
-			{				
-				g_2d.setColor(Color.BLACK);
-				int x = Integer.valueOf(item_array[2][i]);
-				int y = Integer.valueOf(item_array[3][i]);
-				
-				g_2d.fillRect(x, y, item_width, item_height);
-
-				g_2d.setColor(Color.WHITE);
-				g_2d.drawString(item_array[0][i], x, y + 15);
-			}
+			int x = Integer.valueOf(item_array[2][i]);
+			int y = Integer.valueOf(item_array[3][i]);
+			g_2d.drawImage(item_imgs[i], x, y, item_width, item_height, null);
 		}
 		
 		g_2d.dispose();
