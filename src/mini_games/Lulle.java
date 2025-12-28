@@ -4,7 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,15 +44,17 @@ public class Lulle extends JPanel implements Runnable
 	int entity_width	 = 112;
 	int entity_height 	 = 194;
 	int entity_max_speed = 6;
-	
+
+	// Dirt parameters
 	int dirt_width 	= entity_width;
 	int dirt_heigth = entity_height / 2;
 	int dirt_x 		= 0;
 	int dirt_y 		= 0;
+	BufferedImage dirt_img;
 	
 	// Player parameters
 	Player player;
-	ImageIcon player_img;
+	BufferedImage player_img;
 	
 	// NPC parameters
 	Enemy npc;
@@ -57,7 +62,7 @@ public class Lulle extends JPanel implements Runnable
 	int[] speed_direction_arr = {-1, 1};
 	int index 			  = (int) (Math.random() * 2);
 	int index2 			  = (int) (Math.random() * 2);
-	ImageIcon npc_img;
+	BufferedImage npc_img;
 	
 	public Lulle(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
 	{
@@ -83,6 +88,17 @@ public class Lulle extends JPanel implements Runnable
 		int npc_speed_y = speed_direction_arr[index2];
 		npc.setSpeed_x(npc_speed_x);
 		npc.setSpeed_y(npc_speed_y);
+		
+		try
+		{
+			player_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/player_1-transp.png"));
+			npc_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/lulle_1-transp.png"));
+			dirt_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/dirt-transp.png"));
+		} catch(IOException e)
+		{
+			System.err.println("Err ImageIO.read()");
+			e.printStackTrace();
+		}
 		
 		frame.add(this);
 		frame.repaint();
@@ -288,19 +304,14 @@ public class Lulle extends JPanel implements Runnable
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Paint player
-		g_2d.setColor(Color.PINK);
-		g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), entity_width, entity_height);
+		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), entity_width, entity_height, null);
 		
 		// Paint dirt if it is generated
 		if(dirt_placed)
-		{			
-			g_2d.setColor(Color.GRAY);
-			g_2d.fillRect(dirt_x, dirt_y, dirt_width, dirt_heigth);
-		}
+			g_2d.drawImage(dirt_img, dirt_x, dirt_y, dirt_width, dirt_heigth, null);
 
 		// Paint NPC
-		g_2d.setColor(Color.BLACK);
-		g_2d.fillRect(npc.getEnemy_x(), npc.getEnemy_y(), entity_width, entity_height);
+		g_2d.drawImage(npc_img, npc.getEnemy_x(), npc.getEnemy_y(), entity_width, entity_height, null);
 		
 		g_2d.dispose();
 	}
