@@ -37,12 +37,6 @@ public class Lkab extends JPanel implements Runnable
 	// Player parameters
 	Player player;
 	int player_max_speed;
-//	int player_x 		  = 1689;
-//	int player_y 		  = 584;
-//	double player_speed_x = 0;
-//	double player_speed_y = 0;
-//	int player_width	  = 112;
-//	int player_height	  = 145;
 	BufferedImage player_img;
 
 	// Wires parameters
@@ -58,10 +52,10 @@ public class Lkab extends JPanel implements Runnable
 	Color BLUE	= Color.BLUE;
 	
 	// Wire sources parameters
-	int len = 3; // Length all arrays
-	char[] wire_src_1 = new char[len]; // Left side src
-	int[] wire_src_1_placed = {0, 0, 0};
-	char[] wire_src_2 = new char[len]; // Right side src
+	int len					= 3;			 // Length all arrays
+	char[] wire_src_1		= new char[len]; // Left side src
+	int[] wire_src_1_placed	= {0, 0, 0};
+	char[] wire_src_2		= new char[len]; // Right side src
 	int[] wire_src_2_placed = {0, 0, 0};
 	int wire_src_width;
 	int wire_src_height;
@@ -88,7 +82,7 @@ public class Lkab extends JPanel implements Runnable
 		
 		try
 		{
-			background_img = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/gallivare_swamp.png"));
+			background_img = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/gallivare_swamp_2.png"));
 			player_img = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_right_float-transp.png"));
 		} catch(IOException e)
 		{
