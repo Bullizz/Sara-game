@@ -4,15 +4,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import entities.Enemy;
+import entities.Player;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
@@ -35,12 +34,13 @@ public class Lulle extends JPanel implements Runnable
 	final int RNG 			  = 100;
 	// 1 in <RNG> chance that dirt is generated ~every millisecond
 	
-	int MAX_POINTS = 4;
+	int MAX_POINTS  = 4;
 	int points 		= 0;
 	
 	// General entity parameters
-	int entity_width  = 112;
-	int entity_height = 194;
+	int entity_width	 = 112;
+	int entity_height 	 = 194;
+	int entity_max_speed = 6;
 	
 	int dirt_width 	= entity_width;
 	int dirt_heigth = entity_height / 2;
@@ -48,29 +48,21 @@ public class Lulle extends JPanel implements Runnable
 	int dirt_y 		= 0;
 	
 	// Player parameters
-	int player_max_speed = 6;
-	int player_x 		 = 1689;
-	int player_y 		 = 584;
-	int player_speed_x 	 = 0;
-	int player_speed_y 	 = 0;
+	Player player;
 	ImageIcon player_img;
 	
 	// NPC parameters
-	int npc_max_speed 		  = 6;
-	int npc_x		  		  = 121;
-	int npc_y 		  		  = 193;
+	Enemy npc;
 	// Randomize npc speed direction
 	int[] speed_direction_arr = {-1, 1};
-		int index 			  = (int) (Math.random() * 2);
-	int npc_speed_x			  = speed_direction_arr[index];
-		int index2 			  = (int) (Math.random() * 2);
-	int npc_speed_y 		  = speed_direction_arr[index2];
+	int index 			  = (int) (Math.random() * 2);
+	int index2 			  = (int) (Math.random() * 2);
 	ImageIcon npc_img;
 	
 	public Lulle(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
 	{
 		super();
-			this.width = frame.getWidth();
+			this.width 	= frame.getWidth();
 			this.height = 9 * (frame.getHeight() / 10);
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
@@ -84,6 +76,14 @@ public class Lulle extends JPanel implements Runnable
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 	
+		player = new Player(1689, 584, entity_width, entity_height);
+		npc = new Enemy((String) null, 0, 121, 193, entity_width, entity_height);
+		
+		int npc_speed_x = speed_direction_arr[index];
+		int npc_speed_y = speed_direction_arr[index2];
+		npc.setSpeed_x(npc_speed_x);
+		npc.setSpeed_y(npc_speed_y);
+		
 		frame.add(this);
 		frame.repaint();
 		
@@ -119,12 +119,6 @@ public class Lulle extends JPanel implements Runnable
 				last_time = current_time;
 				if(delta >= 1)
 				{
-					if(key_handler.isSpace_pressed())
-					{
-						points = MAX_POINTS;
-						key_handler.setSpace_pressed(false);
-					}
-					
 					updatePlayer();
 					
 					updateNPC();
@@ -157,23 +151,34 @@ public class Lulle extends JPanel implements Runnable
 		int player_dx = direction_arr[0];
 		int player_dy = direction_arr[1];
 		
+		int player_speed_x = player.getPlayer_speed_x();
+		int player_speed_y = player.getPlayer_speed_y();
+		
 		// Horizontal acceleration
-		if((key_handler.LEFT || key_handler.RIGHT) && player_speed_x < player_max_speed)
+		if((key_handler.LEFT || key_handler.RIGHT) && player_speed_x < entity_max_speed)
 			player_speed_x++;
 		else if((!key_handler.LEFT || !key_handler.RIGHT) && player_speed_x > 0)
 			player_speed_x--;
 
 		// Vertical acceleration
-		if((key_handler.UP || key_handler.DOWN) && player_speed_y < player_max_speed)
+		if((key_handler.UP || key_handler.DOWN) && player_speed_y < entity_max_speed)
 			player_speed_y++;
 		else if((!key_handler.UP || !key_handler.DOWN) && player_speed_y > 0)
 			player_speed_y--;
+		
+		int player_x = player.getPlayer_x();
+		int player_y = player.getPlayer_y();
 		
 		// If within map constraints
 		if(moveableX(player_x, player_dx))
 			player_x += player_speed_x * player_dx;
 		if(moveableY(player_y, player_dy))
 			player_y += player_speed_y * player_dy;
+		
+		player.setPlayer_x(player_x);
+		player.setPlayer_y(player_y);
+		player.setPlayer_speed_x(player_speed_x);
+		player.setPlayer_speed_y(player_speed_y);
 	}
 	
 	// Moveable within x-direction
@@ -182,6 +187,7 @@ public class Lulle extends JPanel implements Runnable
 		if(dx > 0)
 			x += entity_width;
 		
+		int player_speed_x = player.getPlayer_speed_x();
 		// Left
 		if(dx < 0 && 0 < (x - player_speed_x))
 			return true;
@@ -198,6 +204,7 @@ public class Lulle extends JPanel implements Runnable
 		if(dy > 0)
 			y += entity_height;
 		
+		int player_speed_y = player.getPlayer_speed_y();
 		// Up
 		if(dy < 0 && 0 < (y - player_speed_y))
 			return true;
@@ -210,6 +217,12 @@ public class Lulle extends JPanel implements Runnable
 	
 	private void updateNPC()
 	{
+		int npc_x = npc.getEnemy_x();
+		int npc_y = npc.getEnemy_y();
+		
+		int npc_speed_x = npc.getSpeed_x();
+		int npc_speed_y = npc.getSpeed_y();
+		
 		// Left
 		if(npc_x < 0)
 			npc_speed_x = 1;
@@ -223,8 +236,8 @@ public class Lulle extends JPanel implements Runnable
 		else if(this.height < (npc_y + entity_height))
 			npc_speed_y = -1;
 		
-		npc_x += npc_speed_x * npc_max_speed;
-		npc_y += npc_speed_y * npc_max_speed;
+		npc_x += npc_speed_x * entity_max_speed;
+		npc_y += npc_speed_y * entity_max_speed;
 		
 		// Randomize dirt-generation
 		int dirt_rng = (int) (Math.random() * RNG);
@@ -234,6 +247,11 @@ public class Lulle extends JPanel implements Runnable
 			dirt_x = npc_x;
 			dirt_y = npc_y + (entity_height / 2);
 		}
+		
+		npc.setEnemy_x(npc_x);
+		npc.setEnemy_y(npc_y);
+		npc.setSpeed_x(npc_speed_x);
+		npc.setSpeed_y(npc_speed_y);
 	}
 	
 	// Check if player can 'clean' dirt, a.k.a. if player intersects majority of dirt
@@ -241,6 +259,9 @@ public class Lulle extends JPanel implements Runnable
 	{
 		boolean valid_x = false;
 		boolean valid_y = false;
+	
+		int player_x = player.getPlayer_x();
+		int player_y = player.getPlayer_y();
 		
 		// If majority of dirt-width within player-width
 		if(Math.abs(player_x - dirt_x) <= (0.2 * (double) entity_width))
@@ -268,7 +289,7 @@ public class Lulle extends JPanel implements Runnable
 		
 		// Paint player
 		g_2d.setColor(Color.PINK);
-		g_2d.fillRect(player_x, player_y, entity_width, entity_height);
+		g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), entity_width, entity_height);
 		
 		// Paint dirt if it is generated
 		if(dirt_placed)
@@ -279,7 +300,7 @@ public class Lulle extends JPanel implements Runnable
 
 		// Paint NPC
 		g_2d.setColor(Color.BLACK);
-		g_2d.fillRect(npc_x, npc_y, entity_width, entity_height);
+		g_2d.fillRect(npc.getEnemy_x(), npc.getEnemy_y(), entity_width, entity_height);
 		
 		g_2d.dispose();
 	}

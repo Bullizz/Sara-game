@@ -3,6 +3,7 @@ package entities;
 public class Enemy
 {
 	int x, y;
+	int speed_x, speed_y;
 
 	final public int width, height;
 	final public String id_string;
@@ -37,6 +38,24 @@ public class Enemy
 	public void setEnemy_y(int enemy_y)
 	{		
 		this.y = enemy_y;
+	}
+	
+	public int getSpeed_x()
+	{
+		return speed_x;
+	}
+	public void setSpeed_x(int speed_x)
+	{
+		this.speed_x = speed_x;
+	}
+	
+	public int getSpeed_y()
+	{
+		return speed_y;
+	}
+	public void setSpeed_y(int speed_y)
+	{
+		this.speed_y = speed_y;
 	}
 		
 }
