@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import entities.Player;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
@@ -31,12 +32,13 @@ public class Pauline extends JPanel implements Runnable
 	int player_y_passing;
 
 	// Player parameters
+	Player player;
 	int player_max_speed = 7;
-	int player_x 		 = 0;
-	int player_y 		 = 0;
-	int player_width	 = 112;
-	int player_height	 = 194;
-	int player_speed_x 	 = 0;
+//	int player_x 		 = 0;
+//	int player_y 		 = 0;
+//	int player_width	 = 112;
+//	int player_height	 = 194;
+//	int player_speed_x 	 = 0;
 	boolean carrying	 = false;
 	ImageIcon player_img;
 	
@@ -63,8 +65,8 @@ public class Pauline extends JPanel implements Runnable
 	// Trash bin parameters
 	int trash_x;
 	int trash_y;
-	int trash_width  = player_width;
-	int trash_height = player_height / 2;
+	int trash_width;//  = player_width;
+	int trash_height;// = player_height / 2;
 	
 	public Pauline(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
 	{
@@ -74,15 +76,17 @@ public class Pauline extends JPanel implements Runnable
 		setPreferredSize(new Dimension(width, height));
 		setLocation(0, 0);
 		
-		this.player_x = 3 * (this.width / 5); 
-		this.player_y = this.height - player_height;
+		player = new Player(3 * (this.width / 5), this.height - 194, 112, 194);
+
+		item_held_y += player.getPlayer_y();
 		
-		this.item_held_y += this.player_y;
-		
-		this.trash_x  = this.width - player_width;
-		this.trash_y  = this.player_y + trash_height;
+		trash_x  	   = this.width - player.getPlayer_width();
+		trash_y  	   = player.getPlayer_y() + trash_height;
+		trash_width    = player.getPlayer_width();
+		trash_height   = player.getPlayer_height();
 		
 		falling_column = this.width / 6;
+		
 		
 		this.frame				= frame;
 		this.top				= top;
@@ -100,8 +104,8 @@ public class Pauline extends JPanel implements Runnable
 	private void initPaulineThread()
 	{
 		game_loop_running = true;
-		pauline_thread = new Thread(this);
 		
+		pauline_thread = new Thread(this);
 		pauline_thread.start();
 	}
 
@@ -147,6 +151,8 @@ public class Pauline extends JPanel implements Runnable
 	private void updatePlayer()
 	{
 		int[] direction_arr = key_handler.getDirection_arr();
+
+		int player_speed_x = player.getPlayer_speed_x();
 		
 		// Get positive/negative direction of player
 		int player_dx = direction_arr[0];
@@ -157,13 +163,19 @@ public class Pauline extends JPanel implements Runnable
 		else if((!key_handler.LEFT || !key_handler.RIGHT) && player_speed_x > 0)
 			player_speed_x--;
 		
+		int player_x = player.getPlayer_x();
+		
 		// If within table and trash bin
 		if(moveable(player_x, player_dx))
 			player_x += player_speed_x * player_dx;
+		
+		player.setPlayer_x(player_x);
+		player.setPlayer_speed_x(player_speed_x);
 	}
 	
 	private void updateItemRain()
 	{
+		int player_x = player.getPlayer_x();
 		for(int i = 0; i < rng_lim; i++)
 		{
 			// Default
@@ -217,7 +229,7 @@ public class Pauline extends JPanel implements Runnable
 			else if(item_array[1][i].equals(holding_str))
 			{
 				// Trashing held item
-				if(trash_x - (player_x + player_width) < 2)
+				if(trash_x - (player_x + player.getPlayer_width()) < 2)
 				{
 					item_array[1][i] = default_str;
 					item_array[2][i] = "-1";
@@ -273,10 +285,14 @@ public class Pauline extends JPanel implements Runnable
 		int y0 = Integer.valueOf(item_array[3][item_index]);
 		int y1 = y0 + item_height;
 		
+		int player_x = player.getPlayer_x();
+		int player_y = player.getPlayer_y();
+		int player_width = player.getPlayer_height();
+		
 		if(Math.abs(x0 - player_x) < (item_width / 2) || Math.abs(x1 - (player_x + player_width)) < (item_width / 2))
 			x_crossed = true;
 			
-		if(player_y < y0 && y1 < (player_y + player_height))
+		if(player_y < y0 && y1 < (player_y + player_width))
 			y_crossed = true;
 
 		if(x_crossed && y_crossed)
@@ -288,7 +304,7 @@ public class Pauline extends JPanel implements Runnable
 	private boolean moveable(int player_x, int dx)
 	{
 		if(dx > 0)
-			player_x += player_width;
+			player_x += player.getPlayer_width();
 		
 		// Left
 		if(dx < 0 && player_x > this.width / 3)
@@ -348,7 +364,7 @@ public class Pauline extends JPanel implements Runnable
 		
 		// Paint player
 		g_2d.setColor(Color.PINK);
-		g_2d.fillRect(player_x, player_y, player_width, player_height);
+		g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height);
 
 		// Paint items
 		for(int i = 0; i < rng_lim; i++)
