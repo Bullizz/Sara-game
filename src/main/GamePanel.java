@@ -29,7 +29,7 @@ public class GamePanel extends JPanel
 	KeyHandler key_handler;
 	Player player;
 	Enemy lulle, albin, lkab, ssc, slusk, attila, pauline;
-	final int enemy_amount  = 7;
+	final int enemy_amount = 7;
 	
 	Enemy[] enemies;
 	GameTimer game_timer;
@@ -45,8 +45,7 @@ public class GamePanel extends JPanel
 	JFrame frame;
 	JLabel top;
 	
-	BufferedImage map_img;
-	boolean map_drawn = false;
+	BufferedImage map_img, player_img;
 	
 	int[][] map_constraints;
 	
@@ -67,7 +66,8 @@ public class GamePanel extends JPanel
 		try
 		{
 			map_img = ImageIO.read(getClass().getResourceAsStream("/image_files/europe_4.png"));
-		} catch(IOException e)
+			player_img = ImageIO.read(getClass().getResourceAsStream("/image_files/sara-transp.png"));			
+		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
@@ -590,23 +590,19 @@ public class GamePanel extends JPanel
 		
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
-		if(game_loop_running)
-			// Draw map
-			draw(g_2d);
-		
-		if(game_loop_running)
-		{			
-			// Paint player
-			try
-			{			
-				g_2d.setColor(Color.PINK);
-				g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height);
-			} catch(Exception e)
-			{
-				System.out.println(e.getCause());
-			}
+		// Draw background
+		if(map_img != null)
+			g_2d.drawImage(map_img, 0, 0, this.width, this.height, null);
+		else
+		{
+			
 		}
 
+		// Paint player
+		if(player != null)
+			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height(), null);
+		
+		
 		if(enemies_updating)
 		{
 			// Paint enemies
@@ -628,10 +624,5 @@ public class GamePanel extends JPanel
 		}
 		
 		g_2d.dispose();
-	}
-	
-	public void draw(Graphics2D g_2d)
-	{
-		g_2d.drawImage(map_img, 0, 0, this.width, this.height, null);
 	}
 }

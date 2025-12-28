@@ -4,7 +4,7 @@ public class Player
 {
 	int player_x, player_y;
 	
-	final public int player_width, player_height;
+	public int player_width, player_height;
 	final public int max_speed = 5;
 	
 	int player_speed_x = 0;
@@ -55,5 +55,23 @@ public class Player
 	public void setPlayer_speed_y(int player_speed_y)
 	{
 		this.player_speed_y = player_speed_y;
+	}
+
+	public int getPlayer_width()
+	{
+		return player_width;
+	}
+	public void setPlayer_width(int player_width)
+	{
+		this.player_width = player_width;
+	}
+	
+	public int getPlayer_height()
+	{
+		return player_height;
+	}
+	public void setPlayer_height(int player_height)
+	{
+		this.player_height = player_height;
 	}
 }

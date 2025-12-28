@@ -81,6 +81,15 @@ public class Lkab extends JPanel implements Runnable
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 		
+		try
+		{
+			background_img = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/gallivare_swamp.png"));
+			player_img = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_right_float-transp.png"));
+		} catch(IOException e)
+		{
+			
+		}
+
 		frame.add(this);
 		frame.repaint();
 		
@@ -90,14 +99,6 @@ public class Lkab extends JPanel implements Runnable
 		wire_src_height = height / 7;
 		wire_width		= wire_src_height / 5;
 
-		try
-		{
-			background_img = ImageIO.read(getClass().getResourceAsStream("/image_files/gallivare_swamp.png"));
-			player_img = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_right_float-transp.png"));
-		} catch(IOException e)
-		{
-			
-		}
 		
 		initLkabThread();
 	}
@@ -130,7 +131,7 @@ public class Lkab extends JPanel implements Runnable
 		lkab_thread.start();
 	}
 
-	int FPS = 90;
+	int FPS = 60;
 	@Override
 	public void run()
 	{
@@ -479,15 +480,7 @@ public class Lkab extends JPanel implements Runnable
 		
 		// Paint swamp
 //		BufferedImage background_img = null;
-		try
-		{
-//			background_img = ImageIO.read(getClass().getResourceAsStream("/image_files/gallivare_swamp.png"));
-			g_2d.drawImage(background_img, 0, 0, this.width, this.height, null);
-		} catch(Exception e)
-		{
-			e.printStackTrace();
-			
-		}
+		g_2d.drawImage(background_img, 0, 0, this.width, this.height, null);
 		
 		// Paint player
 //		g_2d.setColor(Color.PINK);
