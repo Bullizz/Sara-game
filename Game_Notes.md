@@ -6,7 +6,7 @@
         - Randomized
    - ##### Exit
 - ### Game Menu
-   - #### "Warning, progress won't be saved if you quit the game
+   - #### "Warning, progress won't be saved if you quit the game"
    - #### <Yes|No>
 
 - ## GAME
@@ -17,6 +17,7 @@
          - #### SLUSK
             - #### Need to bong
             - #### Really increases time
+            - #### Button mash, press space-button <RNG> amount of times
          - #### Lulle
             - #### Need to clean up after him
          - #### Albin (hero?)
@@ -25,7 +26,7 @@
          - #### LKAB
             - #### Need to go through swamp
             - #### Player speed ~50%
-            - #### Lay cable, like wores in amogus
+            - #### Lay cable, like wires in amogus
          - #### Pauline
             - #### Organize rockethouse sittning
             - #### Catch falling stuff and bring to table
