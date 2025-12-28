@@ -495,7 +495,7 @@ public class GamePanel extends JPanel
 		int player_x = player.getPlayer_x();
 		int player_y = player.getPlayer_y();
 		
-		clearChildren();
+//		clearChildren();
 		frame.remove(this);
 		
 		switch(enemy_collision_index)
@@ -527,6 +527,7 @@ public class GamePanel extends JPanel
 	
 	// Nullify all, to then be collected by the garbage collector,
 	// a.k.a. clears memory
+	/*
 	private void clearChildren()
 	{
 		player 	= null;
@@ -539,6 +540,7 @@ public class GamePanel extends JPanel
 		pauline = null;
 		enemies = null;
 	}
+	*/
 	
 	// Load file with map boundaries
 	private int[][] loadMapConstraints(int cols, int rows)
