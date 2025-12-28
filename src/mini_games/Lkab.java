@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import entities.Player;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
@@ -34,13 +35,14 @@ public class Lkab extends JPanel implements Runnable
 	int player_y_passing;
 	
 	// Player parameters
-	int player_max_speed  = 2;
-	int player_x 		  = 1689;
-	int player_y 		  = 584;
-	double player_speed_x = 0;
-	double player_speed_y = 0;
-	int player_width	  = 112;
-	int player_height	  = 145;
+	Player player;
+	int player_max_speed;
+//	int player_x 		  = 1689;
+//	int player_y 		  = 584;
+//	double player_speed_x = 0;
+//	double player_speed_y = 0;
+//	int player_width	  = 112;
+//	int player_height	  = 145;
 	BufferedImage player_img;
 
 	// Wires parameters
@@ -80,6 +82,9 @@ public class Lkab extends JPanel implements Runnable
 		this.key_handler		= key_handler;
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
+		
+		player = new Player(1689, 584, 112, 145);
+		player_max_speed = player.max_speed / 2;
 		
 		try
 		{
@@ -184,17 +189,23 @@ public class Lkab extends JPanel implements Runnable
 		int player_dx = direction_arr[0];
 		int player_dy = direction_arr[1];
 		
+		double player_speed_x = player.getPlayer_speed_x();
+		double player_speed_y = player.getPlayer_speed_y();
+		
 		// Horizontal acceleration
 		if((key_handler.LEFT || key_handler.RIGHT) && player_speed_x < player_max_speed)
-			player_speed_x += 0.5;
+			player_speed_x++;
 		else if((!key_handler.LEFT || !key_handler.RIGHT) && player_speed_x > 0)
-			player_speed_x -= 0.5;
+			player_speed_x--;
 
 		// Vertical acceleration
 		if((key_handler.UP || key_handler.DOWN) && player_speed_y < player_max_speed)
-			player_speed_y += 0.5;
+			player_speed_y++;// += 0.5;
 		else if((!key_handler.UP || !key_handler.DOWN) && player_speed_y > 0)
-			player_speed_y -= 0.5;
+			player_speed_y--;// -= 0.5;
+		
+		int player_x = player.getPlayer_x();
+		int player_y = player.getPlayer_y();
 		
 		// If within map constraints
 		if(moveableX(player_x, player_dx))
@@ -218,14 +229,20 @@ public class Lkab extends JPanel implements Runnable
 		}
 		if(moveableY(player_y, player_dy))
 			player_y += player_speed_y * player_dy;
+	
+		player.setPlayer_x(player_x);
+		player.setPlayer_y(player_y);
+		player.setPlayer_speed_x((int) player_speed_x);
+		player.setPlayer_speed_y((int) player_speed_y);
 	}
 	
 	// Moveable within x-direction
 	private boolean moveableX(int x, int dx)
 	{
 		if(dx > 0)
-			x += player_width;
-		
+			x += player.getPlayer_width();
+
+		int player_speed_x = player.getPlayer_speed_x();
 		// Left
 		if(dx < 0 && 0 < (x - player_speed_x))
 			return true;
@@ -240,8 +257,9 @@ public class Lkab extends JPanel implements Runnable
 	private boolean moveableY(int y, int dy)
 	{		
 		if(dy > 0)
-			y += player_height;
-		
+			y += player.getPlayer_height();
+
+		int player_speed_y = player.getPlayer_speed_y();
 		// Up
 		if(dy < 0 && 0 < (y - player_speed_y))
 			return true;
@@ -326,15 +344,17 @@ public class Lkab extends JPanel implements Runnable
 			// y-pos. of wire_src at "index" i
 			int y = ((i * 2) + 1) * wire_src_height;
 			
+			int player_y = player.getPlayer_y();
+			
 			// If player covers top half of wire_src
-			if(player_y < y && (player_y + player_height) > (y + (wire_src_height / 2)))
+			if(player_y < y && (player_y + player.getPlayer_height()) > (y + (wire_src_height / 2)))
 			{
 				crossing_y = true;
 				break;
 			}
 			
 			// If player covers bottom half of wire_src
-			else if((player_y + player_height) > (y + wire_src_height) && player_y < (y + (wire_src_height / 2)))
+			else if((player_y + player.getPlayer_height()) > (y + wire_src_height) && player_y < (y + (wire_src_height / 2)))
 			{
 				crossing_y = true;
 				break;
@@ -346,6 +366,8 @@ public class Lkab extends JPanel implements Runnable
 			wire_y = ((i * 2) + 1) * wire_src_height;
 			wire_y += 2 * wire_width;
 			
+			int player_x = player.getPlayer_x();
+			
 			// Left-hand-side wire_src
 			if(player_x < wire_src_width / 2)
 			{
@@ -354,7 +376,7 @@ public class Lkab extends JPanel implements Runnable
 			}
 
 			// Right-hand-side wire_src
-			else if(player_x + player_width > this.width - (wire_src_width / 2))
+			else if(player_x + player.getPlayer_width() > this.width - (wire_src_width / 2))
 			{
 				wire_x = this.width - wire_src_width;
 				crossing_x = true;
@@ -479,13 +501,10 @@ public class Lkab extends JPanel implements Runnable
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Paint swamp
-//		BufferedImage background_img = null;
 		g_2d.drawImage(background_img, 0, 0, this.width, this.height, null);
 		
 		// Paint player
-//		g_2d.setColor(Color.PINK);
-//		g_2d.fillRect(player_x, player_y, player_width, player_height);
-		g_2d.drawImage(player_img, player_x, player_y, player_width, player_height, null);
+		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height(), null);
 		
 		// Paint wire sources
 		for(int i = 0; i < len; i++)
@@ -572,7 +591,7 @@ public class Lkab extends JPanel implements Runnable
 		{
 			g_2d.setColor(active_color);
 			g_2d.setStroke(new BasicStroke((float) wire_width));
-			g_2d.drawLine(wire_x, wire_y, player_x, player_y + (player_height / 2));
+			g_2d.drawLine(wire_x, wire_y, player.getPlayer_x() + wire_width, player.getPlayer_y() + (player.getPlayer_height() / 2));
 		}
 		
 		g_2d.dispose();
