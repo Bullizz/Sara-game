@@ -43,6 +43,11 @@ public class GameTimer extends JLabel
 					setRandom_speed_coeff();
 				
 				double time = total_time;
+				if(time < 0)
+				{
+					time = 0;
+					setTime_coeff(0);
+				}
 				
 				// Get hours
 				time /= 360000;
