@@ -44,6 +44,13 @@ public class GameTimer extends JLabel
 				
 				double time = total_time;
 				
+				// Ensures game-timer never goes under 0, in-game clock stays at 00:00:00.00 
+				if(time < 0)
+				{
+					time = 0;
+					setTime_coeff(0);
+				}
+				
 				// Get hours
 				time /= 360000;
 				HH = Math.floor(time);
