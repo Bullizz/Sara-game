@@ -261,13 +261,13 @@ public class GamePanel extends JPanel
 		int player_speed_y = player.getPlayer_speed_y();
 		
 		// Horizontal acceleration
-		if((key_handler.LEFT || key_handler.RIGHT) && player_speed_x < player.max_speed)
+		if((key_handler.LEFT || key_handler.RIGHT) && player_speed_x <= player.max_speed)
 			player_speed_x++;
 		else if((!key_handler.LEFT || !key_handler.RIGHT) && player_speed_x > 0)
 			player_speed_x--;
 
 		// Vertical acceleration
-		if((key_handler.UP || key_handler.DOWN) && player_speed_y < player.max_speed)
+		if((key_handler.UP || key_handler.DOWN) && player_speed_y <= player.max_speed)
 			player_speed_y++;
 		else if((!key_handler.UP || !key_handler.DOWN) && player_speed_y > 0)
 			player_speed_y--;
