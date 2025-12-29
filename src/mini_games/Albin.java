@@ -21,13 +21,9 @@ import main.KeyHandler;
 public class Albin extends JPanel
 {
 	int width, height;
-	BufferedImage background_img, car_left, car_right;
+	BufferedImage background_img;
 	int time_1, time_2;
 	TimerTask task1, task2;
-	int car_dim;
-	int car_x, car_y;
-	char car_dir = 'r';	// <left | right>
-	int dx_1, dx_2;
 	
 	// Arguments
 	JFrame frame;
@@ -36,6 +32,13 @@ public class Albin extends JPanel
 	KeyHandler key_handler;
 	int player_x_passing;
 	int player_y_passing;
+
+	// Car parameters
+	int car_width 	= 576;
+	int car_height 	= 384;
+	char car_dir 	= 'r';	// <'l'|'r'> = <left|right>
+	int car_x, car_y;
+	BufferedImage car_left, car_right;
 	
 	public Albin(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
 	{
@@ -65,19 +68,16 @@ public class Albin extends JPanel
 		this.player_y_passing	= player_y;
 		
 		// Dimension and y-pos.
-		car_dim = width / 5;
-		car_y = (height - car_dim) / 2;
+		car_y = (height - car_height) / 2;
 		
-		// Randomize how many seconds mini-game will take, range: [3, 8] per "cycle"
+		// Randomize how many seconds mini-game will take,
+		// range: [3, 8] per "cycle"
 		int max = 8;
 		int min = 3;
-		int game_time = timeStrToNum(game_timer.getTime_str());
-//		if(game_time < 2 * max)
-//			max = game_time / 2;
-
-		time_1 = (int) ((Math.random() * (max - min)) + min);	// Cycle 1
+		
+		time_1 = (int) ((Math.random() * (max - min)) + min);	// Cycle 1 length [s]
 			time_1 *= 1000;
-		time_2 = (int) ((Math.random() * (max - min)) + min);	// Cycle 2
+		time_2 = (int) ((Math.random() * (max - min)) + min);	// Cycle 2 length [s]
 			time_2 *= 1000;
 		
 		Timer timer_1 = new Timer();
@@ -85,81 +85,49 @@ public class Albin extends JPanel
 		
 		frame.add(this);
 		frame.repaint();
-
-		// Right-ward step size
-		dx_1 = width / time_1;
-		if(dx_1 <= 0)
-			dx_1 = 1;
 		
-		// Left-ward step size
-		dx_2 = width / time_2;
-		if(dx_2 <= 0)
-			dx_2 = 1;
-		
+		// Timer for cycle 1 (left --> right)
 		task1 = new TimerTask()
 		{
-			int mili_sec = 0;
-
 			@Override
 			public void run()
 			{
-				// Cycle 1 passed
-				if(mili_sec >= time_1)
+				// Cycle 1 done
+				if(car_x > width)
 				{
 					timer_1.cancel();
 					car_dir = 'l';
-					car_x = width;
-					timer_2.scheduleAtFixedRate(task2, 0, 1);
+					timer_2.scheduleAtFixedRate(task2, 0, time_2 / width);
 				}
 				
-				car_x += dx_1;
-				mili_sec++;
+				car_x++;
 				repaint();
 			}
 		};
 
+		// Timer for cycle 2 (right --> left)
 		task2 = new TimerTask()
 		{
-			int mili_sec = 0;
-			
 			@Override
 			public void run()
 			{
-				// Cycle 2 passed
-				if(mili_sec >= time_2)
+				// Cycle 2 done
+				if(car_x + car_width < 0)
 				{
 					timer_2.cancel();
 					killClass();
-				}				
+				}
 				
-				car_x -= dx_2;
-				mili_sec++;
+				car_x--;
 				repaint();
 			}
 
 		};
 		
-		timer_1.scheduleAtFixedRate(task1, 0, 1);
-	}
-
-	// Get gaming time as int
-	private int timeStrToNum(String time_str)
-	{
-		String HH_str		= time_str.substring(0, 2);
-		String MM_str		= time_str.substring(3, 5);
-		String SS_str		= time_str.substring(6, 8);
-		String sub_SS_str	= time_str.substring(9, 11);
-		
-		int HH		= Integer.valueOf(HH_str);
-		int MM		= Integer.valueOf(MM_str);
-		int SS		= Integer.valueOf(SS_str);
-		int sub_SS	= Integer.valueOf(sub_SS_str);
-		SS += sub_SS / 100;
-		
-		return HH + MM + SS;
+		timer_1.scheduleAtFixedRate(task1, 0, time_1 / width);
 	}
 	
-	// Remove local GUI and gen. main GamePanel
+	// Remove local GUI-comps. and gen. main GamePanel
 	private void killClass()
 	{
 		game_timer.setTime_coeff(1);
@@ -181,11 +149,11 @@ public class Albin extends JPanel
 		{
 			// Left-ward
 			case 'l':			
-				g_2d.drawImage(car_left, car_x, car_y, (int) (1.5 * car_dim), car_dim, null);
+				g_2d.drawImage(car_left, car_x, car_y, car_width, car_height, null);
 				break;
 			// Right-ward
 			case 'r':
-				g_2d.drawImage(car_right, car_x, car_y, (int) (1.5 * car_dim), car_dim, null);
+				g_2d.drawImage(car_right, car_x, car_y, car_width, car_height, null);
 				break;
 		}
 		
