@@ -43,6 +43,8 @@ public class GameTimer extends JLabel
 					setRandom_speed_coeff();
 				
 				double time = total_time;
+				
+				// Ensures game-timer never goes under 0, in-game clock stays at 00:00:00.00 
 				if(time < 0)
 				{
 					time = 0;
