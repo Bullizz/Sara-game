@@ -14,15 +14,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import entities.Enemy;
 import entities.Player;
-import mini_games.Albin;
-import mini_games.Attila;
-import mini_games.Lkab;
+import entities.Enemy;
 import mini_games.Lulle;
-import mini_games.Pauline;
+import mini_games.Albin;
+import mini_games.Lkab;
 import mini_games.SSC;
 import mini_games.Slusk;
+import mini_games.Attila;
+import mini_games.Pauline;
 
 public class GamePanel extends JPanel
 {
@@ -79,9 +79,6 @@ public class GamePanel extends JPanel
 		int entity_width  = this.width / 40;
 		int entity_height = this.height / 40;
 		
-		// Init. player
-		player	= new Player(player_x0, player_y0, entity_height, entity_width);
-		
 		// Init. enemies
 		lulle 	= new Enemy("lulle",	0,  1460,  259,  entity_height, entity_width);
 		albin	= new Enemy("albin",	3,  1468,  356,  entity_height, entity_width);
@@ -92,6 +89,23 @@ public class GamePanel extends JPanel
 		pauline = new Enemy("pauline",	2,  504,   647,  entity_height, entity_width);
 		
 		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
+
+		// Check that player spawn != any enemy spawn
+		for(int enemy_i = 0; enemy_i < enemies.length; enemy_i++)
+		{
+			if(enemies[enemy_i].getEnemy_x() - (player_x0 + entity_width) <= 5)
+				player_x0 -= 5;
+			else if(player_x0 - (enemies[enemy_i].getEnemy_x() + entity_width) <= 5)
+				player_x0 += 5;
+				
+			if(enemies[enemy_i].getEnemy_y() - (player_y0 + entity_height) <= 5)
+				player_y0 -= 5;
+			else if(player_y0 - (enemies[enemy_i].getEnemy_y() + entity_height) <= 5)
+				player_y0 += 5;
+		}
+			
+		// Init. player
+		player	= new Player(player_x0, player_y0, entity_height, entity_width);
 		
 		this.frame 		 = frame;
 		this.top 		 = top;
@@ -510,7 +524,8 @@ public class GamePanel extends JPanel
 				//			new SSC(player_x, player_y);
 				break;
 			case 4:
-				//			new Slusk(player_x, player_y);
+				game_timer.setTime_coeff(25);
+				new Slusk(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 5:
 				//			new Attila(player_x, player_y);
