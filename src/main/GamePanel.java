@@ -280,7 +280,7 @@ public class GamePanel extends JPanel
 		 *  ____________________________________
 		 * | follow-type |     description      |
 		 * |____________________________________|
-		 * |       0     | Follow at full speed |
+		 * |       0     | Follow at 90% speed  |
 		 * |____________________________________|
 		 * |       1     | Follow at 50% speed  |
 		 * |____________________________________|
@@ -306,20 +306,16 @@ public class GamePanel extends JPanel
 			switch(current_enemy.follow_type)
 			{
 				case 0:
-					speed_coeff = 1;
-	//					speed_coeff = 0;
+					speed_coeff = (float) 0.9;
 					break;
 				case 1:
 					speed_coeff = (float) 0.5;
-	//					speed_coeff = 0;
 					break;
 				case 2:
 					speed_coeff = game_timer.getRandom_speed_coeff();
-	//					speed_coeff = 0;
 					break;
 				case 3:
 					speed_coeff = -1;
-	//					speed_coeff = 0;
 					break;
 			}
 			
@@ -505,7 +501,7 @@ public class GamePanel extends JPanel
 				break;
 			case 1:
 				game_timer.setTime_coeff(-1);
-				//			new Albin(player_x, player_y);
+				new Albin(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 2:
 				new Lkab(frame, top, game_timer, key_handler, player_x, player_y);
