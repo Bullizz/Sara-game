@@ -7,12 +7,14 @@ import javax.swing.JFrame;
 
 public class KeyHandler implements KeyListener
 {
-	JFrame frame;
+//	JFrame frame;
 	boolean game_paused = false;
 	public boolean UP, LEFT, DOWN, RIGHT;
 	int[] direction_arr = {0, 0};
 	
+	int slusk_points;
 	boolean space_pressed;
+	boolean slusk_active;
 
 	public boolean isGame_paused()
 	{
@@ -43,8 +45,18 @@ public class KeyHandler implements KeyListener
 			setGame_paused(false);
 			System.exit(0);
 		}
-		else if(user_inp == KeyEvent.VK_SPACE)
-			setSpace_pressed(true);
+		
+		// For slusk minigame
+		if(slusk_active)
+		{
+			if(user_inp == KeyEvent.VK_SPACE && !space_pressed)
+			{
+				space_pressed = true;
+				slusk_points++;
+//				System.out.println(slusk_points);
+			}
+			
+		}
 		
 		else
 		{
@@ -84,32 +96,41 @@ public class KeyHandler implements KeyListener
 		int dx = getDirection_arr()[0];
 		int dy = getDirection_arr()[1];
 		
-		if(user_inp == KeyEvent.VK_UP || user_inp == KeyEvent.VK_W)
-		{
-			UP = false;
-			if(!DOWN)
-				dy = -1;
-		}
-		if(user_inp == KeyEvent.VK_LEFT || user_inp == KeyEvent.VK_A)
-		{
-			LEFT = false;
-			if(!RIGHT)
-				dx = -1;
-		}
-		if(user_inp == KeyEvent.VK_DOWN || user_inp == KeyEvent.VK_S)
-		{
-			DOWN = false;
-			if(!UP)
-				dy = 1;
-		}
-		if(user_inp == KeyEvent.VK_RIGHT || user_inp == KeyEvent.VK_D)
-		{
-			RIGHT = false;
-			if(!LEFT)
-				dx = 1;
+		if(slusk_active)
+		{			
+			if(release.getKeyCode() == KeyEvent.VK_SPACE && space_pressed)
+				space_pressed = false;
 		}
 		
-		setDirection_arr(new int[]{dx, dy});
+		else
+		{
+			if(user_inp == KeyEvent.VK_UP || user_inp == KeyEvent.VK_W)
+			{
+				UP = false;
+				if(!DOWN)
+					dy = -1;
+			}
+			if(user_inp == KeyEvent.VK_LEFT || user_inp == KeyEvent.VK_A)
+			{
+				LEFT = false;
+				if(!RIGHT)
+					dx = -1;
+			}
+			if(user_inp == KeyEvent.VK_DOWN || user_inp == KeyEvent.VK_S)
+			{
+				DOWN = false;
+				if(!UP)
+					dy = 1;
+			}
+			if(user_inp == KeyEvent.VK_RIGHT || user_inp == KeyEvent.VK_D)
+			{
+				RIGHT = false;
+				if(!LEFT)
+					dx = 1;
+			}
+			
+			setDirection_arr(new int[]{dx, dy});
+		}
 	}
 
 	public int[] getDirection_arr()
@@ -121,7 +142,9 @@ public class KeyHandler implements KeyListener
 		this.direction_arr = direction_arr;
 	}
 	
-		
+	/*
+	 * Slusk minigame methods
+	 */
 	public boolean isSpace_pressed()
 	{
 		return space_pressed;
@@ -129,5 +152,23 @@ public class KeyHandler implements KeyListener
 	public void setSpace_pressed(boolean space_pressed)
 	{
 		this.space_pressed = space_pressed;
+	}
+
+	public int getSlusk_points()
+	{
+		return slusk_points;
+	}
+	public void setSlusk_points(int slusk_points)
+	{
+		this.slusk_points = slusk_points;
+	}
+	
+	public boolean isSlusk_active()
+	{
+		return slusk_active;
+	}
+	public void setSlusk_active(boolean slusk_active)
+	{
+		this.slusk_active = slusk_active;
 	}
 }
