@@ -1,6 +1,540 @@
 package mini_games;
 
-public class SSC
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import entities.Player;
+import main.GamePanel;
+import main.GameTimer;
+import main.KeyHandler;
+
+public class SSC extends JPanel implements Runnable
 {
-	public SSC(int player_x, int player_y){}
+	int width, height;
+	Thread ssc_thread;
+	boolean game_loop_running, game_paused = false;
+	BufferedImage background_img;
+	int cycle_counter = 0;
+	
+	// Arguments
+	JFrame frame;
+	JLabel top;
+	GameTimer game_timer;
+	KeyHandler key_handler;
+	int player_x_passing;
+	int player_y_passing;
+	
+	// Player parameters
+	Player player;
+	BufferedImage player_img;
+	int max_speed;
+	boolean striping = false;
+	
+	// Rocket parameters
+	int rocket_cycles;
+	boolean active_cycle	= false;
+	boolean active_rockets	= false;
+	int[] rocket_pos_UP		= new int[20];	// Rockets from above
+	int[] rocket_pos_LEFT	= new int[5];	// Rockets from the left
+	int[] rocket_pos_DOWN	= new int[20];	// Rockets from below
+	int[] rocket_pos_RIGHT	= new int[5];	// Rockets from the right
+	int rocket_src;
+	int dRocket = 0;
+	
+	int rocket_width;
+	int rocket_height;
+	
+	public SSC(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
+	{
+		super();
+			this.width = frame.getWidth();
+			this.height = 9 * (frame.getHeight() / 10);
+		setPreferredSize(new Dimension(width, height));
+		setLocation(0, 0);
+		
+		try
+		{
+			background_img= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/ssc/background_img.png"));
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		this.frame				= frame;
+		this.top				= top;
+		this.game_timer			= game_timer;
+		this.key_handler		= key_handler;
+		this.player_x_passing	= player_x;
+		this.player_y_passing	= player_y;
+		
+		int x0 = ((10 * width) - height) / 20;
+		int y0 = ((10 * height) - width) / 20;
+		player = new Player(x0, y0, height / 10, width / 10);
+		
+		max_speed = player.max_speed * 3;
+		
+		// Gen. 4 - 8 rocket cycles
+		rocket_cycles = (int) ((Math.random() * (8 - 4)) + 4);
+		System.out.println(rocket_cycles);
+		
+		frame.add(this);
+		frame.repaint();
+		
+		initSscThread();
+	}
+
+	private void initSscThread()
+	{
+		game_loop_running = true;
+		
+		ssc_thread = new Thread(this);
+		ssc_thread.start();
+	}
+
+	int FPS = 60;
+	@Override
+	public void run()
+	{
+		// Master game-loop
+		while(ssc_thread != null)
+		{
+			double draw_interval = Math.pow(10, 9);
+			draw_interval /= FPS;
+			double delta = 0;
+			long last_time = System.nanoTime();
+			long current_time;
+			
+			boolean game_paused = key_handler.isGame_paused();
+			// Slave game-loop
+			while(game_loop_running && !game_paused)
+			{
+				current_time = System.nanoTime();
+				delta += (current_time - last_time) / draw_interval;
+				last_time = current_time;
+				if(delta >= 1)
+				{
+					updatePlayer();
+					
+					updateRockets();
+
+					boolean collision = checkCollision();
+					
+					if(collision)
+					{
+						game_timer.setTime_coeff(10);
+						initStripingEffect();
+					}
+					
+					// Minigame completed
+					if(cycle_counter >= rocket_cycles)
+					{
+						frame.remove(this);
+						
+						game_loop_running = false;
+						ssc_thread = null;
+					}
+					
+					repaint();
+					
+					delta = 0;
+				}
+			} // End  of slave game-loop
+		} // End of master game-loop
+		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+	}
+
+
+	private void updatePlayer()
+	{
+		int[] direction_arr = key_handler.getDirection_arr();
+		
+		// Get positive/negative direction of player
+		int player_dx = direction_arr[0];
+		int player_dy = direction_arr[1];
+		
+		int player_speed_x = player.getPlayer_speed_x();
+		int player_speed_y = player.getPlayer_speed_y();
+		
+		// Horizontal acceleration
+		if((key_handler.LEFT || key_handler.RIGHT) && player_speed_x < max_speed)
+			player_speed_x++;
+		else if((!key_handler.LEFT || !key_handler.RIGHT) && player_speed_x > 0)
+			player_speed_x--;
+
+		// Vertical acceleration
+		if((key_handler.UP || key_handler.DOWN) && player_speed_y < max_speed)
+			player_speed_y++;
+		else if((!key_handler.UP || !key_handler.DOWN) && player_speed_y > 0)
+			player_speed_y--;
+		
+		int player_x = player.getPlayer_x();
+		int player_y = player.getPlayer_y();
+		
+		// If within map constraints
+		if(moveableX(player_x, player_dx))
+			player_x += player_speed_x * player_dx;
+		if(moveableY(player_y, player_dy))
+			player_y += player_speed_y * player_dy;
+		
+		player.setPlayer_x(player_x);
+		player.setPlayer_y(player_y);
+		player.setPlayer_speed_x(player_speed_x);
+		player.setPlayer_speed_y(player_speed_y);
+	}
+	
+	// Moveable within x-direction
+	private boolean moveableX(int x, int dx)
+	{
+		if(dx > 0)
+			x += player.getPlayer_width();
+		
+		int player_speed_x = player.getPlayer_speed_x();
+		// Left
+		if(dx < 0 && 0 < (x - player_speed_x))
+			return true;
+		// Right
+		else if(dx > 0 && (x + player_speed_x) < this.width)
+			return true;
+		
+		return false;
+	}
+
+	// Moveable within y-direction
+	private boolean moveableY(int y, int dy)
+	{		
+		if(dy > 0)
+			y += player.getPlayer_height();
+		
+		int player_speed_y = player.getPlayer_speed_y();
+		// Up
+		if(dy < 0 && 0 < (y - player_speed_y))
+			return true;
+		// Down
+		else if(dy > 0 && (y + player_speed_y) < this.height)
+			return true;
+		
+		return false;
+	}
+	
+	private void updateRockets()
+	{
+		if(!active_rockets)
+		{
+			// Get which side rockets will come from
+			rocket_src = (int) (Math.random() * 4);
+			switch(rocket_src)
+			{
+				// Up
+				case 0:
+					rocket_pos_UP = getRocketPosArray(rocket_pos_UP.length);
+						rocket_width  = player.getPlayer_width();
+						rocket_height = player.getPlayer_height();
+					dRocket = -rocket_height;
+					break;
+				// Left
+				case 1:
+					rocket_pos_LEFT = getRocketPosArray(rocket_pos_LEFT.length);
+						rocket_height = player.getPlayer_height();
+						rocket_width = 2 * rocket_height;
+					dRocket = -rocket_width;
+					break;
+				// Down
+				case 2:
+					rocket_pos_DOWN = getRocketPosArray(rocket_pos_DOWN.length);
+						rocket_width  = player.getPlayer_width();
+						rocket_height = player.getPlayer_height();
+					dRocket = height;
+					break;
+				// Right
+				case 3:
+					rocket_pos_RIGHT = getRocketPosArray(rocket_pos_RIGHT.length);
+						rocket_height = player.getPlayer_height();
+						rocket_width = 2 * rocket_height;
+					dRocket = width;
+					break;
+			}
+			active_rockets = true;
+		}
+		
+		else if(active_rockets)
+		{
+			switch(rocket_src)
+			{
+				// Up
+				case 0:
+					if(dRocket > height)
+					{
+						cycle_counter++;
+						active_rockets = false;
+					}
+					else
+						dRocket += max_speed;
+					break;
+				// Left
+				case 1:
+					if(dRocket > width)
+					{
+						cycle_counter++;
+						active_rockets = false;
+					}
+					else
+						dRocket += 2 * max_speed;
+					break;
+				// Down
+				case 2:
+					if(dRocket + rocket_height < 0)
+					{
+						cycle_counter++;
+						active_rockets = false;
+					}
+					else
+						dRocket -= max_speed;
+					break;
+				// Right
+				case 3:
+					if(dRocket + rocket_width < 0)
+					{
+						cycle_counter++;
+						active_rockets = false;
+					}
+					else
+						dRocket -= 2 * max_speed;
+					break;
+			}
+		}
+	}
+
+	private boolean checkCollision()
+	{
+		boolean crossing_x = false;
+		boolean crossing_y = false;
+		
+		int player_x = player.getPlayer_x();
+		int player_y = player.getPlayer_y();
+		
+		switch(rocket_src)
+		{
+			// Up
+			case 0:
+				int y0  = dRocket;
+				for(int rocket_index = 0; rocket_index < rocket_pos_UP.length; rocket_index++)
+				{
+					if(rocket_pos_UP[rocket_index] == 1)
+					{
+						int x0  = rocket_width * rocket_index;
+						
+						if(player_x < x0 && (player_x + player.getPlayer_width()) >= x0 + (rocket_width / 2))
+							crossing_x = true; 
+						else if(x0 < player_x && player_x <= x0 + (rocket_width / 2))
+							crossing_x = true; 
+	
+						if(player_y < y0 && player_y + player.getPlayer_height() >= y0 + (rocket_height / 2))
+							crossing_y = true;
+						else if(player_y > y0 && player_y <= y0 + (rocket_height / 2))
+							crossing_y = true;
+						
+						if(crossing_x && crossing_y)
+							return true;
+					}
+				}
+				break;
+			// Left
+			case 1:
+				int x1 = dRocket;
+				for(int rocket_index = 0; rocket_index < rocket_pos_LEFT.length; rocket_index++)
+				{
+					if(rocket_pos_LEFT[rocket_index] == 1)
+					{
+						int y1 = rocket_height * rocket_index;
+	
+						if(player_x < x1 && (player_x + player.getPlayer_width()) >= x1 + (rocket_width / 2))
+							crossing_x = true; 
+						else if(x1 < player_x && player_x <= x1 + (rocket_width / 2))
+							crossing_x = true; 
+	
+						if(player_y < y1 && player_y + player.getPlayer_height() >= y1 + (rocket_height / 2))
+							crossing_y = true;
+						else if(player_y > y1 && player_y <= y1 + (rocket_height / 2))
+							crossing_y = true;
+						
+						if(crossing_x && crossing_y)
+							return true;
+					}
+				}
+				break;
+			// Down
+			case 2:
+				int y2 = dRocket;
+				for(int rocket_index = 0; rocket_index < rocket_pos_UP.length; rocket_index++)
+				{
+					if(rocket_pos_DOWN[rocket_index] == 1)
+					{
+						int x2 = rocket_width * rocket_index;
+						
+						if(player_x < x2 && (player_x + player.getPlayer_width()) >= x2 + (rocket_width / 2))
+							crossing_x = true; 
+						else if(x2 < player_x && player_x <= x2 + (rocket_width / 2))
+							crossing_x = true; 
+		
+						if(player_y < y2 && player_y + player.getPlayer_height() >= y2 + (rocket_height / 2))
+							crossing_y = true;
+						else if(player_y > y2 && player_y <= y2 + (rocket_height / 2))
+							crossing_y = true;
+						
+						if(crossing_x && crossing_y)
+							return true;
+					}
+				}
+				break;
+			// Right
+			case 3:
+				int x3 = dRocket;
+				for(int rocket_index = 0; rocket_index < rocket_pos_LEFT.length; rocket_index++)
+				{
+					if(rocket_pos_RIGHT[rocket_index] == 1)
+					{
+						int y3 = rocket_height * rocket_index;
+	
+						if(player_x < x3 && (player_x + player.getPlayer_width()) >= x3 + (rocket_width / 2))
+							crossing_x = true; 
+						else if(x3 < player_x && player_x <= x3 + (rocket_width / 2))
+							crossing_x = true; 
+	
+						if(player_y < y3 && player_y + player.getPlayer_height() >= y3 + (rocket_height / 2))
+							crossing_y = true;
+						else if(player_y > y3 && player_y <= y3 + (rocket_height / 2))
+							crossing_y = true;
+						
+						if(crossing_x && crossing_y)
+							return true;
+					}
+				}
+				break;
+		}
+		
+		return false;
+	}
+	
+	private int[] getRocketPosArray(int length)
+	{
+		int[] pos_arr = new int[length];
+		int places_positioned = 0;
+		int index = 0;
+		while(places_positioned < (length / 2) + 1)
+		{
+			int place = (int) (Math.random() * ((length / 2) + 1));
+			if(place == 0 && pos_arr[index] != 1)
+			{
+				pos_arr[index] = 1;
+				places_positioned++;
+			}
+			
+			index++;
+			if(index == length)
+				index = 0;
+		}
+		
+		return pos_arr;
+	}
+
+	private void toggleStriping()
+	{
+		if(striping)
+			striping = false;
+		else if(!striping)
+			striping = true;
+	}
+	
+	private void initStripingEffect()
+	{
+		Timer timer = new Timer();
+		TimerTask task = new TimerTask()
+		{
+			int t = 0;
+			@Override
+			public void run()
+			{
+				if(t % 3 == 0)
+					toggleStriping();
+				if(t > 80)
+				{
+					striping = false;
+					game_timer.setTime_coeff(1);
+					timer.cancel();
+				}
+				t++;
+			}
+		};
+		timer.scheduleAtFixedRate(task, 0, 10);
+	}
+	
+	@Override
+	public void paintComponent(Graphics g_1d)
+	{		
+		super.paintComponent(g_1d);
+		Graphics2D g_2d = (Graphics2D) g_1d;
+		
+		// Paint background
+		g_2d.drawImage(background_img, 0, 0, width, height, null);
+		
+		// Paint player
+		g_2d.setColor(Color.PINK);
+		if(!striping)
+			g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height());
+	
+		// Paint rockets
+		g_2d.setColor(Color.GRAY);
+		if(active_rockets)
+		{
+			switch(rocket_src)
+			{
+				// Up
+				case 0:
+					for(int rocket_index = 0; rocket_index < rocket_pos_UP.length; rocket_index++)
+					{
+						if(rocket_pos_UP[rocket_index] == 1)
+							g_2d.fillRect(rocket_index * rocket_width, dRocket, rocket_width, rocket_height);
+					}
+					break;
+				// Left
+				case 1:
+					for(int rocket_index = 0; rocket_index < rocket_pos_LEFT.length; rocket_index++)
+					{
+						if(rocket_pos_LEFT[rocket_index] == 1)
+							g_2d.fillRect(dRocket, rocket_index * rocket_height, rocket_width, rocket_height);
+					}
+					break;
+				// Down
+				case 2:
+
+					for(int rocket_index = 0; rocket_index < rocket_pos_DOWN.length; rocket_index++)
+					{
+						if(rocket_pos_DOWN[rocket_index] == 1)
+							g_2d.fillRect(rocket_index * rocket_width, dRocket, rocket_width, rocket_height);
+					}
+					break;
+				// Right
+				case 3:
+					for(int rocket_index = 0; rocket_index < rocket_pos_RIGHT.length; rocket_index++)
+					{
+						if(rocket_pos_RIGHT[rocket_index] == 1)
+							g_2d.fillRect(dRocket, rocket_index * rocket_height, rocket_width, rocket_height);
+					}
+					break;
+			}
+		}
+		
+		g_2d.dispose();
+	}	
 }
