@@ -149,7 +149,7 @@ public class Pauline extends JPanel implements Runnable
 				delta += (current_time - last_time) / draw_interval;
 				last_time = current_time;
 				if(delta >= 1)
-				{					
+				{
 					updatePlayer();
 					
 					updateItemRain();
