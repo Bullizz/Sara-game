@@ -7,14 +7,15 @@
   - ### GamePanel
     - #### Enemy imgs
     - #### Goal pos. at milano
-    - #### Correct colors
+    - #### ~~Correct colors~~
   - ### Lulle
-    - #### Background img 
+    - #### Background img
   - ### Lkab
     - #### Wire-src imgs?
     - #### Player speed?
   - ### Slusk
-    - #### Background img 
+    - #### Background img
+    - #### Change upper limit?
   - ### Albin
     - #### SoundFX
   - ### Pauliine
