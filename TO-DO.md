@@ -8,6 +8,7 @@
     - #### ~~Enemy imgs~~
     - #### Goal pos. at milano
     - #### ~~Correct colors~~
+    - #### Add map "scenery"
   - ### Lulle
     - #### Background img
   - ### Lkab
@@ -18,7 +19,7 @@
     - #### Change upper limit?
   - ### Albin
     - #### SoundFX
-  - ### Pauliine
+  - ### Pauline
     - #### Background img
 - ## Log game-time
 

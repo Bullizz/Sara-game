@@ -1,6 +1,5 @@
 package main;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,15 +13,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import entities.Player;
 import entities.Enemy;
-import mini_games.Lulle;
+import entities.Player;
+import menu.EndMenu;
 import mini_games.Albin;
+import mini_games.Attila;
 import mini_games.Lkab;
+import mini_games.Lulle;
+import mini_games.Pauline;
 import mini_games.SSC;
 import mini_games.Slusk;
-import mini_games.Attila;
-import mini_games.Pauline;
 
 public class GamePanel extends JPanel
 {
@@ -51,7 +51,11 @@ public class GamePanel extends JPanel
 	int[][] map_constraints;
 	
 	int enemy_collision_index = -1;
-	double delta = 0;
+	
+//	int GOAL_X = 858;
+//	int GOAL_Y = 795;
+	int GOAL_X = 854;
+	int GOAL_Y = 772;
 	
 	public GamePanel(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x0, int player_y0)
 	{
@@ -185,6 +189,25 @@ public class GamePanel extends JPanel
 								game_loop_running = false;
 							}
 							
+							System.out.println(player.getPlayer_x() + ", " + player.getPlayer_y());
+							
+							// Reach goal y-pos.
+							if(player.getPlayer_y() < GOAL_Y && GOAL_Y < (player.getPlayer_y() + player.getPlayer_height()))
+							{
+								// Reach goal x-pos.
+								if(player.getPlayer_x() < GOAL_X && GOAL_X < (player.getPlayer_x() + player.getPlayer_width()))
+								{
+//									JOptionPane.showMessageDialog(null, "cross");
+									game_loop_running = false;
+									game_thread 	= null;
+									
+									enemies_updating = false;
+									enemies_thread	= null;
+
+									game_timer.setTime_coeff(0);
+								}
+							}
+							
 							delta = 0;
 						}
 					} // End of slave game-loop
@@ -200,8 +223,11 @@ public class GamePanel extends JPanel
 						
 						launchMiniGame(enemy_collision_index);
 					}
+					else
+						endGame();
 				} // End of master game-loop
 			}
+
 		});
 		game_thread.start();
 	}
@@ -257,8 +283,8 @@ public class GamePanel extends JPanel
 							
 							delta = 0;
 						}
-					} // End of slave game-loop
-				} // End of master game-loop
+					} // End of [enemy] slave game-loop
+				} // End of [enemy] master game-loop
 			}
 		});
 		enemies_thread.start();
@@ -596,6 +622,16 @@ public class GamePanel extends JPanel
 		return map;
 	}
 
+	private void endGame()
+	{
+		String final_time_str = game_timer.getTime_str();
+		game_timer.timer.cancel();
+		
+		frame.remove(this);
+		
+		new EndMenu(frame, top, final_time_str);
+	}
+
 	@Override
 	public void paintComponent(Graphics g_1d)
 	{
@@ -609,7 +645,6 @@ public class GamePanel extends JPanel
 		// Paint player
 		if(player != null)
 			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height(), null);
-		
 		
 		if(enemies_updating)
 		{
