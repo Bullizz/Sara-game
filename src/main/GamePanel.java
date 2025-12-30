@@ -223,6 +223,7 @@ public class GamePanel extends JPanel
 						
 						launchMiniGame(enemy_collision_index);
 					}
+					// No collision, game finished
 					else
 						endGame();
 				} // End of master game-loop
@@ -622,6 +623,7 @@ public class GamePanel extends JPanel
 		return map;
 	}
 
+	// End GamePanel
 	private void endGame()
 	{
 		String final_time_str = game_timer.getTime_str();
