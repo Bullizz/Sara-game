@@ -52,8 +52,6 @@ public class GamePanel extends JPanel
 	int enemy_collision_index = -1;
 	double delta = 0;
 	
-	MouseList ml;
-	
 	public GamePanel(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x0, int player_y0)
 	{
 		super();
@@ -114,18 +112,6 @@ public class GamePanel extends JPanel
 		
 		// Integer matrix with map boundaries
 		map_constraints = loadMapConstraints(this.width, this.height);
-		
-//		ml = new MouseList(this.width, this.height, frame.getHeight() / 10);
-//		frame.addMouseMotionListener(ml);
-		
-//		addMouseListener(new MouseAdapter() {
-//			public void mousePressed(MouseEvent e)
-//			{
-//				JOptionPane.showMessageDialog(null, e.getX() + ", " + e.getY());
-////				System.out.println(e.getX() + ", " + e.getY());
-////				System.exit(0);
-//			}
-//		});
 		
 		initGameThread();
 		initEnemiesThread();
@@ -566,7 +552,7 @@ public class GamePanel extends JPanel
 		
 		try
 		{
-			File file = new File("map-4.txt");
+			File file = new File("map.txt");
 			Scanner reader = new Scanner(file);
 			while(reader.hasNextLine())
 			{
