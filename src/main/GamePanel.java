@@ -186,12 +186,11 @@ public class GamePanel extends JPanel
 							if(collision_params[0] == 1)
 							{
 								enemy_collision_index = collision_params[1];
-								break;
+								game_loop_running = false;
 							}
 							
 							delta = 0;
 						}
-						
 					} // End of slave game-loop
 					
 					// Collision detected
