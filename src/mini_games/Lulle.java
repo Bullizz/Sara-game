@@ -82,7 +82,7 @@ public class Lulle extends JPanel implements Runnable
 		this.player_y_passing	= player_y;
 	
 		player = new Player(1689, 584, entity_width, entity_height);
-		npc = new Enemy((String) null, 0, 121, 193, entity_width, entity_height);
+		npc = new Enemy((String) null, 121, 193, entity_width, entity_height);
 		
 		int npc_speed_x = speed_direction_arr[index];
 		int npc_speed_y = speed_direction_arr[index2];
@@ -292,7 +292,6 @@ public class Lulle extends JPanel implements Runnable
 		{
 			points++;
 			dirt_placed = false;
-			System.out.println(points);
 		}
 	}
 

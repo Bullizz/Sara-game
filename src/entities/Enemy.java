@@ -7,18 +7,25 @@ public class Enemy
 
 	final public int width, height;
 	final public String id_string;
-	final public int follow_type;
-	
+	public int follow_type = 3;
 	public final int max_speed = 5;
 	
-	public Enemy(String id_string, int follow_type, int x, int y, int width, int height)
+	public Enemy(String id_string, int x, int y, int width, int height)
 	{
 		this.id_string 	 = id_string;
-		this.follow_type = follow_type;
 		this.x 			 = x;
 		this.y			 = y;
 		this.width		 = width;
 		this.height		 = height;
+	}
+	
+	public int getFollow_type()
+	{
+		return follow_type;
+	}
+	public void setFollow_type(int follow_type)
+	{
+		this.follow_type = follow_type;
 	}
 
 	public int getEnemy_x()

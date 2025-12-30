@@ -80,17 +80,17 @@ public class GamePanel extends JPanel
 		int entity_height = this.height / 40;
 		
 		// Init. enemies
-		lulle 	= new Enemy("lulle",	0,  1460,  259,  entity_height, entity_width);
-		albin	= new Enemy("albin",	3,  1468,  356,  entity_height, entity_width);
-		lkab	= new Enemy("lkab",		1,  664,   313,  entity_height, entity_width);
-		ssc		= new Enemy("ssc",		2,  1665,  107,  entity_height, entity_width);
-		slusk	= new Enemy("slusk",	1,  1402,  567,  entity_height, entity_width);
-		attila	= new Enemy("attila",	0,  807,   739,  entity_height, entity_width);
-		pauline = new Enemy("pauline",	2,  504,   647,  entity_height, entity_width);
+		lulle 	= new Enemy("lulle",	1460,  259,  entity_height, entity_width);
+		albin	= new Enemy("albin",	1468,  356,  entity_height, entity_width);
+		lkab	= new Enemy("lkab",		664,   313,  entity_height, entity_width);
+		ssc		= new Enemy("ssc",		1665,  107,  entity_height, entity_width);
+		slusk	= new Enemy("slusk",	1402,  567,  entity_height, entity_width);
+		attila	= new Enemy("attila",	807,   739,  entity_height, entity_width);
+		pauline = new Enemy("pauline",  504,   647,  entity_height, entity_width);
 		
 		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 
-		// Check that player spawn != any enemy spawn
+		// Check that player-spawn != any enemy-spawn
 		for(int enemy_i = 0; enemy_i < enemies.length; enemy_i++)
 		{
 			if(enemies[enemy_i].getEnemy_x() - (player_x0 + entity_width) <= 5)
@@ -228,6 +228,9 @@ public class GamePanel extends JPanel
 					long last_time = System.nanoTime();
 					long current_time;
 					
+					boolean anti_spawn  = true;
+					int spawn_counter   = 0;
+					
 					// Slave game-loop
 					while(enemies_updating && !game_paused)
 					{
@@ -237,6 +240,25 @@ public class GamePanel extends JPanel
 						if(delta >= 1)
 						{
 							updateEnemies();
+							
+							// Enemies move away from player for first 15 frames
+							if(anti_spawn)
+							{
+//								0, 3, 1, 2, 1, 0, 2
+								spawn_counter++;
+								if(spawn_counter % 15 == 0)
+								{
+									enemies[0].setFollow_type(0);
+									enemies[1].setFollow_type(3);
+									enemies[2].setFollow_type(1);
+									enemies[3].setFollow_type(2);
+									enemies[4].setFollow_type(1);
+									enemies[5].setFollow_type(0);
+									enemies[6].setFollow_type(2);
+									
+									anti_spawn = false;
+								}
+							}
 							
 							delta = 0;
 						}
@@ -317,10 +339,10 @@ public class GamePanel extends JPanel
 			Enemy current_enemy = enemies[enemy_index];
 			
 			// Assign speed-coefficient depending on "enemy-type"
-			switch(current_enemy.follow_type)
+			switch(current_enemy.getFollow_type())
 			{
 				case 0:
-					speed_coeff = (float) 0.9;
+					speed_coeff = (float) 0.8;
 					break;
 				case 1:
 					speed_coeff = (float) 0.5;
@@ -512,29 +534,30 @@ public class GamePanel extends JPanel
 		switch(enemy_collision_index)
 		{
 			case 0:
-//				new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
+				new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 1:
 				game_timer.setTime_coeff(-1);
-//				new Albin(frame, top, game_timer, key_handler, player_x, player_y);
+				new Albin(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 2:
-//				new Lkab(frame, top, game_timer, key_handler, player_x, player_y);
+				new Lkab(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 3:
+				new SSC(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 4:
 				game_timer.setTime_coeff(25);
-//				new Slusk(frame, top, game_timer, key_handler, player_x, player_y);
+				new Slusk(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 5:
-				//			new Attila(player_x, player_y);
+//				new Attila(frame, top, game_timer, key_handler, player_x, player_y);				
+				new Albin(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 6:
-//				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
+				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 		}
-		new SSC(frame, top, game_timer, key_handler, player_x, player_y);
 	}
 	
 	// Nullify all, to then be collected by the garbage collector,

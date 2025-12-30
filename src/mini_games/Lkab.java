@@ -37,7 +37,7 @@ public class Lkab extends JPanel implements Runnable
 	// Player parameters
 	Player player;
 	int player_max_speed;
-	BufferedImage player_img;
+	BufferedImage player_img, player_img_LEFT, player_img_RIGHT;
 
 	// Wires parameters
 	Color active_color;
@@ -82,11 +82,13 @@ public class Lkab extends JPanel implements Runnable
 		
 		try
 		{
-			background_img = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/gallivare_swamp_2.png"));
-			player_img = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_right_float-transp.png"));
+			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/gallivare_swamp_2.png"));
+			player_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_left_float-transp.png"));
+			player_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_right_float-transp.png"));
+			player_img			= player_img_RIGHT;
 		} catch(IOException e)
 		{
-			
+			e.printStackTrace();
 		}
 
 		frame.add(this);
@@ -206,20 +208,11 @@ public class Lkab extends JPanel implements Runnable
 		{
 			player_x += player_speed_x * player_dx;
 			
-			// Get right or left -facing player image
-			String img_name = null;
+			// Get right or left facing player image
 			if(player_dx < 0)
-				img_name = "/image_files/minigame_imgs/lkab/player_left_float-transp.png";
+				player_img = player_img_LEFT;
 			else if(player_dx > 0)
-				img_name = "/image_files/minigame_imgs/lkab/player_right_float-transp.png";
-			try
-			{
-				player_img = ImageIO.read(getClass().getResourceAsStream(img_name));
-			} catch(IOException e)
-			{
-				System.err.println("mini_games/Lkab - ImageIO.read()");
-				e.printStackTrace();
-			}
+				player_img = player_img_RIGHT;
 		}
 		if(moveableY(player_y, player_dy))
 			player_y += player_speed_y * player_dy;
