@@ -12,10 +12,12 @@ public class KeyHandler implements KeyListener
 	public boolean UP, LEFT, DOWN, RIGHT;
 	int[] direction_arr = {0, 0};
 	
+	// Slusk minigame
 	int slusk_points;
 	boolean space_pressed;
 	boolean slusk_active;
 	
+	// Attila minigame
 	boolean attila_active;
 	char current_key;
 
@@ -125,7 +127,25 @@ public class KeyHandler implements KeyListener
 		
 		else if(attila_active)
 		{
-			setCurrent_key('\0');
+			switch(current_key)
+			{
+				case 'w':
+					if(release.getKeyCode() == KeyEvent.VK_W)
+						setCurrent_key('\0');
+					break;
+				case 'a':
+					if(release.getKeyCode() == KeyEvent.VK_A)
+						setCurrent_key('\0');
+					break;
+				case 's':
+					if(release.getKeyCode() == KeyEvent.VK_S)
+						setCurrent_key('\0');
+					break;
+				case 'd':
+					if(release.getKeyCode() == KeyEvent.VK_D)
+						setCurrent_key('\0');
+					break;
+			}
 		}
 		
 		else
@@ -197,10 +217,6 @@ public class KeyHandler implements KeyListener
 	}
 	
 	// Attila minigame methods
-	public boolean isAttila_active()
-	{
-		return attila_active;
-	}
 	public void setAttila_active(boolean attila_active)
 	{
 		this.attila_active = attila_active;
@@ -213,5 +229,5 @@ public class KeyHandler implements KeyListener
 	public void setCurrent_key(char current_key)
 	{
 		this.current_key = current_key;
-	}	
+	}
 }
