@@ -37,11 +37,12 @@ public class SSC extends JPanel implements Runnable
 	
 	// Player parameters
 	Player player;
-	BufferedImage player_img;
+	BufferedImage player_img, player_img_left, player_img_right;
 	int max_speed;
 	boolean striping = false;
 	
 	// Rocket parameters
+	BufferedImage rocket_img_UP, rocket_img_LEFT, rocket_img_DOWN, rocket_img_RIGHT;
 	int rocket_cycles;
 	boolean active_cycle	= false;
 	boolean active_rockets	= false;
@@ -65,7 +66,15 @@ public class SSC extends JPanel implements Runnable
 		
 		try
 		{
-			background_img= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/ssc/background_img.png"));
+			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/ssc/background_img.png"));
+			player_img_left		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/ssc/player_left.png"));
+			player_img_right	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/ssc/player_right.png"));
+			player_img = player_img_right;
+			
+			rocket_img_UP		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/ssc/rocket_up.png"));
+			rocket_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/ssc/rocket_left.png"));
+			rocket_img_DOWN		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/ssc/rocket_down.png"));
+			rocket_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/ssc/rocket_right.png"));
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -84,9 +93,8 @@ public class SSC extends JPanel implements Runnable
 		
 		max_speed = player.max_speed * 3;
 		
-		// Gen. 4 - 8 rocket cycles
-		rocket_cycles = (int) ((Math.random() * (8 - 4)) + 4);
-		System.out.println(rocket_cycles);
+		// Gen. 4 - 10 rocket cycles
+		rocket_cycles = (int) ((Math.random() * (10 - 4)) + 4);
 		
 		frame.add(this);
 		frame.repaint();
@@ -129,7 +137,6 @@ public class SSC extends JPanel implements Runnable
 					updateRockets();
 
 					boolean collision = checkCollision();
-					
 					if(collision)
 					{
 						game_timer.setTime_coeff(10);
@@ -153,8 +160,7 @@ public class SSC extends JPanel implements Runnable
 		} // End of master game-loop
 		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
 	}
-
-
+	
 	private void updatePlayer()
 	{
 		int[] direction_arr = key_handler.getDirection_arr();
@@ -183,7 +189,15 @@ public class SSC extends JPanel implements Runnable
 		
 		// If within map constraints
 		if(moveableX(player_x, player_dx))
+		{
 			player_x += player_speed_x * player_dx;
+			
+			// Update player img
+			if(player_dx > 0)
+				player_img = player_img_right;
+			else if(player_dx < 0)
+				player_img = player_img_left;
+		}
 		if(moveableY(player_y, player_dy))
 			player_y += player_speed_y * player_dy;
 		
@@ -229,34 +243,35 @@ public class SSC extends JPanel implements Runnable
 	
 	private void updateRockets()
 	{
+		// Activate a rocket cycle
 		if(!active_rockets)
 		{
 			// Get which side rockets will come from
 			rocket_src = (int) (Math.random() * 4);
 			switch(rocket_src)
 			{
-				// Up
+				// From above
 				case 0:
 					rocket_pos_UP = getRocketPosArray(rocket_pos_UP.length);
 						rocket_width  = player.getPlayer_width();
 						rocket_height = player.getPlayer_height();
 					dRocket = -rocket_height;
 					break;
-				// Left
+				// From left
 				case 1:
 					rocket_pos_LEFT = getRocketPosArray(rocket_pos_LEFT.length);
 						rocket_height = player.getPlayer_height();
 						rocket_width = 2 * rocket_height;
 					dRocket = -rocket_width;
 					break;
-				// Down
+				// From below
 				case 2:
 					rocket_pos_DOWN = getRocketPosArray(rocket_pos_DOWN.length);
 						rocket_width  = player.getPlayer_width();
 						rocket_height = player.getPlayer_height();
 					dRocket = height;
 					break;
-				// Right
+				// From right
 				case 3:
 					rocket_pos_RIGHT = getRocketPosArray(rocket_pos_RIGHT.length);
 						rocket_height = player.getPlayer_height();
@@ -267,11 +282,12 @@ public class SSC extends JPanel implements Runnable
 			active_rockets = true;
 		}
 		
+		// Rocket cycle active
 		else if(active_rockets)
 		{
 			switch(rocket_src)
 			{
-				// Up
+				// From above
 				case 0:
 					if(dRocket > height)
 					{
@@ -281,7 +297,8 @@ public class SSC extends JPanel implements Runnable
 					else
 						dRocket += max_speed;
 					break;
-				// Left
+					
+				// From left
 				case 1:
 					if(dRocket > width)
 					{
@@ -291,7 +308,8 @@ public class SSC extends JPanel implements Runnable
 					else
 						dRocket += 2 * max_speed;
 					break;
-				// Down
+				
+				// From below
 				case 2:
 					if(dRocket + rocket_height < 0)
 					{
@@ -301,7 +319,8 @@ public class SSC extends JPanel implements Runnable
 					else
 						dRocket -= max_speed;
 					break;
-				// Right
+				
+				// From right
 				case 3:
 					if(dRocket + rocket_width < 0)
 					{
@@ -315,6 +334,7 @@ public class SSC extends JPanel implements Runnable
 		}
 	}
 
+	// Check player-rocket collision
 	private boolean checkCollision()
 	{
 		boolean crossing_x = false;
@@ -325,7 +345,7 @@ public class SSC extends JPanel implements Runnable
 		
 		switch(rocket_src)
 		{
-			// Up
+			// From above
 			case 0:
 				int y0  = dRocket;
 				for(int rocket_index = 0; rocket_index < rocket_pos_UP.length; rocket_index++)
@@ -334,11 +354,13 @@ public class SSC extends JPanel implements Runnable
 					{
 						int x0  = rocket_width * rocket_index;
 						
+						// Horizontal collision
 						if(player_x < x0 && (player_x + player.getPlayer_width()) >= x0 + (rocket_width / 2))
 							crossing_x = true; 
 						else if(x0 < player_x && player_x <= x0 + (rocket_width / 2))
 							crossing_x = true; 
 	
+						// Vertical collision
 						if(player_y < y0 && player_y + player.getPlayer_height() >= y0 + (rocket_height / 2))
 							crossing_y = true;
 						else if(player_y > y0 && player_y <= y0 + (rocket_height / 2))
@@ -349,7 +371,8 @@ public class SSC extends JPanel implements Runnable
 					}
 				}
 				break;
-			// Left
+				
+			// From the left
 			case 1:
 				int x1 = dRocket;
 				for(int rocket_index = 0; rocket_index < rocket_pos_LEFT.length; rocket_index++)
@@ -357,12 +380,14 @@ public class SSC extends JPanel implements Runnable
 					if(rocket_pos_LEFT[rocket_index] == 1)
 					{
 						int y1 = rocket_height * rocket_index;
-	
+
+						// Horizontal collision
 						if(player_x < x1 && (player_x + player.getPlayer_width()) >= x1 + (rocket_width / 2))
 							crossing_x = true; 
 						else if(x1 < player_x && player_x <= x1 + (rocket_width / 2))
 							crossing_x = true; 
 	
+						// Vertical collision
 						if(player_y < y1 && player_y + player.getPlayer_height() >= y1 + (rocket_height / 2))
 							crossing_y = true;
 						else if(player_y > y1 && player_y <= y1 + (rocket_height / 2))
@@ -373,7 +398,8 @@ public class SSC extends JPanel implements Runnable
 					}
 				}
 				break;
-			// Down
+				
+			// From below
 			case 2:
 				int y2 = dRocket;
 				for(int rocket_index = 0; rocket_index < rocket_pos_UP.length; rocket_index++)
@@ -381,12 +407,14 @@ public class SSC extends JPanel implements Runnable
 					if(rocket_pos_DOWN[rocket_index] == 1)
 					{
 						int x2 = rocket_width * rocket_index;
-						
+
+						// Horizontal collision
 						if(player_x < x2 && (player_x + player.getPlayer_width()) >= x2 + (rocket_width / 2))
 							crossing_x = true; 
 						else if(x2 < player_x && player_x <= x2 + (rocket_width / 2))
 							crossing_x = true; 
 		
+						// Vertical collision
 						if(player_y < y2 && player_y + player.getPlayer_height() >= y2 + (rocket_height / 2))
 							crossing_y = true;
 						else if(player_y > y2 && player_y <= y2 + (rocket_height / 2))
@@ -397,7 +425,8 @@ public class SSC extends JPanel implements Runnable
 					}
 				}
 				break;
-			// Right
+				
+			// From the right
 			case 3:
 				int x3 = dRocket;
 				for(int rocket_index = 0; rocket_index < rocket_pos_LEFT.length; rocket_index++)
@@ -405,12 +434,14 @@ public class SSC extends JPanel implements Runnable
 					if(rocket_pos_RIGHT[rocket_index] == 1)
 					{
 						int y3 = rocket_height * rocket_index;
-	
+						
+						// Horizontal collision
 						if(player_x < x3 && (player_x + player.getPlayer_width()) >= x3 + (rocket_width / 2))
 							crossing_x = true; 
 						else if(x3 < player_x && player_x <= x3 + (rocket_width / 2))
 							crossing_x = true; 
 	
+						// Vertical collision
 						if(player_y < y3 && player_y + player.getPlayer_height() >= y3 + (rocket_height / 2))
 							crossing_y = true;
 						else if(player_y > y3 && player_y <= y3 + (rocket_height / 2))
@@ -426,13 +457,17 @@ public class SSC extends JPanel implements Runnable
 		return false;
 	}
 	
+	// Get position-indices of rockets, e.g. [0, 1, 0, 1, 1]
 	private int[] getRocketPosArray(int length)
 	{
 		int[] pos_arr = new int[length];
 		int places_positioned = 0;
 		int index = 0;
+		
+		// Array needs atleast 11 (src: <0 | 2>) or 3 (src: <1 | 3>) elements = 1
 		while(places_positioned < (length / 2) + 1)
 		{
+			// Randomize where rockets will be launched from
 			int place = (int) (Math.random() * ((length / 2) + 1));
 			if(place == 0 && pos_arr[index] != 1)
 			{
@@ -456,6 +491,7 @@ public class SSC extends JPanel implements Runnable
 			striping = true;
 	}
 	
+	// Striping effect when hit by rocket
 	private void initStripingEffect()
 	{
 		Timer timer = new Timer();
@@ -465,8 +501,11 @@ public class SSC extends JPanel implements Runnable
 			@Override
 			public void run()
 			{
+				// Toggle every 30 ms
 				if(t % 3 == 0)
 					toggleStriping();
+				
+				// Effect lasting for 800 ms
 				if(t > 80)
 				{
 					striping = false;
@@ -489,9 +528,8 @@ public class SSC extends JPanel implements Runnable
 		g_2d.drawImage(background_img, 0, 0, width, height, null);
 		
 		// Paint player
-		g_2d.setColor(Color.PINK);
 		if(!striping)
-			g_2d.fillRect(player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height());
+			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height(), null);
 	
 		// Paint rockets
 		g_2d.setColor(Color.GRAY);
@@ -499,42 +537,43 @@ public class SSC extends JPanel implements Runnable
 		{
 			switch(rocket_src)
 			{
-				// Up
+				// Paint rockets from above
 				case 0:
 					for(int rocket_index = 0; rocket_index < rocket_pos_UP.length; rocket_index++)
 					{
 						if(rocket_pos_UP[rocket_index] == 1)
-							g_2d.fillRect(rocket_index * rocket_width, dRocket, rocket_width, rocket_height);
+							g_2d.drawImage(rocket_img_UP, rocket_index * rocket_width, dRocket, rocket_width, rocket_height, null);
 					}
 					break;
-				// Left
+				
+				// Paint rockets from left
 				case 1:
 					for(int rocket_index = 0; rocket_index < rocket_pos_LEFT.length; rocket_index++)
 					{
 						if(rocket_pos_LEFT[rocket_index] == 1)
-							g_2d.fillRect(dRocket, rocket_index * rocket_height, rocket_width, rocket_height);
+							g_2d.drawImage(rocket_img_LEFT, dRocket, rocket_index * rocket_height, rocket_width, rocket_height, null);
 					}
 					break;
-				// Down
+				
+				// Paint rockets from below
 				case 2:
-
 					for(int rocket_index = 0; rocket_index < rocket_pos_DOWN.length; rocket_index++)
 					{
 						if(rocket_pos_DOWN[rocket_index] == 1)
-							g_2d.fillRect(rocket_index * rocket_width, dRocket, rocket_width, rocket_height);
+							g_2d.drawImage(rocket_img_DOWN, rocket_index * rocket_width, dRocket, rocket_width, rocket_height, null);
 					}
 					break;
-				// Right
+					
+				// Paint rockets from right
 				case 3:
 					for(int rocket_index = 0; rocket_index < rocket_pos_RIGHT.length; rocket_index++)
 					{
 						if(rocket_pos_RIGHT[rocket_index] == 1)
-							g_2d.fillRect(dRocket, rocket_index * rocket_height, rocket_width, rocket_height);
+							g_2d.drawImage(rocket_img_RIGHT, dRocket, rocket_index * rocket_height, rocket_width, rocket_height, null);
 					}
 					break;
 			}
 		}
-		
 		g_2d.dispose();
-	}	
+	}
 }
