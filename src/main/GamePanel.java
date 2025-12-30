@@ -507,33 +507,34 @@ public class GamePanel extends JPanel
 		
 //		clearChildren();
 		frame.remove(this);
+		key_handler.setDirection_arr(new int[] {0, 0});
 		
 		switch(enemy_collision_index)
 		{
 			case 0:
-				new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
+//				new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 1:
 				game_timer.setTime_coeff(-1);
-				new Albin(frame, top, game_timer, key_handler, player_x, player_y);
+//				new Albin(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 2:
-				new Lkab(frame, top, game_timer, key_handler, player_x, player_y);
+//				new Lkab(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 3:
-				//			new SSC(player_x, player_y);
 				break;
 			case 4:
 				game_timer.setTime_coeff(25);
-				new Slusk(frame, top, game_timer, key_handler, player_x, player_y);
+//				new Slusk(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 5:
 				//			new Attila(player_x, player_y);
 				break;
 			case 6:
-				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
+//				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 		}
+		new SSC(frame, top, game_timer, key_handler, player_x, player_y);
 	}
 	
 	// Nullify all, to then be collected by the garbage collector,
