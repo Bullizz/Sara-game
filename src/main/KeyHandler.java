@@ -15,6 +15,9 @@ public class KeyHandler implements KeyListener
 	int slusk_points;
 	boolean space_pressed;
 	boolean slusk_active;
+	
+	boolean attila_active;
+	char current_key;
 
 	public boolean isGame_paused()
 	{
@@ -53,9 +56,27 @@ public class KeyHandler implements KeyListener
 			{
 				space_pressed = true;
 				slusk_points++;
-//				System.out.println(slusk_points);
 			}
-			
+		}
+		
+		else if(attila_active)
+		{
+			int user_key = press.getKeyCode();
+			switch(user_key)
+			{
+				case KeyEvent.VK_W:
+					setCurrent_key('w');
+					break;
+				case KeyEvent.VK_A:
+					setCurrent_key('a');
+					break;
+				case KeyEvent.VK_S:
+					setCurrent_key('s');
+					break;
+				case KeyEvent.VK_D:
+					setCurrent_key('d');
+					break;
+			}
 		}
 		
 		else
@@ -102,6 +123,11 @@ public class KeyHandler implements KeyListener
 				space_pressed = false;
 		}
 		
+		else if(attila_active)
+		{
+			setCurrent_key('\0');
+		}
+		
 		else
 		{
 			if(user_inp == KeyEvent.VK_UP || user_inp == KeyEvent.VK_W)
@@ -142,9 +168,7 @@ public class KeyHandler implements KeyListener
 		this.direction_arr = direction_arr;
 	}
 	
-	/*
-	 * Slusk minigame methods
-	 */
+	// Slusk minigame methods
 	public boolean isSpace_pressed()
 	{
 		return space_pressed;
@@ -171,4 +195,23 @@ public class KeyHandler implements KeyListener
 	{
 		this.slusk_active = slusk_active;
 	}
+	
+	// Attila minigame methods
+	public boolean isAttila_active()
+	{
+		return attila_active;
+	}
+	public void setAttila_active(boolean attila_active)
+	{
+		this.attila_active = attila_active;
+	}
+	
+	public char getCurrent_key()
+	{
+		return current_key;
+	}
+	public void setCurrent_key(char current_key)
+	{
+		this.current_key = current_key;
+	}	
 }
