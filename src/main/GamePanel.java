@@ -526,9 +526,8 @@ public class GamePanel extends JPanel
 		int player_x = player.getPlayer_x();
 		int player_y = player.getPlayer_y();
 		
-//		clearChildren();
-		frame.remove(this);
 		key_handler.setDirection_arr(new int[] {0, 0});
+		frame.remove(this);
 		
 		switch(enemy_collision_index)
 		{
@@ -550,31 +549,13 @@ public class GamePanel extends JPanel
 				new Slusk(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 5:
-//				new Attila(frame, top, game_timer, key_handler, player_x, player_y);				
-				new Albin(frame, top, game_timer, key_handler, player_x, player_y);
+				new Attila(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 			case 6:
 				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
 				break;
 		}
 	}
-	
-	// Nullify all, to then be collected by the garbage collector,
-	// a.k.a. clears memory
-	/*
-	private void clearChildren()
-	{
-		player 	= null;
-		lulle 	= null;
-		albin 	= null;
-		lkab 	= null;
-		ssc 	= null;
-		slusk 	= null;
-		attila 	= null;
-		pauline = null;
-		enemies = null;
-	}
-	*/
 	
 	// Load file with map boundaries
 	private int[][] loadMapConstraints(int cols, int rows)
@@ -627,12 +608,7 @@ public class GamePanel extends JPanel
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Draw background
-		if(map_img != null)
-			g_2d.drawImage(map_img, 0, 0, this.width, this.height, null);
-		else
-		{
-			
-		}
+		g_2d.drawImage(map_img, 0, 0, this.width, this.height, null);
 
 		// Paint player
 		if(player != null)
