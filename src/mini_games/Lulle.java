@@ -21,14 +21,6 @@ import main.KeyHandler;
 
 public class Lulle extends JPanel implements Runnable
 {
-	// Arguments
-	JFrame frame;
-	JLabel top;
-	GameTimer game_timer;
-	KeyHandler key_handler;
-	int player_x_passing;
-	int player_y_passing;
-	
 	Thread lulle_thread;
 	int width, height;
 	boolean game_paused 	  = false;
@@ -36,6 +28,14 @@ public class Lulle extends JPanel implements Runnable
 	boolean game_loop_running = true;
 	final int RNG 			  = 100;
 	// 1 in <RNG> chance that dirt is generated ~every millisecond
+
+	// Arguments
+	JFrame frame;
+	JLabel top;
+	GameTimer game_timer;
+	KeyHandler key_handler;
+	int player_x_passing;
+	int player_y_passing;
 	
 	int MAX_POINTS  = 4;
 	int points 		= 0;
@@ -299,7 +299,6 @@ public class Lulle extends JPanel implements Runnable
 	public void paintComponent(Graphics g_1d)
 	{
 		super.paintComponent(g_1d);
-		
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Paint player
