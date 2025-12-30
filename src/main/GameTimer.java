@@ -116,7 +116,7 @@ public class GameTimer extends JLabel
 	}
 	public void setRandom_speed_coeff()
 	{
-		random_speed_coeff = (Math.random() * (1 - (-1))) + (-1);
+		random_speed_coeff = (Math.random() * (2 - (-1))) + (-1);
 	}
 
 	public String getTime_str()

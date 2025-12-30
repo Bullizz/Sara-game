@@ -5,7 +5,7 @@
   - ### Music
   - ### Pause system
   - ### GamePanel
-    - #### Enemy imgs
+    - #### ~~Enemy imgs~~
     - #### Goal pos. at milano
     - #### ~~Correct colors~~
   - ### Lulle
@@ -25,3 +25,5 @@
 - ## End menu
 
 - ## General project cleanup
+
+- ## Organize image-folders

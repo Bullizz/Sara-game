@@ -46,6 +46,7 @@ public class GamePanel extends JPanel
 	JLabel top;
 	
 	BufferedImage map_img, player_img;
+	BufferedImage lulle_img, albin_img, lkab_img, ssc_img, slusk_img, attila_img, pauline_img;
 	
 	int[][] map_constraints;
 	
@@ -63,8 +64,17 @@ public class GamePanel extends JPanel
 		
 		try
 		{
-			map_img = ImageIO.read(getClass().getResourceAsStream("/image_files/europe_4.png"));
-			player_img = ImageIO.read(getClass().getResourceAsStream("/image_files/sara-transp.png"));			
+			map_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/background_map.png"));
+			player_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/sara-transp.png"));
+			
+			lulle_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle.png")); 
+			albin_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/albin2.png"));
+			lkab_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab.png"));
+			ssc_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc.png"));
+			slusk_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk.png"));
+			attila_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/attila.png"));
+			pauline_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline.png"));;
+			
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -74,8 +84,8 @@ public class GamePanel extends JPanel
 		if(!frame.isVisible())
 			frame.setVisible(true);
 
-		int entity_width  = this.width / 40;
-		int entity_height = this.height / 40;
+		int entity_width  = this.width / 30;
+		int entity_height = this.height / 30;
 		
 		// Init. enemies
 		lulle 	= new Enemy("lulle",	1460,  259,  entity_height, entity_width);
@@ -606,17 +616,31 @@ public class GamePanel extends JPanel
 			// Paint enemies
 			for(int i = 0; i < enemy_amount; i++)
 			{
-				try
-				{					
-					Enemy current_Enemy = enemies[i];
-					
-					g_2d.setColor(Color.BLACK);
-					g_2d.fillRect(current_Enemy.getEnemy_x(), current_Enemy.getEnemy_y(), current_Enemy.width, current_Enemy.height);
-					g_2d.setColor(Color.WHITE);
-					g_2d.drawString(current_Enemy.id_string, current_Enemy.getEnemy_x(), current_Enemy.getEnemy_y() + 15);
-				} catch(Exception e)
+				Enemy current_enemy = enemies[i];
+				
+				switch(current_enemy.id_string)
 				{
-					System.out.println(e.getCause());
+				case "lulle":
+					g_2d.drawImage(lulle_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					break;
+				case "albin":
+					g_2d.drawImage(albin_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					break;
+				case "lkab":
+					g_2d.drawImage(lkab_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					break;
+				case "ssc":
+					g_2d.drawImage(ssc_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					break;
+				case "slusk":
+					g_2d.drawImage(slusk_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					break;
+				case "attila":
+					g_2d.drawImage(attila_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					break;
+				case "pauline":
+					g_2d.drawImage(pauline_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					break;
 				}
 			}
 		}
