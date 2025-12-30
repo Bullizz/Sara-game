@@ -30,8 +30,8 @@ public class Main
 		top.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight() / 10));
 		top.setLocation(0, 0);
 		top.setFont(new Font("Arial", Font.BOLD, 50));
-		top.setBackground(Color.RED);
-		top.setForeground(Color.BLUE);
+		top.setBackground(new Color(0, 162, 232));
+		top.setForeground(new Color(239, 228, 176));
 		top.setOpaque(true);
 		frame.add(top);
 		
