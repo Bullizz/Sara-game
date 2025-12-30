@@ -36,7 +36,9 @@
               - Christmas card
             - #### Currently trash bin implemented, but items stop falling after placed on table
          - #### Attila
-         	- #### Need to catch him??
+         	- #### Need to catch him
+         	- #### Falling WASD like dance dance revolution
+         	- #### Correct key-inp accelerates player
          - #### SSC
             - #### Need to avoid rocket engines
             - #### While player and rocket cross, time increase by x
