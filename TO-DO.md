@@ -1,0 +1,24 @@
+- ## Start Menu
+- ## Game Menu
+
+- ## GAME
+  - ### Music
+  - ### Pause system
+  - ### GamePanel
+    - #### Enemy imgs
+    - #### Goal pos. at milano
+    - #### Correct colors
+  - ### Lulle
+    - #### Background img 
+  - ### Lkab
+    - #### Wire-src imgs?
+    - #### Player speed?
+  - ### Slusk
+    - #### Background img 
+  - ### Albin
+    - #### SoundFX
+  - ### Pauliine
+    - #### Background img
+- ## Log game-time
+
+- ## End menu
