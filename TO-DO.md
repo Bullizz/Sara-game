@@ -23,3 +23,5 @@
 - ## Log game-time
 
 - ## End menu
+
+- ## General project cleanup
