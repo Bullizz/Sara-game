@@ -211,7 +211,7 @@ public class SSC extends JPanel implements Runnable
 	private boolean moveableX(int x, int dx)
 	{
 		if(dx > 0)
-			x += player.getPlayer_width();
+			x += player.player_width;
 		
 		int player_speed_x = player.getPlayer_speed_x();
 		// Left
@@ -228,7 +228,7 @@ public class SSC extends JPanel implements Runnable
 	private boolean moveableY(int y, int dy)
 	{		
 		if(dy > 0)
-			y += player.getPlayer_height();
+			y += player.player_height;
 		
 		int player_speed_y = player.getPlayer_speed_y();
 		// Up
@@ -253,28 +253,28 @@ public class SSC extends JPanel implements Runnable
 				// From above
 				case 0:
 					rocket_pos_UP = getRocketPosArray(rocket_pos_UP.length);
-						rocket_width  = player.getPlayer_width();
-						rocket_height = player.getPlayer_height();
+						rocket_width  = player.player_width;
+						rocket_height = player.player_height;
 					dRocket = -rocket_height;
 					break;
 				// From left
 				case 1:
 					rocket_pos_LEFT = getRocketPosArray(rocket_pos_LEFT.length);
-						rocket_height = player.getPlayer_height();
+						rocket_height = player.player_height;
 						rocket_width = 2 * rocket_height;
 					dRocket = -rocket_width;
 					break;
 				// From below
 				case 2:
 					rocket_pos_DOWN = getRocketPosArray(rocket_pos_DOWN.length);
-						rocket_width  = player.getPlayer_width();
-						rocket_height = player.getPlayer_height();
+						rocket_width  = player.player_width;
+						rocket_height = player.player_height;
 					dRocket = height;
 					break;
 				// From right
 				case 3:
 					rocket_pos_RIGHT = getRocketPosArray(rocket_pos_RIGHT.length);
-						rocket_height = player.getPlayer_height();
+						rocket_height = player.player_height;
 						rocket_width = 2 * rocket_height;
 					dRocket = width;
 					break;
@@ -355,13 +355,13 @@ public class SSC extends JPanel implements Runnable
 						int x0  = rocket_width * rocket_index;
 						
 						// Horizontal collision
-						if(player_x < x0 && (player_x + player.getPlayer_width()) >= x0 + (rocket_width / 2))
+						if(player_x < x0 && (player_x + player.player_width) >= x0 + (rocket_width / 2))
 							crossing_x = true; 
 						else if(x0 < player_x && player_x <= x0 + (rocket_width / 2))
 							crossing_x = true; 
 	
 						// Vertical collision
-						if(player_y < y0 && player_y + player.getPlayer_height() >= y0 + (rocket_height / 2))
+						if(player_y < y0 && player_y + player.player_height >= y0 + (rocket_height / 2))
 							crossing_y = true;
 						else if(player_y > y0 && player_y <= y0 + (rocket_height / 2))
 							crossing_y = true;
@@ -382,13 +382,13 @@ public class SSC extends JPanel implements Runnable
 						int y1 = rocket_height * rocket_index;
 
 						// Horizontal collision
-						if(player_x < x1 && (player_x + player.getPlayer_width()) >= x1 + (rocket_width / 2))
+						if(player_x < x1 && (player_x + player.player_width) >= x1 + (rocket_width / 2))
 							crossing_x = true; 
 						else if(x1 < player_x && player_x <= x1 + (rocket_width / 2))
 							crossing_x = true; 
 	
 						// Vertical collision
-						if(player_y < y1 && player_y + player.getPlayer_height() >= y1 + (rocket_height / 2))
+						if(player_y < y1 && player_y + player.player_height >= y1 + (rocket_height / 2))
 							crossing_y = true;
 						else if(player_y > y1 && player_y <= y1 + (rocket_height / 2))
 							crossing_y = true;
@@ -409,13 +409,13 @@ public class SSC extends JPanel implements Runnable
 						int x2 = rocket_width * rocket_index;
 
 						// Horizontal collision
-						if(player_x < x2 && (player_x + player.getPlayer_width()) >= x2 + (rocket_width / 2))
+						if(player_x < x2 && (player_x + player.player_width) >= x2 + (rocket_width / 2))
 							crossing_x = true; 
 						else if(x2 < player_x && player_x <= x2 + (rocket_width / 2))
 							crossing_x = true; 
 		
 						// Vertical collision
-						if(player_y < y2 && player_y + player.getPlayer_height() >= y2 + (rocket_height / 2))
+						if(player_y < y2 && player_y + player.player_height >= y2 + (rocket_height / 2))
 							crossing_y = true;
 						else if(player_y > y2 && player_y <= y2 + (rocket_height / 2))
 							crossing_y = true;
@@ -436,13 +436,13 @@ public class SSC extends JPanel implements Runnable
 						int y3 = rocket_height * rocket_index;
 						
 						// Horizontal collision
-						if(player_x < x3 && (player_x + player.getPlayer_width()) >= x3 + (rocket_width / 2))
+						if(player_x < x3 && (player_x + player.player_width) >= x3 + (rocket_width / 2))
 							crossing_x = true; 
 						else if(x3 < player_x && player_x <= x3 + (rocket_width / 2))
 							crossing_x = true; 
 	
 						// Vertical collision
-						if(player_y < y3 && player_y + player.getPlayer_height() >= y3 + (rocket_height / 2))
+						if(player_y < y3 && player_y + player.player_height >= y3 + (rocket_height / 2))
 							crossing_y = true;
 						else if(player_y > y3 && player_y <= y3 + (rocket_height / 2))
 							crossing_y = true;
@@ -529,7 +529,7 @@ public class SSC extends JPanel implements Runnable
 		
 		// Paint player
 		if(!striping)
-			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height(), null);
+			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
 	
 		// Paint rockets
 		g_2d.setColor(Color.GRAY);

@@ -227,7 +227,7 @@ public class Lkab extends JPanel implements Runnable
 	private boolean moveableX(int x, int dx)
 	{
 		if(dx > 0)
-			x += player.getPlayer_width();
+			x += player.player_width;
 
 		int player_speed_x = player.getPlayer_speed_x();
 		// Left
@@ -244,7 +244,7 @@ public class Lkab extends JPanel implements Runnable
 	private boolean moveableY(int y, int dy)
 	{		
 		if(dy > 0)
-			y += player.getPlayer_height();
+			y += player.player_height;
 
 		int player_speed_y = player.getPlayer_speed_y();
 		// Up
@@ -334,14 +334,14 @@ public class Lkab extends JPanel implements Runnable
 			int player_y = player.getPlayer_y();
 			
 			// If player covers top half of wire_src
-			if(player_y < y && (player_y + player.getPlayer_height()) > (y + (wire_src_height / 2)))
+			if(player_y < y && (player_y + player.player_height) > (y + (wire_src_height / 2)))
 			{
 				crossing_y = true;
 				break;
 			}
 			
 			// If player covers bottom half of wire_src
-			else if((player_y + player.getPlayer_height()) > (y + wire_src_height) && player_y < (y + (wire_src_height / 2)))
+			else if((player_y + player.player_height) > (y + wire_src_height) && player_y < (y + (wire_src_height / 2)))
 			{
 				crossing_y = true;
 				break;
@@ -363,7 +363,7 @@ public class Lkab extends JPanel implements Runnable
 			}
 
 			// Right-hand-side wire_src
-			else if(player_x + player.getPlayer_width() > this.width - (wire_src_width / 2))
+			else if(player_x + player.player_width > this.width - (wire_src_width / 2))
 			{
 				wire_x = this.width - wire_src_width;
 				crossing_x = true;
@@ -491,7 +491,7 @@ public class Lkab extends JPanel implements Runnable
 		g_2d.drawImage(background_img, 0, 0, this.width, this.height, null);
 		
 		// Paint player
-		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height(), null);
+		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
 		
 		// Paint wire sources
 		for(int i = 0; i < len; i++)
@@ -578,7 +578,7 @@ public class Lkab extends JPanel implements Runnable
 		{
 			g_2d.setColor(active_color);
 			g_2d.setStroke(new BasicStroke((float) wire_width));
-			g_2d.drawLine(wire_x, wire_y, player.getPlayer_x() + wire_width, player.getPlayer_y() + (player.getPlayer_height() / 2));
+			g_2d.drawLine(wire_x, wire_y, player.getPlayer_x() + wire_width, player.getPlayer_y() + (player.player_height / 2));
 		}
 		
 		g_2d.dispose();
