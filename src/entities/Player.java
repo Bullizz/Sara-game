@@ -56,22 +56,4 @@ public class Player
 	{
 		this.player_speed_y = player_speed_y;
 	}
-
-	public int getPlayer_width()
-	{
-		return player_width;
-	}
-	public void setPlayer_width(int player_width)
-	{
-		this.player_width = player_width;
-	}
-	
-	public int getPlayer_height()
-	{
-		return player_height;
-	}
-	public void setPlayer_height(int player_height)
-	{
-		this.player_height = player_height;
-	}
 }

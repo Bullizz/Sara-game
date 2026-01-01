@@ -5,7 +5,7 @@ public class Enemy
 	int x, y;
 	int speed_x, speed_y;
 
-	final public int width, height;
+	public int width, height;
 	final public String id_string;
 	public int follow_type = 3;
 	public final int max_speed = 4;

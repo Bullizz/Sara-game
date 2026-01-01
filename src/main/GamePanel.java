@@ -192,10 +192,10 @@ public class GamePanel extends JPanel
 							System.out.println(player.getPlayer_x() + ", " + player.getPlayer_y());
 							
 							// Reach goal y-pos.
-							if(player.getPlayer_y() < GOAL_Y && GOAL_Y < (player.getPlayer_y() + player.getPlayer_height()))
+							if(player.getPlayer_y() < GOAL_Y && GOAL_Y < (player.getPlayer_y() + player.player_height))
 							{
 								// Reach goal x-pos.
-								if(player.getPlayer_x() < GOAL_X && GOAL_X < (player.getPlayer_x() + player.getPlayer_width()))
+								if(player.getPlayer_x() < GOAL_X && GOAL_X < (player.getPlayer_x() + player.player_width))
 								{
 //									JOptionPane.showMessageDialog(null, "cross");
 									game_loop_running = false;
@@ -646,7 +646,7 @@ public class GamePanel extends JPanel
 
 		// Paint player
 		if(player != null)
-			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height(), null);
+			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
 		
 		if(enemies_updating)
 		{

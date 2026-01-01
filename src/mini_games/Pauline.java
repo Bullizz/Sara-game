@@ -82,9 +82,9 @@ public class Pauline extends JPanel implements Runnable
 
 		item_held_y += player.getPlayer_y();
 		
-		trash_width    = player.getPlayer_width();
-		trash_height   = player.getPlayer_height() / 2;
-		trash_x  	   = this.width - player.getPlayer_width();
+		trash_width    = player.player_width;
+		trash_height   = player.player_height / 2;
+		trash_x  	   = this.width - player.player_width;
 		trash_y  	   = player.getPlayer_y() + trash_height;
 		
 		falling_column = this.width / 6;
@@ -247,7 +247,7 @@ public class Pauline extends JPanel implements Runnable
 			else if(item_array[1][i].equals(holding_str))
 			{
 				// Trashing held item
-				if(trash_x - (player_x + player.getPlayer_width()) < 2)
+				if(trash_x - (player_x + player.player_width) < 2)
 				{
 					item_array[1][i] = default_str;
 					item_array[2][i] = "-1";
@@ -310,7 +310,7 @@ public class Pauline extends JPanel implements Runnable
 		
 		int player_x = player.getPlayer_x();
 		int player_y = player.getPlayer_y();
-		int player_width = player.getPlayer_height();
+		int player_width = player.player_height;
 		
 		if(Math.abs(x0 - player_x) < (item_width / 2) || Math.abs(x1 - (player_x + player_width)) < (item_width / 2))
 			x_crossed = true;
@@ -327,7 +327,7 @@ public class Pauline extends JPanel implements Runnable
 	private boolean moveable(int player_x, int dx)
 	{
 		if(dx > 0)
-			player_x += player.getPlayer_width();
+			player_x += player.player_width;
 		
 		// Left
 		if(dx < 0 && player_x > this.width / 3)

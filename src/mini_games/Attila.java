@@ -181,7 +181,7 @@ public class Attila extends JPanel implements Runnable
 					repaint();
 					
 					 // Game completed
-					 if(player.getPlayer_x() + player.getPlayer_width() >= attila_x + key_dim)
+					 if(player.getPlayer_x() + player.player_width >= attila_x + key_dim)
 					 {
 						 key_handler.setAttila_active(false);
 						 
@@ -372,9 +372,9 @@ public class Attila extends JPanel implements Runnable
 		g_2d.drawImage(background_img, background_x, 0, 5 * width, height, null);
 		
 		// Paint player
-		g_2d.rotate(Math.toRadians(angle), player.getPlayer_x() + (player.getPlayer_width() / 2), player.getPlayer_y() + (player.getPlayer_height() / 2));
-		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height(), null);
-		g_2d.rotate(Math.toRadians(-angle), player.getPlayer_x() + (player.getPlayer_width() / 2), player.getPlayer_y() + (player.getPlayer_height() / 2));
+		g_2d.rotate(Math.toRadians(angle), player.getPlayer_x() + (player.player_width / 2), player.getPlayer_y() + (player.player_height / 2));
+		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
+		g_2d.rotate(Math.toRadians(-angle), player.getPlayer_x() + (player.player_width / 2), player.getPlayer_y() + (player.player_height / 2));
 	
 		// Paint attila
 		g_2d.rotate(Math.toRadians(-angle), attila_x + (key_dim / 2), attila_y + (key_dim / 2));
