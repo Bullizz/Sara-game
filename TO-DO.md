@@ -6,7 +6,7 @@
   - ### Pause system
   - ### GamePanel
     - #### ~~Enemy imgs~~
-    - #### Goal pos. at milano
+    - #### ~~Goal pos. at milano~~
     - #### ~~Correct colors~~
     - #### Add map "scenery"
   - ### Lulle
