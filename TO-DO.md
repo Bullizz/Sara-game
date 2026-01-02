@@ -7,6 +7,7 @@
   - ### GamePanel
     - #### ~~Enemy imgs~~
     - #### ~~Goal pos. at milano~~
+    - #### Need to stay at goal pos. for atleast 30 frames
     - #### ~~Correct colors~~
     - #### Add map "scenery"
   - ### Lulle
