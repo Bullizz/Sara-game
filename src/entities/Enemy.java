@@ -63,6 +63,5 @@ public class Enemy
 	public void setSpeed_y(int speed_y)
 	{
 		this.speed_y = speed_y;
-	}
-		
+	}		
 }

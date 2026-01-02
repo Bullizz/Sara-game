@@ -215,15 +215,12 @@ public class GamePanel extends JPanel
 								enemies_thread	  = null;
 							}
 							
-							System.out.println(player.getPlayer_x() + ", " + player.getPlayer_y());
-							
 							// Reach goal y-pos.
 							if(player.getPlayer_y() < GOAL_Y && GOAL_Y < (player.getPlayer_y() + player.player_height))
 							{
 								// Reach goal x-pos.
 								if(player.getPlayer_x() < GOAL_X && GOAL_X < (player.getPlayer_x() + player.player_width))
-								{
-//									JOptionPane.showMessageDialog(null, "cross");
+								{	
 									game_loop_running = false;
 									game_thread 	= null;
 									

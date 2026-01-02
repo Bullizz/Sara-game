@@ -37,7 +37,8 @@ public class Lulle extends JPanel implements Runnable
 	int player_x_passing;
 	int player_y_passing;
 	
-	int MAX_POINTS  = 4;
+	// Max points 4 - 8
+	int MAX_POINTS  = (int) ((Math.random() * (8 - 4)) + 4);
 	int points 		= 0;
 	
 	// General entity parameters
@@ -283,8 +284,8 @@ public class Lulle extends JPanel implements Runnable
 		if(Math.abs(player_x - dirt_x) <= (0.2 * (double) entity_width))
 			valid_x = true;
 		
-		// If dirt-height completely within player-height
-		if(player_y < dirt_y && (dirt_y + dirt_heigth) < (player_y + entity_height))
+		// If dirt-y ~= broom
+		if(player_y + (entity_height / 2) < dirt_y && dirt_y + (dirt_heigth / 2) <= player_y + entity_height)
 			valid_y = true;
 		
 		// Player covered enough dirt a.k.a. clean
