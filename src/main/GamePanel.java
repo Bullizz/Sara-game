@@ -103,17 +103,38 @@ public class GamePanel extends JPanel
 		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 
 		// Check that player-spawn != any enemy-spawn
-		for(int enemy_i = 0; enemy_i < enemies.length; enemy_i++)
+		int enemy_i = 0;
+		while(enemy_i < enemies.length)
 		{
-			if(enemies[enemy_i].getEnemy_x() - (player_x0 + entity_width) <= 5)
+			boolean valid_x = false;			
+			boolean valid_y = false;
+			
+			// Enemy to the right
+			int x_diff_1 = Math.abs(enemies[enemy_i].getEnemy_x() - (player_x0 + entity_width));
+			// Enemy to the left			
+			int x_diff_2 = Math.abs(player_x0 - (enemies[enemy_i].getEnemy_x() + entity_width));
+			
+			// Enemy below player
+			int y_diff_1 = Math.abs(enemies[enemy_i].getEnemy_y() - (player_y0 + entity_height));
+			// Enemy above player
+			int y_diff_2 = Math.abs(player_y0 - (enemies[enemy_i].getEnemy_y() + entity_height));
+			
+			if(x_diff_1 <= 5)
 				player_x0 -= 5;
-			else if(player_x0 - (enemies[enemy_i].getEnemy_x() + entity_width) <= 5)
+			else if(x_diff_2 <= 5)
 				player_x0 += 5;
+			else
+				valid_x = true;
 				
-			if(enemies[enemy_i].getEnemy_y() - (player_y0 + entity_height) <= 5)
+			if(y_diff_1 <= 5)
 				player_y0 -= 5;
-			else if(player_y0 - (enemies[enemy_i].getEnemy_y() + entity_height) <= 5)
+			else if(y_diff_2 <= 5)
 				player_y0 += 5;
+			else
+				valid_y = true;
+			
+			if(valid_x && valid_y)
+				enemy_i++;
 		}
 			
 		// Init. player
@@ -186,7 +207,12 @@ public class GamePanel extends JPanel
 							if(collision_params[0] == 1)
 							{
 								enemy_collision_index = collision_params[1];
+								
 								game_loop_running = false;
+								game_thread		  = null;
+								
+								enemies_updating  = false;
+								enemies_thread	  = null;
 							}
 							
 							System.out.println(player.getPlayer_x() + ", " + player.getPlayer_y());
@@ -214,15 +240,8 @@ public class GamePanel extends JPanel
 					
 					// Collision detected
 					if(enemy_collision_index > -1)
-					{
-						game_loop_running = false;
-						game_thread		  = null;
-						
-						enemies_updating  = false;
-						enemies_thread	  = null;
-						
 						launchMiniGame(enemy_collision_index);
-					}
+					
 					// No collision, game finished
 					else
 						endGame();
@@ -445,9 +464,6 @@ public class GamePanel extends JPanel
 		 * 
 		 */
 		
-//		int y1 = map_constraints[(int) Enemy_y][(int) Enemy_x];
-//		int y2 = map_constraints[(int) Enemy_y + player_height][(int) Enemy_x];
-		
 		for(int i = 1; i <= 13; i++)
 		{
 			enemy_x += direction_arr;
@@ -478,9 +494,6 @@ public class GamePanel extends JPanel
 		 *          		----------
 		 * 
 		 */
-		
-//		int x1 = map_constraints[(int) Enemy_y][(int) Enemy_x];
-//		int x2 = map_constraints[(int) Enemy_y][(int) Enemy_x + player_width];
 		
 		for(int i = 1; i <= 13; i++)
 		{
@@ -629,6 +642,7 @@ public class GamePanel extends JPanel
 		String final_time_str = game_timer.getTime_str();
 		game_timer.timer.cancel();
 		
+		frame.removeKeyListener(key_handler);
 		frame.remove(this);
 		
 		new EndMenu(frame, top, final_time_str);
@@ -643,7 +657,7 @@ public class GamePanel extends JPanel
 		
 		// Draw background
 		g_2d.drawImage(map_img, 0, 0, this.width, this.height, null);
-
+		
 		// Paint player
 		if(player != null)
 			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
@@ -658,22 +672,22 @@ public class GamePanel extends JPanel
 				switch(current_enemy.id_string)
 				{
 				case "lulle":
-					g_2d.drawImage(lulle_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					g_2d.drawImage(lulle_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
 					break;
 				case "albin":
-					g_2d.drawImage(albin_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					g_2d.drawImage(albin_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
 					break;
 				case "lkab":
-					g_2d.drawImage(lkab_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					g_2d.drawImage(lkab_img,    current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
 					break;
 				case "ssc":
-					g_2d.drawImage(ssc_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					g_2d.drawImage(ssc_img,     current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
 					break;
 				case "slusk":
-					g_2d.drawImage(slusk_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					g_2d.drawImage(slusk_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
 					break;
 				case "attila":
-					g_2d.drawImage(attila_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+					g_2d.drawImage(attila_img,  current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
 					break;
 				case "pauline":
 					g_2d.drawImage(pauline_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
