@@ -71,6 +71,10 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 			case "Switch Song":
 				JOptionPane.showMessageDialog(null, "Switch Song");
 				break;
+			case "Leaderboard":
+				frame.remove(current_panel);
+				new EndMenu(frame, top, "");
+				break;
 			case "Exit":
 				System.exit(0);
 				break;

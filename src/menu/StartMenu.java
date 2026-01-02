@@ -36,7 +36,7 @@ public class StartMenu extends JPanel
 			// Container of user optns.
 			JPanel optn_container = new JPanel();
 			optn_container.setBackground(yellow);
-			optn_container.setLayout(new GridLayout(5, 1));
+			optn_container.setLayout(new GridLayout(6, 1));
 			add(optn_container);
 				JPanel filler_top = new JPanel();
 				filler_top.setBackground(blue);
@@ -59,10 +59,16 @@ public class StartMenu extends JPanel
 					current_song.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, yellow));
 					current_song.setOpaque(true);
 					music_optn.add(current_song);
-					
+						
 					// Ability to change song, (randomize new)
-					MenuButton swictch_song_btn = new MenuButton("Switch Song", 4, 2, 4, 4);
-					music_optn.add(swictch_song_btn);
+					MenuButton switch_song_btn = new MenuButton("Switch Song", 4, 2, 4, 4);
+					music_optn.add(switch_song_btn);
+				MenuButton leaderboard_btn = new MenuButton("Leaderboard", 2, 4, 2, 4);
+				leaderboard_btn.setFrame(frame);
+				leaderboard_btn.setTop(top);
+				leaderboard_btn.setPanel(this);
+				optn_container.add(leaderboard_btn);
+				
 				MenuButton exit_btn = new MenuButton("Exit", 2, 4, 4, 4);
 				optn_container.add(exit_btn);
 				

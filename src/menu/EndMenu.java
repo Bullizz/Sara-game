@@ -50,7 +50,13 @@ public class EndMenu extends JPanel
 		top.setText("Good job!");
 		this.top = top;
 		
-		initUserInpGUI(final_time_str);
+		if(!final_time_str.equals(""))
+			initUserInpGUI(final_time_str);
+		else
+		{			
+			this.top.setText("Vada a Bordo, Cazzo!");
+			initEndPanel(null, "");
+		}
 	}
 	
 	// Name-input panel
@@ -111,15 +117,17 @@ public class EndMenu extends JPanel
 			filler.setBackground(blue);
 			add(filler);
 		}
-		
 		revalidate();
 	}
 	
 	// Panel with leaderboard and cont. options
-	private void initEndPanel(String user_name, String final_time_str)
+	public void initEndPanel(String user_name, String final_time_str)
 	{
-		double tot_time = getTotTime(final_time_str);
-		writeToLeaderboardMatrix(user_name, final_time_str, tot_time);
+		if(!final_time_str.equals(""))
+		{			
+			double tot_time = getTotTime(final_time_str);
+			writeToLeaderboardMatrix(user_name, final_time_str, tot_time);
+		}
 		
 		String[] leaderboard_matrix = getLeaderboardMatrix();
 		leaderboard_matrix = sortLeaderboardMatrix(leaderboard_matrix);
