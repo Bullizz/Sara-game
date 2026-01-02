@@ -7,14 +7,15 @@
   - ### GamePanel
     - #### ~~Enemy imgs~~
     - #### ~~Goal pos. at milano~~
-    - #### Need to stay at goal pos. for atleast 30 frames
     - #### ~~Correct colors~~
     - #### Add map "scenery"
   - ### Lulle
+    - #### ~~Improve hitbox~~
+    - #### ~~Assign max-points RNG value~~
     - #### Background img
   - ### Lkab
     - #### Wire-src imgs?
-    - #### Player speed?
+    - #### ~~Player speed~~
   - ### Slusk
     - #### Background img
     - #### Change upper limit?
@@ -22,9 +23,9 @@
     - #### SoundFX
   - ### Pauline
     - #### Background img
-- ## Log game-time
+- ## ~~Log game-time¨¨
 
-- ## End menu
+- ## ~~End menu~~
 
 - ## General project cleanup
 
