@@ -60,7 +60,8 @@ public class KeyHandler implements KeyListener
 				slusk_points++;
 			}
 		}
-		
+
+		// For attila minigame
 		else if(attila_active)
 		{
 			int user_key = press.getKeyCode();

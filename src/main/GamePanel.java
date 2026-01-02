@@ -3,6 +3,7 @@ package main;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -52,8 +53,6 @@ public class GamePanel extends JPanel
 	
 	int enemy_collision_index = -1;
 	
-//	int GOAL_X = 858;
-//	int GOAL_Y = 795;
 	int GOAL_X = 854;
 	int GOAL_Y = 772;
 	

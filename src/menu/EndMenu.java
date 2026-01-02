@@ -23,6 +23,8 @@ import javax.swing.JTextField;
 public class EndMenu extends JPanel
 {
 	JFrame frame;
+	JLabel top;
+	
 	int width, height;
 	
 	Color blue = new Color(0, 162, 232);
@@ -36,7 +38,7 @@ public class EndMenu extends JPanel
 	{
 		super();
 			this.width  = frame.getWidth();
-			this.height = 9 * (frame.getHeight() / 10);
+			this.height = (9 * frame.getHeight()) / 10;
 
 		this.frame = frame;
 		
@@ -46,6 +48,7 @@ public class EndMenu extends JPanel
 		frame.add(this);
 		
 		top.setText("Good job!");
+		this.top = top;
 		
 		initUserInpGUI(final_time_str);
 	}
@@ -182,22 +185,23 @@ public class EndMenu extends JPanel
 			filler_top.setBackground(blue);
 			rest.add(filler_top);
 			
-			MenuButton menu_btn = new MenuButton("Main Menu");
-			menu_btn.setOpaque(true);
+			MenuButton menu_btn = new MenuButton("Main Menu", 4, 4, 4, 4);
+			menu_btn.setFrame(frame);
+			menu_btn.setTop(top);
+			menu_btn.setPanel(this);
 			rest.add(menu_btn);
 			
 			JPanel filler_mid = new JPanel();
 			filler_mid.setBackground(blue);
 			rest.add(filler_mid);
 			
-			MenuButton exit_btn = new MenuButton("Exit");
+			MenuButton exit_btn = new MenuButton("Exit", 4, 4, 4, 4);
 			exit_btn.setOpaque(true);
 			rest.add(exit_btn);
 			
 			JPanel filler_bottom = new JPanel();
 			filler_bottom.setBackground(blue);
 			rest.add(filler_bottom);
-		
 		revalidate();
 	}
 	

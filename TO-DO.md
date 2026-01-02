@@ -1,4 +1,4 @@
-- ## Start Menu
+- ## ~~Start Menu~~
 - ## Game Menu
 
 - ## GAME
@@ -23,7 +23,8 @@
     - #### SoundFX
   - ### Pauline
     - #### Background img
-- ## ~~Log game-time¨¨
+    - #### Rescale player-img
+- ## ~~Log game-time~~
 
 - ## ~~End menu~~
 

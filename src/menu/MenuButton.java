@@ -7,8 +7,14 @@ import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+
+import main.GamePanel;
+import main.KeyHandler;
 
 public class MenuButton extends JButton implements /*ActionListener, */MouseListener
 {
@@ -17,17 +23,19 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 	
 	String btn_name;
 	
-	Border border = BorderFactory.createMatteBorder(4, 4, 4, 4, yellow);
-	Border hover_border = BorderFactory.createMatteBorder(7, 7, 7, 7, yellow);
+	Border border;
+	Border hover_border;
 	
 	Font font = new Font("Arial", Font.PLAIN, 40);
 	Font hover_font = new Font("Arial", Font.BOLD, 40);
 	
-	public MenuButton(String btn_name)
+	public MenuButton(String btn_name, int top, int left, int bot, int right)
 	{
 		super(btn_name);
 		
 		this.btn_name = btn_name;
+		border = BorderFactory.createMatteBorder(top, left, bot, right, yellow);
+		hover_border = BorderFactory.createMatteBorder(2 * top, 2 * left, 2 * bot, 2 * right, yellow);
 		
 		new JButton();
 		setBackground(blue);
@@ -36,37 +44,63 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 		setFont(font);
 		addMouseListener(this);
 	}
-	
-//	@Override
-//	public void actionPerformed(ActionEvent e){}
+
+	JFrame frame;
+	JLabel top;
+	JComponent current_panel;
 	
 	@Override
 	public void mouseClicked(MouseEvent e){}
 	@Override
-	public void mousePressed(MouseEvent e)
+	public void mousePressed(MouseEvent press)
 	{
 		switch(btn_name)
 		{
-		case "Main Menu":
-			JOptionPane.showMessageDialog(null, "Main Menu");
-			break;
-		case "Exit":
-			System.exit(0);
-			break;
+			case "Play":
+				frame.remove(current_panel);
+				KeyHandler key_handler = new KeyHandler();
+				frame.addKeyListener(key_handler);
+				frame.requestFocus();
+				new GamePanel(frame, top, null, key_handler, 972, 101);
+				break;
+			case "Main Menu":
+				frame.remove(current_panel);
+				top.setText("Vada a Bordo, Cazzo!");
+				new StartMenu(frame, top);
+				break;
+			case "Switch Song":
+				JOptionPane.showMessageDialog(null, "Switch Song");
+				break;
+			case "Exit":
+				System.exit(0);
+				break;
 		}
 	}
 	@Override
 	public void mouseReleased(MouseEvent e){}
 	@Override
-	public void mouseEntered(MouseEvent e)
+	public void mouseEntered(MouseEvent enter)
 	{
 		setFont(hover_font);
 		setBorder(hover_border);
 	}
 	@Override
-	public void mouseExited(MouseEvent e)
+	public void mouseExited(MouseEvent exit)
 	{		
 		setFont(font);
 		setBorder(border);
+	}
+
+	public void setFrame(JFrame frame)
+	{
+		this.frame = frame;
+	}
+	public void setTop(JLabel top)
+	{
+		this.top = top;
+	}
+	public void setPanel(JComponent start_menu)
+	{
+		current_panel = start_menu;
 	}
 }
