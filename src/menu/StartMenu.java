@@ -78,7 +78,6 @@ public class StartMenu extends JPanel
 			JPanel filler_right = new JPanel();
 			filler_right.setBackground(blue);
 			add(filler_right);
-			
 		frame.setVisible(true);
 	}
 }
