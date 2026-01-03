@@ -22,7 +22,6 @@
     - #### SoundFX
   - ### Pauline
     - #### Background img
-    - #### Rescale player-img
 - ## ~~Log game-time~~
 
 - ## ~~End menu~~
