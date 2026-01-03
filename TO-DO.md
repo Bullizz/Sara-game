@@ -1,9 +1,8 @@
 - ## ~~Start Menu~~
-- ## Game Menu
+- ## ~~Exit game system (gamePanel --> StartMenu)~~
 
 - ## GAME
   - ### Music
-  - ### Pause system
   - ### GamePanel
     - #### ~~Enemy imgs~~
     - #### ~~Goal pos. at milano~~
