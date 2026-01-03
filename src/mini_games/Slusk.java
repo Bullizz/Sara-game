@@ -65,7 +65,7 @@ public class Slusk extends JPanel implements Runnable
 		
 		try
 		{
-//			background_img 		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/background_img.png"));
+			background_img 		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/background.png"));
 			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/big_pic-transp.png"));
 			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar_2-transp.png"));
 			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar-transp.png"));
@@ -208,8 +208,8 @@ public class Slusk extends JPanel implements Runnable
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Paint background
-		g_2d.setColor(Color.CYAN);
-		g_2d.fillRect(0, 0, width, height);
+//		g_2d.setColor(Color.CYAN);
+		g_2d.drawImage(background_img, 0, 0, width, height, null);
 		
 		// Paint space sign
 		g_2d.rotate(Math.toRadians(-45), space_x + (space_width / 2), space_y + (space_height / 2));

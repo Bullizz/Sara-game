@@ -8,6 +8,7 @@
     - #### ~~Goal pos. at milano~~
     - #### ~~Correct colors~~
     - #### Add map "scenery"
+    - #### Fix player img
   - ### Lulle
     - #### ~~Improve hitbox~~
     - #### ~~Assign max-points RNG value~~
@@ -16,7 +17,7 @@
     - #### ~~Wire-src imgs~~
     - #### ~~Player speed~~
   - ### Slusk
-    - #### Background img
+    - #### ~~Background img~~
     - #### Change upper limit?
   - ### Albin
     - #### SoundFX
