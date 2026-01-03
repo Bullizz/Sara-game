@@ -3,20 +3,21 @@
 
 - ## GAME
   - ### Music
-  - ### GamePanel
+  - ### ~~GamePanel~~
     - #### ~~Enemy imgs~~
     - #### ~~Goal pos. at milano~~
     - #### ~~Correct colors~~
-    - #### Add map "scenery"
-    - #### Fix player img
+    - #### ~~Add map "scenery"~~
+    - #### ~~Fix player img~~
+    - #### ~~Fix lulle img~~
   - ### Lulle
     - #### ~~Improve hitbox~~
     - #### ~~Assign max-points RNG value~~
     - #### Background img
-  - ### Lkab
+  - ### ~~Lkab~~
     - #### ~~Wire-src imgs~~
     - #### ~~Player speed~~
-  - ### Slusk
+  - ### ~~Slusk~~
     - #### ~~Background img~~
     - #### ~~Change upper limit~~
   - ### Albin

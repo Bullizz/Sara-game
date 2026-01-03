@@ -4,4 +4,6 @@
   - ### Color-coordination for falling keys in Attila-game
   - ### Falling keys in Attila-game should fall faster
 
-## Implemented
+## Implemented:
+  - ### Change hitbox to lower player in lulle-game
+  - ### Falling keys in Attila-game should fall faster

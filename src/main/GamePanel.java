@@ -67,8 +67,9 @@ public class GamePanel extends JPanel
 		
 		try
 		{
-			map_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/background_map.png"));
-			player_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/sara-transp.png"));
+//			map_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/background_map.png"));
+			map_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/map3.png"));
+			player_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/player.png"));
 			
 			lulle_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle.png")); 
 			albin_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/albin2.png"));
