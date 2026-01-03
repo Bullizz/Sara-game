@@ -13,7 +13,7 @@
     - #### ~~Assign max-points RNG value~~
     - #### Background img
   - ### Lkab
-    - #### Wire-src imgs?
+    - #### ~~Wire-src imgs~~
     - #### ~~Player speed~~
   - ### Slusk
     - #### Background img
