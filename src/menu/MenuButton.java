@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -75,11 +76,17 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 				frame.remove(current_panel);
 				new EndMenu(frame, top, "");
 				break;
+			case "Clear Leaderboard":
+				clearLeaderboard();
+				frame.remove(current_panel);
+				new EndMenu(frame, top, "");
+				break;
 			case "Exit":
 				System.exit(0);
 				break;
 		}
 	}
+	
 	@Override
 	public void mouseReleased(MouseEvent e){}
 	@Override
@@ -106,5 +113,20 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 	public void setPanel(JComponent start_menu)
 	{
 		current_panel = start_menu;
+	}
+
+	// Remove leaderboard file and gen. new empty
+	private void clearLeaderboard()
+	{
+		File file = new File("leaderboard.txt");
+		try
+		{
+			if(file.delete())
+				file.createNewFile();
+			
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

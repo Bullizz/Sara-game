@@ -123,14 +123,19 @@ public class EndMenu extends JPanel
 	// Panel with leaderboard and cont. options
 	public void initEndPanel(String user_name, String final_time_str)
 	{
+		String[] leaderboard_matrix = null;
+		int leaderboard_len = 0;
 		if(!final_time_str.equals(""))
 		{			
 			double tot_time = getTotTime(final_time_str);
-			writeToLeaderboardMatrix(user_name, final_time_str, tot_time);
+			writeToLeaderboardMatrix(user_name, final_time_str, tot_time);			
 		}
-		
-		String[] leaderboard_matrix = getLeaderboardMatrix();
-		leaderboard_matrix = sortLeaderboardMatrix(leaderboard_matrix);
+		leaderboard_matrix = getLeaderboardMatrix();
+		if(leaderboard_matrix != null)
+		{
+			leaderboard_matrix = sortLeaderboardMatrix(leaderboard_matrix);
+			leaderboard_len = leaderboard_matrix.length;
+		}
 		
 		setPreferredSize(new Dimension(width, height));
 		setLocation(0, 0);
@@ -147,11 +152,11 @@ public class EndMenu extends JPanel
 		leaderboard_container.setLayout(new GridLayout(10, 1));
 		for(int i = 0; i < 10; i++)
 		{
-			if(i < leaderboard_matrix.length)
+			String current_entry = "   ";
+			current_entry += (i + 1);
+			current_entry += ". ";
+			if(i < leaderboard_len)
 			{				
-				String current_entry = "   ";
-				current_entry += (i + 1);
-				current_entry += ", ";
 				current_entry += leaderboard_matrix[i];
 				
 				int i1 = -1, i2;
@@ -165,21 +170,13 @@ public class EndMenu extends JPanel
 				current_entry = current_entry.substring(0, i2);
 				current_entry = current_entry.replace(";", ", ");
 				
-				JLabel l = new JLabel(current_entry, JLabel.LEFT);
-				l.setForeground(yellow);
-				l.setBackground(blue);
-				l.setFont(font);
-				l.setOpaque(true);
-				leaderboard_container.add(l);
 			}
-			else
-			{
-				JPanel filler_panel = new JPanel();
-				filler_panel.setForeground(yellow);
-				filler_panel.setBackground(blue);
-				filler_panel.setOpaque(true);
-				leaderboard_container.add(filler_panel);
-			}
+			JLabel l = new JLabel(current_entry, JLabel.LEFT);
+			l.setForeground(yellow);
+			l.setBackground(blue);
+			l.setFont(font);
+			l.setOpaque(true);
+			leaderboard_container.add(l);
 		}
 		
 		width = this.width - ((21 * width) / 20);
@@ -193,17 +190,19 @@ public class EndMenu extends JPanel
 			filler_top.setBackground(blue);
 			rest.add(filler_top);
 			
-			MenuButton menu_btn = new MenuButton("Main Menu", 4, 4, 4, 4);
+			MenuButton menu_btn = new MenuButton("Main Menu", 4, 4, 2, 4);
 			menu_btn.setFrame(frame);
 			menu_btn.setTop(top);
 			menu_btn.setPanel(this);
 			rest.add(menu_btn);
 			
-			JPanel filler_mid = new JPanel();
-			filler_mid.setBackground(blue);
-			rest.add(filler_mid);
+			MenuButton clearLeaderboardBtn = new MenuButton("Clear Leaderboard", 2, 4, 2, 4);
+			clearLeaderboardBtn.setFrame(frame);
+			clearLeaderboardBtn.setTop(top);
+			clearLeaderboardBtn.setPanel(this);			
+			rest.add(clearLeaderboardBtn);
 			
-			MenuButton exit_btn = new MenuButton("Exit", 4, 4, 4, 4);
+			MenuButton exit_btn = new MenuButton("Exit", 2, 4, 4, 4);
 			exit_btn.setOpaque(true);
 			rest.add(exit_btn);
 			
@@ -251,12 +250,9 @@ public class EndMenu extends JPanel
 		new_entry.append(";");
 		
 		BufferedWriter writer;
-		File file = new File("scoreboard.txt");
 		try
 		{
-			if(!file.exists())
-				file.createNewFile();
-			writer = new BufferedWriter(new FileWriter("scoreboard.txt", true));
+			writer = new BufferedWriter(new FileWriter("leaderboard.txt", true));
 			writer.append(new_entry.toString());
 			writer.append('\n');
 
@@ -272,7 +268,7 @@ public class EndMenu extends JPanel
 	{
 		String[] leaderboard = null;
 		
-		File file = new File("scoreboard.txt");
+		File file = new File("leaderboard.txt");
 		Scanner reader = null;
 		try
 		{
@@ -297,6 +293,7 @@ public class EndMenu extends JPanel
 			leaderboard[i] = current_line;
 			index++;
 		}
+		reader.close();
 		
 		return leaderboard;
 	}
@@ -304,6 +301,9 @@ public class EndMenu extends JPanel
 	// Sort leaderboard with respect to time, shortest --> longest
 	private String[] sortLeaderboardMatrix(String[] matrix)
 	{
+		if(matrix == null)
+			return null;
+		
 		int len = matrix.length;
 		double[] tot_time_arr = new double[len];
 		

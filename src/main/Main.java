@@ -9,7 +9,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import menu.StartMenu;
-import mini_games.Lkab;
 
 public class Main
 {
