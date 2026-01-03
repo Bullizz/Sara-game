@@ -18,12 +18,13 @@ import entities.Player;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
+import menu.StartMenu;
 
 public class SSC extends JPanel implements Runnable
 {
 	int width, height;
 	Thread ssc_thread;
-	boolean game_loop_running, game_paused = false;
+	boolean game_loop_running;
 	BufferedImage background_img;
 	int cycle_counter = 0;
 	
@@ -123,9 +124,8 @@ public class SSC extends JPanel implements Runnable
 			long last_time = System.nanoTime();
 			long current_time;
 			
-			boolean game_paused = key_handler.isGame_paused();
 			// Slave game-loop
-			while(game_loop_running && !game_paused)
+			while(game_loop_running)
 			{
 				current_time = System.nanoTime();
 				delta += (current_time - last_time) / draw_interval;
@@ -143,8 +143,8 @@ public class SSC extends JPanel implements Runnable
 						initStripingEffect();
 					}
 					
-					// Minigame completed
-					if(cycle_counter >= rocket_cycles)
+					// Minigame completed or esc. pressed
+					if(cycle_counter >= rocket_cycles || key_handler.GamePanel_space_pressed)
 					{
 						frame.remove(this);
 						
@@ -158,7 +158,19 @@ public class SSC extends JPanel implements Runnable
 				}
 			} // End  of slave game-loop
 		} // End of master game-loop
-		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+		if(key_handler.GamePanel_space_pressed)
+		{
+			game_timer.timer.cancel();
+			
+			frame.removeKeyListener(key_handler);
+			frame.remove(this);
+
+			top.setText("Vada a Bordo, Cazzo!");
+			
+			new StartMenu(frame, top);
+		}
+		else
+			new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
 	}
 	
 	private void updatePlayer()
