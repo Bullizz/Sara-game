@@ -43,12 +43,10 @@ public class KeyHandler implements KeyListener
 		if(user_inp == KeyEvent.VK_ESCAPE && !game_paused)
 		{
 			setGame_paused(true);
-			System.exit(0);
 		}
 		else if(user_inp == KeyEvent.VK_ESCAPE && game_paused)
 		{
 			setGame_paused(false);
-			System.exit(0);
 		}
 		
 		// For slusk minigame

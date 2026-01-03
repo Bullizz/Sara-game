@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import entities.Enemy;
 import entities.Player;
 import menu.EndMenu;
+import menu.StartMenu;
 import mini_games.Albin;
 import mini_games.Attila;
 import mini_games.Lkab;
@@ -205,13 +206,9 @@ public class GamePanel extends JPanel
 							// Collision
 							if(collision_params[0] == 1)
 							{
+								killThreads();
+								
 								enemy_collision_index = collision_params[1];
-								
-								game_loop_running = false;
-								game_thread		  = null;
-								
-								enemies_updating  = false;
-								enemies_thread	  = null;
 							}
 							
 							// Reach goal y-pos.
@@ -220,15 +217,14 @@ public class GamePanel extends JPanel
 								// Reach goal x-pos.
 								if(player.getPlayer_x() < GOAL_X && GOAL_X < (player.getPlayer_x() + player.player_width))
 								{	
-									game_loop_running = false;
-									game_thread 	= null;
-									
-									enemies_updating = false;
-									enemies_thread	= null;
+									killThreads();
 
 									game_timer.setTime_coeff(0);
 								}
 							}
+							
+							if(key_handler.isGame_paused())
+								killThreads();
 							
 							delta = 0;
 						}
@@ -237,6 +233,9 @@ public class GamePanel extends JPanel
 					// Collision detected
 					if(enemy_collision_index > -1)
 						launchMiniGame(enemy_collision_index);
+					
+					else if(key_handler.isGame_paused())
+						initStartMenu();
 					
 					// No collision, game finished
 					else
@@ -632,6 +631,15 @@ public class GamePanel extends JPanel
 		return map;
 	}
 
+	private void killThreads()
+	{
+		game_loop_running	= false;
+		game_thread			= null;
+		
+		enemies_updating	= false;
+		enemies_thread		= null;
+	}
+	
 	// End GamePanel
 	private void endGame()
 	{
@@ -642,6 +650,19 @@ public class GamePanel extends JPanel
 		frame.remove(this);
 		
 		new EndMenu(frame, top, final_time_str);
+	}
+	
+	private void initStartMenu()
+	{
+		killThreads();
+		game_timer.timer.cancel();
+		
+		frame.removeKeyListener(key_handler);
+		frame.remove(this);
+
+		top.setText("Vada a Bordo, Cazzo!");
+		
+		new StartMenu(frame, top);
 	}
 
 	@Override
