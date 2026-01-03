@@ -92,15 +92,15 @@ public class Pauline extends JPanel implements Runnable
 		
 		try
 		{
-			player_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/player-transp.png"));
-			trash_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/trashbin-transp.png"));
-			table_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/table-transp.png"));
+			player_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/player.png"));
+			trash_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/trashbin.png"));
+			table_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/table.png"));
 			
 			
-			item_imgs[0] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmax_songbook-transp.png"));
-			item_imgs[1] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/julmust-transp.png")); 
-			item_imgs[2] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/pain_suprise-transp.png")); 
-			item_imgs[3] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmas_card_2-transp.png")); 
+			item_imgs[0] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmax_songbook.png"));
+			item_imgs[1] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/julmust.png")); 
+			item_imgs[2] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/pain_suprise.png")); 
+			item_imgs[3] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmas_card.png")); 
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -158,6 +158,7 @@ public class Pauline extends JPanel implements Runnable
 					// Check if all items are placed
 					checkPlacedStatus();
 					
+					// User exit
 					if(key_handler.GamePanel_space_pressed)
 					{
 						pauline_thread = null;
@@ -328,12 +329,12 @@ public class Pauline extends JPanel implements Runnable
 		
 		int player_x = player.getPlayer_x();
 		int player_y = player.getPlayer_y();
-		int player_width = player.player_height;
+		int player_height = player.player_height;
 		
-		if(Math.abs(x0 - player_x) < (item_width / 2) || Math.abs(x1 - (player_x + player_width)) < (item_width / 2))
+		if(Math.abs(x0 - player_x) < (item_width / 2) || Math.abs(x1 - (player_x + player_height)) < (item_width / 2))
 			x_crossed = true;
 			
-		if(player_y < y0 && y1 < (player_y + player_width))
+		if(player_y < y0 && y1 < (player_y + player_height))
 			y_crossed = true;
 
 		if(x_crossed && y_crossed)
