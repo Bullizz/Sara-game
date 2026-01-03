@@ -18,7 +18,7 @@
     - #### ~~Player speed~~
   - ### Slusk
     - #### ~~Background img~~
-    - #### Change upper limit?
+    - #### ~~Change upper limit~~
   - ### Albin
     - #### SoundFX
   - ### Pauline

@@ -1,6 +1,8 @@
 # bin files
 bin/
 
+leaderboard.txt
+
 # Machine specifics, different JRE vers. on different machnines
 
 # JDT-specific (Eclipse Java Development Tools)     

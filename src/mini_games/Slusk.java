@@ -182,7 +182,7 @@ public class Slusk extends JPanel implements Runnable
 	private void assignPoints()
 	{
 		int min = 5;
-		int max = 15;
+		int max = 10;
 		
 		points_1 = (int) ((Math.random() * (max - min)) + min);
 		points_2 = (int) ((Math.random() * (max - min)) + min);

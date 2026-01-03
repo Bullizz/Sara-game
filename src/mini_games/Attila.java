@@ -59,7 +59,7 @@ public class Attila extends JPanel implements Runnable
 	int x_ws = 192;
 	int x_a = 64;
 	int x_d = 320;
-	int falling_speed = 10;
+	int falling_speed = 14;
 	int[][] player_keys_pos;
 
 	public Attila(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
