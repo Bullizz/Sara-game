@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
+import menu.StartMenu;
 
 public class Albin extends JPanel
 {
@@ -93,7 +94,7 @@ public class Albin extends JPanel
 			public void run()
 			{
 				// Cycle 1 done
-				if(car_x > width)
+				if(car_x > width || key_handler.GamePanel_space_pressed)
 				{
 					timer_1.cancel();
 					car_dir = 'l';
@@ -112,7 +113,7 @@ public class Albin extends JPanel
 			public void run()
 			{
 				// Cycle 2 done
-				if(car_x + car_width < 0)
+				if(car_x + car_width < 0 || key_handler.GamePanel_space_pressed)
 				{
 					timer_2.cancel();
 					killClass();
@@ -127,12 +128,24 @@ public class Albin extends JPanel
 		timer_1.scheduleAtFixedRate(task1, 0, time_1 / width);
 	}
 	
-	// Remove local GUI-comps. and gen. main GamePanel
+	// Remove local GUI-comps. and gen. main GamePanel or StartMenu
 	private void killClass()
 	{
 		game_timer.setTime_coeff(1);
 		frame.remove(this);
-		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+		if(key_handler.GamePanel_space_pressed)
+		{
+			game_timer.timer.cancel();
+			
+			frame.removeKeyListener(key_handler);
+			frame.remove(this);
+
+			top.setText("Vada a Bordo, Cazzo!");
+			
+			new StartMenu(frame, top);
+		}
+		else
+			new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
 	}
 
 	@Override

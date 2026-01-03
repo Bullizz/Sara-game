@@ -16,12 +16,13 @@ import entities.Player;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
+import menu.StartMenu;
 
 public class Attila extends JPanel implements Runnable
 {
 	Thread lulle_thread;
 	int width, height;
-	boolean game_loop_running, game_paused = false;
+	boolean game_loop_running;
 	Thread attila_thread;
 	BufferedImage background_img;
 	int background_x = 0;
@@ -148,9 +149,9 @@ public class Attila extends JPanel implements Runnable
 			
 			int frame_counter  = 0;
 			int stripe_counter = 0;
-			boolean game_paused = key_handler.isGame_paused();
+			
 			// Slave game-loop
-			while(game_loop_running && !game_paused)
+			while(game_loop_running)
 			{
 				current_time = System.nanoTime();
 				delta += (current_time - last_time) / draw_interval;
@@ -181,7 +182,7 @@ public class Attila extends JPanel implements Runnable
 					repaint();
 					
 					 // Game completed
-					 if(player.getPlayer_x() + player.player_width >= attila_x + key_dim)
+					 if(player.getPlayer_x() + player.player_width >= attila_x + key_dim || key_handler.GamePanel_space_pressed)
 					 {
 						 key_handler.setAttila_active(false);
 						 
@@ -200,7 +201,7 @@ public class Attila extends JPanel implements Runnable
 					}
 					
 					stripe_counter++;
-					// Player/Attila animation
+					// Player|Attila animation
 					if(stripe_counter % 30 == 0)
 					{
 						toggleAngle();
@@ -211,7 +212,19 @@ public class Attila extends JPanel implements Runnable
 				}
 			} // End of slave game-loop
 		} // End of master game-loop
-		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+		if(key_handler.GamePanel_space_pressed)
+		{
+			game_timer.timer.cancel();
+			
+			frame.removeKeyListener(key_handler);
+			frame.remove(this);
+
+			top.setText("Vada a Bordo, Cazzo!");
+			
+			new StartMenu(frame, top);
+		}
+		else
+			new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
 	}
 
 	private void updatePlayer()

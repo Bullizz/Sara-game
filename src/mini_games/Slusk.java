@@ -15,13 +15,14 @@ import javax.swing.JPanel;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
+import menu.StartMenu;
 
 public class Slusk extends JPanel implements Runnable
 {
 	int width, height;
 	Thread slusk_thread;
 	
-	boolean game_loop_running, game_paused = false;
+	boolean game_loop_running;
 	BufferedImage background_img;
 	int points_1, points_2, points_3, points_4, points_5, points_MAX;
 	BufferedImage big_pic;
@@ -117,9 +118,8 @@ public class Slusk extends JPanel implements Runnable
 			long current_time;
 			
 			int time_counter = 0;
-			boolean game_paused = key_handler.isGame_paused();
 			// Slave game-loop
-			while(game_loop_running && !game_paused)
+			while(game_loop_running)
 			{
 				current_time = System.nanoTime();
 				delta += (current_time - last_time) / draw_interval;
@@ -143,7 +143,7 @@ public class Slusk extends JPanel implements Runnable
 					repaint();
 					
 					// Minigame completed
-					if(current_points > points_MAX)
+					if(current_points > points_MAX || key_handler.GamePanel_space_pressed)
 					{
 						key_handler.setSlusk_active(false);
 						game_loop_running = false;
@@ -163,7 +163,19 @@ public class Slusk extends JPanel implements Runnable
 				}
 			} // End  of slave game-loop
 		} // End of master game-loop
-		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+		if(key_handler.GamePanel_space_pressed)
+		{
+			game_timer.timer.cancel();
+			
+			frame.removeKeyListener(key_handler);
+			frame.remove(this);
+
+			top.setText("Vada a Bordo, Cazzo!");
+			
+			new StartMenu(frame, top);
+		}
+		else
+			new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
 	}
 	
 	// Randomize value to be assigned to points

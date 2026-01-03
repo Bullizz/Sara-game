@@ -3,7 +3,6 @@ package main;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +40,7 @@ public class GamePanel extends JPanel
 	final int width;
 	final int height;
 	
-	boolean game_loop_running, game_paused, enemies_updating;
+	boolean game_loop_running, enemies_updating;
 	double random_speed_coeff;
 	
 	JFrame frame;
@@ -160,6 +159,7 @@ public class GamePanel extends JPanel
 			game_timer = new GameTimer();
 			game_timer.initTimer(top);
 		}
+		game_timer.setTime_coeff(1);
 		
 		game_loop_running = true;
 		game_thread = new Thread(new Runnable()
@@ -180,15 +180,8 @@ public class GamePanel extends JPanel
 					long last_time = System.nanoTime();
 					long current_time;
 					
-					boolean game_paused = key_handler.isGame_paused();
-					
-					// Assign timer first value to start it
-					// (only when master loop is started)
-					if(!game_paused && game_loop_running)
-						game_timer.setTime_coeff(1);
-					
 					// Slave game-loop
-					while(game_loop_running && !game_paused)
+					while(game_loop_running)
 					{
 						// Cont. time-to-update logic
 						current_time = System.nanoTime();
@@ -223,7 +216,7 @@ public class GamePanel extends JPanel
 								}
 							}
 							
-							if(key_handler.isGame_paused())
+							if(key_handler.GamePanel_space_pressed)
 								killThreads();
 							
 							delta = 0;
@@ -234,7 +227,7 @@ public class GamePanel extends JPanel
 					if(enemy_collision_index > -1)
 						launchMiniGame(enemy_collision_index);
 					
-					else if(key_handler.isGame_paused())
+					else if(key_handler.GamePanel_space_pressed)
 						initStartMenu();
 					
 					// No collision, game finished
@@ -268,7 +261,7 @@ public class GamePanel extends JPanel
 					int spawn_counter   = 0;
 					
 					// Slave game-loop
-					while(enemies_updating && !game_paused)
+					while(enemies_updating)
 					{
 						current_time = System.nanoTime();
 						delta += (current_time - last_time) / draw_interval;

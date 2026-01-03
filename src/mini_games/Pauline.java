@@ -17,12 +17,13 @@ import entities.Player;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
+import menu.StartMenu;
 
 public class Pauline extends JPanel implements Runnable
 {
 	int width, height;
 	Thread pauline_thread;
-	boolean game_loop_running, game_paused = false;
+	boolean game_loop_running;
 	int falling_column;
 	BufferedImage background_img;
 	
@@ -140,10 +141,8 @@ public class Pauline extends JPanel implements Runnable
 			long last_time = System.nanoTime();
 			long current_time;
 			
-			boolean game_paused = key_handler.isGame_paused();
-			
 			// Slave game-loop
-			while(game_loop_running && !game_paused)
+			while(game_loop_running)
 			{
 				current_time = System.nanoTime();
 				delta += (current_time - last_time) / draw_interval;
@@ -159,11 +158,30 @@ public class Pauline extends JPanel implements Runnable
 					// Check if all items are placed
 					checkPlacedStatus();
 					
+					if(key_handler.GamePanel_space_pressed)
+					{
+						pauline_thread = null;
+						frame.remove(this);
+						game_loop_running = false;
+					}
+					
 					delta = 0;
 				}
 			} // End of slave loop
 		} // End of master-loop
-		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+		if(key_handler.GamePanel_space_pressed)
+		{
+			game_timer.timer.cancel();
+			
+			frame.removeKeyListener(key_handler);
+			frame.remove(this);
+
+			top.setText("Vada a Bordo, Cazzo!");
+			
+			new StartMenu(frame, top);
+		}
+		else
+			new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
 	}
 
 	private void updatePlayer()

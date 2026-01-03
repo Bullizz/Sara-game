@@ -17,7 +17,7 @@ public class StartMenu extends JPanel
 	Color blue = new Color(0, 162, 232);
 	Color yellow = new Color(239, 228, 176);
 	
-	Font font = new Font("Arial", Font.BOLD, 40);
+	Font font = new Font("Arial", Font.PLAIN, 30);
 	
 	public StartMenu(JFrame frame, JLabel top)
 	{
@@ -61,7 +61,7 @@ public class StartMenu extends JPanel
 					music_optn.add(current_song);
 						
 					// Ability to change song, (randomize new)
-					MenuButton switch_song_btn = new MenuButton("Switch Song", 4, 2, 4, 4);
+					MenuButton switch_song_btn = new MenuButton("<html><p> Switch </p><p> Song </p></htlm>", 4, 2, 4, 4);
 					music_optn.add(switch_song_btn);
 				MenuButton leaderboard_btn = new MenuButton("Leaderboard", 2, 4, 2, 4);
 				leaderboard_btn.setFrame(frame);
@@ -76,8 +76,22 @@ public class StartMenu extends JPanel
 				filler_bottom.setBackground(blue);
 				optn_container.add(filler_bottom);
 			JPanel filler_right = new JPanel();
-			filler_right.setBackground(blue);
+			filler_right.setLayout(new GridLayout(3, 1));
 			add(filler_right);
+				JPanel filler_top_right = new JPanel();
+				filler_top_right.setBackground(blue);
+				filler_right.add(filler_top_right);
+
+				JPanel filler_top_left = new JPanel();
+				filler_top_left.setBackground(blue);
+				filler_right.add(filler_top_left);
+				
+				JLabel esc_info_text = new JLabel("<html><p>Press Esc. to exit the game</p><p>and return to the start menu!</p></html>", JLabel.CENTER);
+				esc_info_text.setBackground(blue);
+				esc_info_text.setForeground(yellow);
+				esc_info_text.setFont(font);
+				esc_info_text.setOpaque(true);
+				filler_right.add(esc_info_text);
 		frame.setVisible(true);
 	}
 }

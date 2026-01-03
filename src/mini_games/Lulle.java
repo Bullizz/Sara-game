@@ -18,12 +18,12 @@ import entities.Player;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
+import menu.StartMenu;
 
 public class Lulle extends JPanel implements Runnable
 {
 	Thread lulle_thread;
 	int width, height;
-	boolean game_paused 	  = false;
 	boolean dirt_placed 	  = false;
 	boolean game_loop_running = true;
 	final int RNG 			  = 100;
@@ -126,10 +126,8 @@ public class Lulle extends JPanel implements Runnable
 			long last_time = System.nanoTime();
 			long current_time;
 			
-			boolean game_paused = key_handler.isGame_paused();
-			
 			// Slave game-loop
-			while(game_loop_running && !game_paused)
+			while(game_loop_running)
 			{
 				current_time = System.nanoTime();
 				delta += (current_time - last_time) / draw_interval;
@@ -145,8 +143,8 @@ public class Lulle extends JPanel implements Runnable
 
 					repaint();
 					
-					// Minigame finished
-					if(points == MAX_POINTS)
+					// Minigame finished or esc. pressed
+					if(points == MAX_POINTS || key_handler.GamePanel_space_pressed)
 					{
 						lulle_thread = null;
 						frame.remove(this);
@@ -157,7 +155,19 @@ public class Lulle extends JPanel implements Runnable
 				}
 			} // End of slave game-loop
 		} // End of master game-loop
-		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+		if(key_handler.GamePanel_space_pressed)
+		{
+			game_timer.timer.cancel();
+			
+			frame.removeKeyListener(key_handler);
+			frame.remove(this);
+
+			top.setText("Vada a Bordo, Cazzo!");
+			
+			new StartMenu(frame, top);
+		}
+		else
+			new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
 	}
 	
 	private void updatePlayer()

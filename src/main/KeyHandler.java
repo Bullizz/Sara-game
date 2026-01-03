@@ -7,28 +7,18 @@ import javax.swing.JFrame;
 
 public class KeyHandler implements KeyListener
 {
-//	JFrame frame;
-	boolean game_paused = false;
+	public boolean GamePanel_space_pressed = false;
 	public boolean UP, LEFT, DOWN, RIGHT;
 	int[] direction_arr = {0, 0};
 	
 	// Slusk minigame
 	int slusk_points;
-	boolean space_pressed;
+	boolean slusk_space_pressed;
 	boolean slusk_active;
 	
 	// Attila minigame
 	boolean attila_active;
 	char current_key;
-
-	public boolean isGame_paused()
-	{
-		return game_paused;
-	}
-	public void setGame_paused(boolean game_paused)
-	{
-		this.game_paused = game_paused;
-	}
 	
 	@Override
 	public void keyTyped(KeyEvent e){}
@@ -39,22 +29,15 @@ public class KeyHandler implements KeyListener
 		int dx = getDirection_arr()[0];
 		int dy = getDirection_arr()[1];
 		
-		// Toggle pause status
-		if(user_inp == KeyEvent.VK_ESCAPE && !game_paused)
-		{
-			setGame_paused(true);
-		}
-		else if(user_inp == KeyEvent.VK_ESCAPE && game_paused)
-		{
-			setGame_paused(false);
-		}
+		if(user_inp == KeyEvent.VK_ESCAPE)
+			GamePanel_space_pressed = true;
 		
 		// For slusk minigame
 		if(slusk_active)
 		{
-			if(user_inp == KeyEvent.VK_SPACE && !space_pressed)
+			if(user_inp == KeyEvent.VK_SPACE && !slusk_space_pressed)
 			{
-				space_pressed = true;
+				slusk_space_pressed = true;
 				slusk_points++;
 			}
 		}
@@ -120,8 +103,8 @@ public class KeyHandler implements KeyListener
 		
 		if(slusk_active)
 		{			
-			if(release.getKeyCode() == KeyEvent.VK_SPACE && space_pressed)
-				space_pressed = false;
+			if(release.getKeyCode() == KeyEvent.VK_SPACE && slusk_space_pressed)
+				slusk_space_pressed = false;
 		}
 		
 		else if(attila_active)
@@ -190,11 +173,11 @@ public class KeyHandler implements KeyListener
 	// Slusk minigame methods
 	public boolean isSpace_pressed()
 	{
-		return space_pressed;
+		return slusk_space_pressed;
 	}
 	public void setSpace_pressed(boolean space_pressed)
 	{
-		this.space_pressed = space_pressed;
+		this.slusk_space_pressed = space_pressed;
 	}
 
 	public int getSlusk_points()
