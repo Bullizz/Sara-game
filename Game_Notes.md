@@ -1,9 +1,12 @@
 ## MENU
 - ### Start Menu
    - #### Play
-   - #### Options
-      - Song choice
-        - Randomized
+   - #### Randomize song
+        - Ram Ranch 46
+        - Miss Li
+        - Canneloni Macaroni
+        - フニクリ フニクラ
+   - ##### Leaderboard
    - ##### Exit
 - ### Game Menu
    - #### "Warning, progress won't be saved if you quit the game"
@@ -18,11 +21,13 @@
             - #### Need to bong
             - #### Really increases time
             - #### Button mash, press space-button <RNG> amount of times
+            - #### Vine boom (for slow bong)
          - #### Lulle
             - #### Need to clean up after him
          - #### Albin (hero?)
             - #### Time goes down
             - #### RNG amount of time restored
+            - #### car sfx
          - #### LKAB
             - #### Need to go through swamp
             - #### Player speed ~50%
