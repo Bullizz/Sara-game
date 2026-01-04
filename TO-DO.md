@@ -27,7 +27,7 @@
     - #### ~~Lower GameAudio~~
   - ### Pauline
     - #### ~~Background img~~
-    - #### ~~Add buffer columns so fall-items !~ table | trashbin~~
+    - #### ~~Add buffer columns so fall-items != table | trashbin~~
 - ## ~~Log game-time~~
 
 - ## ~~End menu~~
