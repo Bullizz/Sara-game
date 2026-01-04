@@ -36,6 +36,7 @@ public class AudioHandler implements LineListener
 			System.out.println();
 		clip = null;
 		
+		// Play audio file
 		try
 		{
 			clip = (Clip) AudioSystem.getLine(new Line.Info(Clip.class));
@@ -60,19 +61,12 @@ public class AudioHandler implements LineListener
 	@Override
 	public void update(LineEvent event)
 	{
-		{
-			/*
-			if(repeat)
+		// Audio file finished
+		if(event.getType() == LineEvent.Type.STOP)
+		{				
+			clip.close();
+			if(repeat && !user_stop)
 				new AudioHandler("", true, current_song_index);
-			else if(!repeat)
-				clip.close();
-			*/
-			if(event.getType() == LineEvent.Type.STOP)
-			{				
-				clip.close();
-				if(repeat && !user_stop)
-					new AudioHandler("", true, current_song_index);
-			}
 		}
 	}
 
@@ -81,6 +75,7 @@ public class AudioHandler implements LineListener
 		return current_song_index;
 	}
 	
+	// Randomize next song
 	private String getRNGSong(int old_song_index)
 	{
 		String[] song_names = {"ram_ranch_46.wav",
@@ -90,11 +85,11 @@ public class AudioHandler implements LineListener
 							   "miss_li.wav"};
 		
 		double[][] nums = new double[5][2];
-		nums[0][0]	= 1; // Ram Ranch			- 7%
-		nums[1][0]	= 3; // Canelloni Macaroni	- 21%
-		nums[2][0]	= 3; // Caramelldansen		- 21%
-		nums[3][0]	= 3; // Italian SFX			- 21%
-		nums[4][0]	= 4; // Miss Li				- 29%
+		nums[0][0]	= 1; // Ram Ranch			- 4%
+		nums[1][0]	= 6; // Canelloni Macaroni	- 22%
+		nums[2][0]	= 6; // Caramelldansen		- 22%
+		nums[3][0]	= 6; // Italian SFX			- 22%
+		nums[4][0]	= 8; // Miss Li				- 30%
 		
 		nums[0][1] = 1;
 		for(int i = 1; i < nums.length; i++)
@@ -105,13 +100,16 @@ public class AudioHandler implements LineListener
 		int new_song_index = old_song_index;
 		int i = 0;
 		
-		// Ensure new song starts playing
+		// Ensure new song is not the same as the previous one
 		while(new_song_index == old_song_index)
 		{
 			double RNG = Math.random() * max;
 			
-//			if(RNG < nums[i][1])
-//				old_song_index = i;	
+			// First array entry
+			if(RNG < nums[i][1])
+				new_song_index = i;
+			
+			// Rest of entries
 			for(i = 1; i < nums.length; i++)
 			{
 				if(nums[i - 1][1] <= RNG && RNG < nums[i][1])
@@ -131,20 +129,7 @@ public class AudioHandler implements LineListener
 		user_stop = true;
 		clip.close();
 	}
-	/*
-	public String getCurrentSongStr()
-	{
-		String[] song_names = {"ram_ranch_46.wav",
-				   "canelloni_macaroni.wav",
-				   "caramelldansen.wav",
-				   "italian_sfx.wav",
-				   "miss_li.wav"};
-		String current_song_name = song_names[current_song_index];
-		current_song_name = current_song_name.
 	
-		return song_names[current_song_index];
-	}
-	*/
 	public void raiseVolume(int level)
 	{		
 		float_ctrl.setValue(level);

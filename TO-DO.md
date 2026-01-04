@@ -15,6 +15,7 @@
     - #### ~~Improve hitbox~~
     - #### ~~Assign max-points RNG value~~
     - #### Background img
+    - #### Fix dirt spawn point is valid
   - ### ~~Lkab~~
     - #### ~~Wire-src imgs~~
     - #### ~~Player speed~~
