@@ -25,9 +25,9 @@
     - #### Lower GameAudio
   - ### Albin
     - #### ~~SoundFX~~
-    - #### Lower GameAudio
+    - #### ~~Lower GameAudio~~
   - ### Pauline
-    - #### Background img
+    - #### ~~Background img~~
     - #### Add buffer columns so fall-items !~ table | trashbin
 - ## ~~Log game-time~~
 

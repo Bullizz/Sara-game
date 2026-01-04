@@ -94,20 +94,19 @@ public class Pauline extends JPanel implements Runnable
 		
 		try
 		{
-			player_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/player.png"));
-			trash_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/trashbin.png"));
-			table_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/table.png"));
+			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/backg_img.png"));
+			player_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/player.png"));
+			trash_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/trashbin.png"));
+			table_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/table.png"));
 			
-			
-			item_imgs[0] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmax_songbook.png"));
-			item_imgs[1] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/julmust.png")); 
-			item_imgs[2] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/pain_suprise.png")); 
-			item_imgs[3] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmas_card.png")); 
+			item_imgs[0]	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmax_songbook.png"));
+			item_imgs[1] 	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/julmust.png")); 
+			item_imgs[2]	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/pain_suprise.png")); 
+			item_imgs[3]	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmas_card.png")); 
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
-		
 		
 		this.frame				= frame;
 		this.top				= top;
@@ -387,8 +386,8 @@ public class Pauline extends JPanel implements Runnable
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Paint room
-		g_2d.setColor(Color.BLUE);
-		g_2d.fillRect(0, 0, width, height);
+//		g_2d.setColor(Color.BLUE);
+		g_2d.drawImage(background_img, 0, 0, width, height, null);
 		
 		// Paint table
 		g_2d.drawImage(table_img, 0, 0, 2 * falling_column, height, null);
