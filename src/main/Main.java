@@ -33,6 +33,7 @@ public class Main
 		top.setOpaque(true);
 		frame.add(top);
 
-		new StartMenu(frame, top);
+		AudioHandler audio_handler = new AudioHandler("", true);
+		new StartMenu(frame, top, audio_handler);
 	}
 }

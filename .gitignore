@@ -2,6 +2,7 @@
 bin/
 
 leaderboard.txt
+src/audio_files/ram_ranch_46.mp3
 
 # Machine specifics, different JRE vers. on different machnines
 
