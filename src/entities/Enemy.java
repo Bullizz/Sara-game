@@ -3,6 +3,7 @@ package entities;
 public class Enemy
 {
 	int x, y;
+	public int x0, y0;
 	int speed_x, speed_y;
 
 	public int width, height;
@@ -14,7 +15,9 @@ public class Enemy
 	{
 		this.id_string 	 = id_string;
 		this.x 			 = x;
+			x0			 = x;
 		this.y			 = y;
+			y0			 = y;
 		this.width		 = width;
 		this.height		 = height;
 	}

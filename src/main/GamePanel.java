@@ -89,7 +89,7 @@ public class GamePanel extends JPanel
 		if(!frame.isVisible())
 			frame.setVisible(true);
 
-		int entity_width  = this.width / 30;
+		int entity_width  = this.width  / 30;
 		int entity_height = this.height / 30;
 		
 		// Init. enemies
@@ -332,9 +332,9 @@ public class GamePanel extends JPanel
 		int player_y = player.getPlayer_y();
 		
 		// If within map constraints
-		if(moveableX2(player_x, player_y, player.player_width, player.player_height, player_dx))
+		if(moveableX(player_x, player_y, player.player_width, player.player_height, player_dx) == 1)
 			player_x += player_speed_x * player_dx;
-		if(moveableY2(player_x, player_y, player.player_width, player.player_height, player_dy))
+		if(moveableY(player_x, player_y, player.player_width, player.player_height, player_dy) == 1)
 			player_y += player_speed_y * player_dy;
 		
 		player.setPlayer_x(player_x);
@@ -428,18 +428,29 @@ public class GamePanel extends JPanel
 			}
 
 			// Enemy stays within map constraints
-			if(moveableX2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]))
-				current_enemy.setEnemy_x((int) (enemy_x + speed_x));
-			if(moveableY2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[1]))
-				current_enemy.setEnemy_y((int) (enemy_y + speed_y));
+			int moving_x = moveableX(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]);
+			int moving_y = moveableY(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[1]);
+			
+			if(moving_x == 1)
+				enemy_x += speed_x;
+			if(moving_y == 1)
+				enemy_y += speed_y;
+			if(moving_x == -1 || moving_y == -1)
+			{				
+				enemy_x = current_enemy.x0;
+				enemy_y = current_enemy.y0;
+			}
+			
+			current_enemy.setEnemy_x((int) enemy_x);
+			current_enemy.setEnemy_y((int) enemy_y);
 		}
 	}
 
 	// Moveable within x-direction
-	private boolean moveableX2(double enemy_x, double enemy_y, int player_width, int player_height, double direction_arr)
+	private int moveableX(double entity_x, double entity_y, int entity_width, int entity_height, double direction_arr)
 	{
 		if(direction_arr > 0)
-			enemy_x += player_width;
+			entity_x += entity_width;
 		
 		/* 
 		 * 	  enemy_x	  enemy_x + player_width
@@ -458,20 +469,27 @@ public class GamePanel extends JPanel
 		
 		for(int i = 1; i <= 13; i++)
 		{
-			enemy_x += direction_arr;
-			// 				  			(x, y1)																	(x, y2)
-			if(map_constraints[(int) enemy_y][(int) enemy_x] == 1 || map_constraints[(int) enemy_y + player_height][(int) enemy_x] == 1)
-				return false;
+			entity_x += direction_arr;
+			
+			try
+			{				
+				// 				  			   (x, y1)																   (x, y2)
+				if(map_constraints[(int) entity_y][(int) entity_x] == 1 || map_constraints[(int) entity_y + entity_height][(int) entity_x] == 1)
+					return 0;
+			} catch(Exception e)
+			{
+				return -1;
+			}
 		}
 		
-		return true;
+		return 1;
 	}
 
 	// Moveable within y-direction
-	private boolean moveableY2(double enemy_x, double enemy_y, int player_width, int player_height, double direction_arr)
+	private int moveableY(double entity_x, double entity_y, int entity_width, int entity_height, double direction_arr)
 	{
 		if(direction_arr > 0)
-			enemy_y += player_height;
+			entity_y += entity_height;
 		
 		/* 
 		 * 			
@@ -489,16 +507,19 @@ public class GamePanel extends JPanel
 		
 		for(int i = 1; i <= 13; i++)
 		{
-			enemy_y += direction_arr;
+			entity_y += direction_arr;
 			try
 			{
-				// 				  			(x1, y)																	(x2, y)
-				if(map_constraints[(int) enemy_y][(int) enemy_x] == 1 || map_constraints[(int) enemy_y][(int) enemy_x + player_width] == 1)
-					return false;
-			} catch(Exception e){return false;}
+				// 				  			  (x1, y)												  (x2, y)
+				if(map_constraints[(int) entity_y][(int) entity_x] == 1 || map_constraints[(int) entity_y][(int) entity_x + entity_width] == 1)
+					return 0;
+			} catch(Exception e)
+			{
+				return -1;
+			}
 		}
 		
-		return true;
+		return 1;
 	}
 	
 	// Check if entity collides with any enemy
