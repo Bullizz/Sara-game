@@ -20,6 +20,7 @@ public class AudioHandler implements LineListener
 	boolean repeat;
 	Clip clip;
 	int current_song_index;
+	boolean user_stop = false;
 	
 	public AudioHandler(String file_name, boolean repeat, int current_song_index)
 	{
@@ -39,15 +40,15 @@ public class AudioHandler implements LineListener
 			clip = (Clip) AudioSystem.getLine(new Line.Info(Clip.class));
 			clip.addLineListener(this);
 			clip.open(AudioSystem.getAudioInputStream(file)); 
-		} catch (LineUnavailableException e)
+		} catch (LineUnavailableException lue)
 		{
-			e.printStackTrace();
-		} catch(IOException e)
+			lue.printStackTrace();
+		} catch(IOException ioe)
 		{
-			e.printStackTrace();
-		} catch(UnsupportedAudioFileException e)
+			ioe.printStackTrace();
+		} catch(UnsupportedAudioFileException uafe)
 		{
-			e.printStackTrace();
+			uafe.printStackTrace();
 		}
 		
 		clip.start();
@@ -56,12 +57,19 @@ public class AudioHandler implements LineListener
 	@Override
 	public void update(LineEvent event)
 	{
-		if(event.getType() == LineEvent.Type.STOP)
 		{
+			/*
 			if(repeat)
-				new AudioHandler("", true);
+				new AudioHandler("", true, current_song_index);
 			else if(!repeat)
 				clip.close();
+			*/
+			if(event.getType() == LineEvent.Type.STOP)
+			{				
+				clip.close();
+				if(repeat && !user_stop)
+					new AudioHandler("", true, current_song_index);
+			}
 		}
 	}
 
@@ -90,34 +98,48 @@ public class AudioHandler implements LineListener
 			nums[i][1] = nums[i][0] + nums[i - 1][1];
 		
 		double max = nums[nums.length - 1][1];
-
+		
 		int new_song_index = old_song_index;
+		int i = 0;
 		
 		// Ensure new song starts playing
 		while(new_song_index == old_song_index)
 		{
 			double RNG = Math.random() * max;
-			int i = 0;
+			
+//			if(RNG < nums[i][1])
+//				old_song_index = i;	
 			for(i = 1; i < nums.length; i++)
 			{
 				if(nums[i - 1][1] <= RNG && RNG < nums[i][1])
 				{
 					new_song_index = i;
 					break;
-				}		
+				}
 			}
-			
-			i = 0;
-			if(RNG < nums[i][1])
-				old_song_index = i;
 		}
-
-		current_song_index = i;
-		return song_names[i];
+		
+		current_song_index = new_song_index;
+		return song_names[new_song_index];
 	}
 
 	public void endCurrentSong()
 	{
+		user_stop = true;
 		clip.close();
 	}
+	/*
+	public String getCurrentSongStr()
+	{
+		String[] song_names = {"ram_ranch_46.wav",
+				   "canelloni_macaroni.wav",
+				   "caramelldansen.wav",
+				   "italian_sfx.wav",
+				   "miss_li.wav"};
+		String current_song_name = song_names[current_song_index];
+		current_song_name = current_song_name.
+	
+		return song_names[current_song_index];
+	}
+	*/
 }

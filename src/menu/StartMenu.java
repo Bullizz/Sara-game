@@ -8,7 +8,10 @@ import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import main.AudioHandler;
 
 public class StartMenu extends JPanel
 {
@@ -19,7 +22,7 @@ public class StartMenu extends JPanel
 	
 	Font font = new Font("Arial", Font.PLAIN, 30);
 	
-	public StartMenu(JFrame frame, JLabel top)
+	public StartMenu(JFrame frame, JLabel top, AudioHandler game_audio)
 	{
 		super();
 			this.width  = frame.getWidth();
@@ -46,27 +49,34 @@ public class StartMenu extends JPanel
 				play_btn.setFrame(frame);
 				play_btn.setTop(top);
 				play_btn.setPanel(this);
+				play_btn.setAudioHandler(game_audio);
 				optn_container.add(play_btn);
 				
-				JPanel music_optn = new JPanel();
+/*				JPanel music_optn = new JPanel();
 				music_optn.setLayout(new GridLayout(1, 2));
 				optn_container.add(music_optn);
 					// Name of current song
-					JLabel current_song = new JLabel("Song", JLabel.CENTER);
+					String current_song_name = game_audio.getCurrentSongStr();
+					JLabel current_song = new JLabel(current_song_name, JLabel.CENTER);
 					current_song.setBackground(blue);
 					current_song.setForeground(yellow);
 					current_song.setFont(font);
 					current_song.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, yellow));
 					current_song.setOpaque(true);
 					music_optn.add(current_song);
+					*/
 						
 					// Ability to change song, (randomize new)
-					MenuButton switch_song_btn = new MenuButton("<html><p> Switch </p><p> Song </p></htlm>", 4, 2, 4, 4);
-					music_optn.add(switch_song_btn);
+				MenuButton switch_song_btn = new MenuButton("Switch Song", 2, 4, 2, 4);
+//				switch_song_btn.setText("<html><p> Switch </p><p> Song </p></htlm>");
+				switch_song_btn.setAudioHandler(game_audio);
+				optn_container.add(switch_song_btn);
+				
 				MenuButton leaderboard_btn = new MenuButton("Leaderboard", 2, 4, 2, 4);
 				leaderboard_btn.setFrame(frame);
 				leaderboard_btn.setTop(top);
 				leaderboard_btn.setPanel(this);
+				leaderboard_btn.setAudioHandler(game_audio);
 				optn_container.add(leaderboard_btn);
 				
 				MenuButton exit_btn = new MenuButton("Exit", 2, 4, 4, 4);
