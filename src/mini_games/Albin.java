@@ -42,6 +42,8 @@ public class Albin extends JPanel
 	char car_dir 	= 'r';	// <'l'|'r'> = <left|right>
 	int car_x, car_y;
 	BufferedImage car_left, car_right;
+	
+	AudioHandler albin_audio;
 
 	public Albin(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x, int player_y)
 	{
@@ -102,7 +104,6 @@ public class Albin extends JPanel
 				{
 					timer_1.cancel();
 					car_dir = 'l';
-//					new AudioHandler("sfx/car-trimmed.wav", false, -1);
 					timer_2.scheduleAtFixedRate(task2, 0, time_2 / width);
 				}
 				
@@ -111,7 +112,7 @@ public class Albin extends JPanel
 			}
 		};
 
-		// Timer for cycle 2 (right --> left)
+		// Timer for cycle 2 (left <-- right)
 		task2 = new TimerTask()
 		{
 			@Override
@@ -121,16 +122,21 @@ public class Albin extends JPanel
 				if(car_x + car_width < 0 || key_handler.GamePanel_space_pressed)
 				{
 					timer_2.cancel();
+					try
+					{
+						albin_audio.endCurrentSong();
+					} catch(Exception e){}
+					game_audio.raiseVolume(0);
 					killClass();
 				}
 				
 				car_x--;
 				repaint();
 			}
-
 		};
 		
-		new AudioHandler("sfx/car-trimmed.wav", false, -1);
+		game_audio.lowerVolume();
+		albin_audio = new AudioHandler("sfx/car.wav", false, -1);
 		timer_1.scheduleAtFixedRate(task1, 0, time_1 / width);
 	}
 	
@@ -147,6 +153,7 @@ public class Albin extends JPanel
 			frame.remove(this);
 
 			top.setText("Vada a Bordo, Cazzo!");
+			albin_audio.endCurrentSong();
 			
 			new StartMenu(frame, top, game_audio);
 		}

@@ -2,10 +2,10 @@ package main;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.Line;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
@@ -16,7 +16,10 @@ public class AudioHandler implements LineListener
 {
 	String file_name = "src/audio_files/";
 	boolean repeat;
+	
 	Clip clip;
+	FloatControl float_ctrl;
+	
 	int current_song_index;
 	boolean user_stop = false;
 	
@@ -37,7 +40,9 @@ public class AudioHandler implements LineListener
 		{
 			clip = (Clip) AudioSystem.getLine(new Line.Info(Clip.class));
 			clip.addLineListener(this);
-			clip.open(AudioSystem.getAudioInputStream(file)); 
+			clip.open(AudioSystem.getAudioInputStream(file));
+			float_ctrl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+			float_ctrl.setValue(0);
 		} catch (LineUnavailableException lue)
 		{
 			lue.printStackTrace();
@@ -140,4 +145,12 @@ public class AudioHandler implements LineListener
 		return song_names[current_song_index];
 	}
 	*/
+	public void raiseVolume(int level)
+	{		
+		float_ctrl.setValue(level);
+	}
+	public void lowerVolume()
+	{
+		float_ctrl.setValue(-10);
+	}
 }
