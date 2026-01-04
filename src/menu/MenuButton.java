@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 
+import main.AudioHandler;
 import main.GamePanel;
 import main.KeyHandler;
 
@@ -34,9 +35,9 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 	{
 		super(btn_name);
 		
-		this.btn_name = btn_name;
-		border = BorderFactory.createMatteBorder(top, left, bot, right, yellow);
-		hover_border = BorderFactory.createMatteBorder(2 * top, 2 * left, 2 * bot, 2 * right, yellow);
+		this.btn_name	= btn_name;
+		border			= BorderFactory.createMatteBorder(top, left, bot, right, yellow);
+		hover_border	= BorderFactory.createMatteBorder(2 * top, 2 * left, 2 * bot, 2 * right, yellow);
 		
 		new JButton();
 		setBackground(blue);
@@ -49,6 +50,7 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 	JFrame frame;
 	JLabel top;
 	JComponent current_panel;
+	AudioHandler game_audio;
 	
 	@Override
 	public void mouseClicked(MouseEvent e){}
@@ -62,24 +64,28 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 				KeyHandler key_handler = new KeyHandler();
 				frame.addKeyListener(key_handler);
 				frame.requestFocus();
-				new GamePanel(frame, top, null, key_handler, 972, 101);
+				new GamePanel(frame, top, null, key_handler, game_audio, 972, 101);
 				break;
 			case "Main Menu":
 				frame.remove(current_panel);
 				top.setText("Vada a Bordo, Cazzo!");
-				new StartMenu(frame, top);
+				new StartMenu(frame, top, game_audio);
 				break;
 			case "Switch Song":
-				JOptionPane.showMessageDialog(null, "Switch Song");
+				int current_song_index = game_audio.getCurrent_song_index();
+				game_audio.endCurrentSong();
+				game_audio = new AudioHandler("", true, current_song_index);
+				frame.remove(current_panel);
+				new StartMenu(frame, top, game_audio);
 				break;
 			case "Leaderboard":
 				frame.remove(current_panel);
-				new EndMenu(frame, top, "");
+				new EndMenu(frame, top, game_audio, "");
 				break;
 			case "Clear Leaderboard":
 				clearLeaderboard();
 				frame.remove(current_panel);
-				new EndMenu(frame, top, "");
+				new EndMenu(frame, top, game_audio, "");
 				break;
 			case "Exit":
 				System.exit(0);
@@ -113,6 +119,10 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 	public void setPanel(JComponent start_menu)
 	{
 		current_panel = start_menu;
+	}
+	public void setAudioHandler(AudioHandler game_audio)
+	{
+		this.game_audio = game_audio;
 	}
 
 	// Remove leaderboard file and gen. new empty

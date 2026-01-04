@@ -20,10 +20,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import main.AudioHandler;
+
 public class EndMenu extends JPanel
 {
 	JFrame frame;
 	JLabel top;
+	AudioHandler game_audio;
 	
 	int width, height;
 	
@@ -34,13 +37,14 @@ public class EndMenu extends JPanel
 	
 	boolean key_pressed = false;
 	
-	public EndMenu(JFrame frame, JLabel top, String final_time_str)
+	public EndMenu(JFrame frame, JLabel top, AudioHandler game_audio, String final_time_str)
 	{
 		super();
 			this.width  = frame.getWidth();
 			this.height = (9 * frame.getHeight()) / 10;
 
 		this.frame = frame;
+		this.game_audio = game_audio;
 		
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
@@ -125,11 +129,13 @@ public class EndMenu extends JPanel
 	{
 		String[] leaderboard_matrix = null;
 		int leaderboard_len = 0;
+		
 		if(!final_time_str.equals(""))
 		{			
 			double tot_time = getTotTime(final_time_str);
 			writeToLeaderboardMatrix(user_name, final_time_str, tot_time);			
 		}
+		
 		leaderboard_matrix = getLeaderboardMatrix();
 		if(leaderboard_matrix != null)
 		{
@@ -194,16 +200,18 @@ public class EndMenu extends JPanel
 			menu_btn.setFrame(frame);
 			menu_btn.setTop(top);
 			menu_btn.setPanel(this);
+			menu_btn.setAudioHandler(game_audio);
 			rest.add(menu_btn);
 			
 			MenuButton clearLeaderboardBtn = new MenuButton("Clear Leaderboard", 2, 4, 2, 4);
 			clearLeaderboardBtn.setFrame(frame);
 			clearLeaderboardBtn.setTop(top);
-			clearLeaderboardBtn.setPanel(this);			
+			clearLeaderboardBtn.setPanel(this);
+			clearLeaderboardBtn.setAudioHandler(game_audio);
 			rest.add(clearLeaderboardBtn);
 			
 			MenuButton exit_btn = new MenuButton("Exit", 2, 4, 4, 4);
-			exit_btn.setOpaque(true);
+//			exit_btn.setOpaque(true);
 			rest.add(exit_btn);
 			
 			JPanel filler_bottom = new JPanel();
