@@ -273,9 +273,12 @@ public class Lulle extends JPanel implements Runnable
 		int dirt_rng = (int) (Math.random() * RNG);
 		if(dirt_rng == 0 && !dirt_placed)
 		{
-			dirt_placed = true;
 			dirt_x = npc_x;
 			dirt_y = npc_y + (entity_height / 2);
+			
+			// Ensure dirt cannot be placed where player cannot reach
+			if(npc_y > (entity_height / 2))
+				dirt_placed = true;
 		}
 		
 		npc.setEnemy_x(npc_x);

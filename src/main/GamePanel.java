@@ -96,7 +96,7 @@ public class GamePanel extends JPanel
 		lulle 	= new Enemy("lulle",	1460,  259,  entity_height, entity_width);
 		albin	= new Enemy("albin",	1468,  356,  entity_height, entity_width);
 		lkab	= new Enemy("lkab",		664,   313,  entity_height, entity_width);
-		ssc		= new Enemy("ssc",		1665,  107,  entity_height, entity_width);
+		ssc		= new Enemy("ssc",		1645,  100,  entity_height, entity_width);
 		slusk	= new Enemy("slusk",	1402,  567,  entity_height, entity_width);
 		attila	= new Enemy("attila",	807,   739,  entity_height, entity_width);
 		pauline = new Enemy("pauline",  504,   647,  entity_height, entity_width);
