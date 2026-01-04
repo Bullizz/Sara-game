@@ -2,7 +2,7 @@
 - ## ~~Exit game system (gamePanel --> StartMenu)~~
 
 - ## GAME
-  - ### Music
+  - ### ~~Music~~
   - ### GamePanel
     - #### ~~Enemy imgs~~
     - #### ~~Goal pos. at milano~~
@@ -21,9 +21,11 @@
   - ### ~~Slusk~~
     - #### ~~Background img~~
     - #### ~~Change upper limit~~
-    - #### SoundFX
+    - #### ~~SoundFX~~
+    - #### Lower GameAudio
   - ### Albin
-    - #### SoundFX
+    - #### ~~SoundFX~~
+    - #### Lower GameAudio
   - ### Pauline
     - #### Background img
     - #### Add buffer columns so fall-items !~ table | trashbin
