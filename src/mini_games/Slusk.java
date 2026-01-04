@@ -223,10 +223,6 @@ public class Slusk extends JPanel implements Runnable
 	{
 		AudioHandler slusk_audio = new AudioHandler("sfx/vine-boom.wav", false, -1);
 		slusk_audio.raiseVolume(6);
-//		int play_sfx = (int) (Math.random() * 2);
-//		if(play_sfx == 0)
-//		{
-//		}
 	}
 	
 	@Override
