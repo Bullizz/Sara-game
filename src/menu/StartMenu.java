@@ -69,6 +69,9 @@ public class StartMenu extends JPanel
 					// Ability to change song, (randomize new)
 				MenuButton switch_song_btn = new MenuButton("Switch Song", 2, 4, 2, 4);
 //				switch_song_btn.setText("<html><p> Switch </p><p> Song </p></htlm>");
+				switch_song_btn.setFrame(frame);
+				switch_song_btn.setTop(top);
+				switch_song_btn.setPanel(this);
 				switch_song_btn.setAudioHandler(game_audio);
 				optn_container.add(switch_song_btn);
 				

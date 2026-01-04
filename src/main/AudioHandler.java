@@ -14,8 +14,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class AudioHandler implements LineListener
 {
-//	C:\Users\albin\eclipse-workspace\Sara_Game\src\audio_files\italian_sfx.wav
-
 	String file_name = "src/audio_files/";
 	boolean repeat;
 	Clip clip;

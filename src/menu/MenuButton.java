@@ -64,7 +64,7 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 				KeyHandler key_handler = new KeyHandler();
 				frame.addKeyListener(key_handler);
 				frame.requestFocus();
-				new GamePanel(frame, top, null, key_handler, 972, 101);
+				new GamePanel(frame, top, null, key_handler, game_audio, 972, 101);
 				break;
 			case "Main Menu":
 				frame.remove(current_panel);
@@ -75,15 +75,17 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 				int current_song_index = game_audio.getCurrent_song_index();
 				game_audio.endCurrentSong();
 				game_audio = new AudioHandler("", true, current_song_index);
+				frame.remove(current_panel);
+				new StartMenu(frame, top, game_audio);
 				break;
 			case "Leaderboard":
 				frame.remove(current_panel);
-				new EndMenu(frame, top, "");
+				new EndMenu(frame, top, game_audio, "");
 				break;
 			case "Clear Leaderboard":
 				clearLeaderboard();
 				frame.remove(current_panel);
-				new EndMenu(frame, top, "");
+				new EndMenu(frame, top, game_audio, "");
 				break;
 			case "Exit":
 				System.exit(0);
@@ -121,10 +123,6 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 	public void setAudioHandler(AudioHandler game_audio)
 	{
 		this.game_audio = game_audio;
-	}
-	public AudioHandler getAudioHandler()
-	{
-		return game_audio;
 	}
 
 	// Remove leaderboard file and gen. new empty

@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import main.AudioHandler;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
@@ -31,6 +32,7 @@ public class Albin extends JPanel
 	JLabel top;
 	GameTimer game_timer;
 	KeyHandler key_handler;
+	AudioHandler game_audio;
 	int player_x_passing;
 	int player_y_passing;
 
@@ -40,8 +42,8 @@ public class Albin extends JPanel
 	char car_dir 	= 'r';	// <'l'|'r'> = <left|right>
 	int car_x, car_y;
 	BufferedImage car_left, car_right;
-	
-	public Albin(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
+
+	public Albin(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x, int player_y)
 	{
 		super();
 			this.width  = frame.getWidth();
@@ -65,6 +67,7 @@ public class Albin extends JPanel
 		this.top				= top;
 		this.game_timer			= game_timer;
 		this.key_handler		= key_handler;
+		this.game_audio			= game_audio;
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 		
@@ -87,6 +90,7 @@ public class Albin extends JPanel
 		frame.add(this);
 		frame.repaint();
 		
+		
 		// Timer for cycle 1 (left --> right)
 		task1 = new TimerTask()
 		{
@@ -98,6 +102,7 @@ public class Albin extends JPanel
 				{
 					timer_1.cancel();
 					car_dir = 'l';
+//					new AudioHandler("sfx/car-trimmed.wav", false, -1);
 					timer_2.scheduleAtFixedRate(task2, 0, time_2 / width);
 				}
 				
@@ -125,6 +130,7 @@ public class Albin extends JPanel
 
 		};
 		
+		new AudioHandler("sfx/car-trimmed.wav", false, -1);
 		timer_1.scheduleAtFixedRate(task1, 0, time_1 / width);
 	}
 	
@@ -142,10 +148,10 @@ public class Albin extends JPanel
 
 			top.setText("Vada a Bordo, Cazzo!");
 			
-			new StartMenu(frame, top);
+			new StartMenu(frame, top, game_audio);
 		}
 		else
-			new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+			new GamePanel(frame, top, game_timer, key_handler, game_audio, player_x_passing, player_y_passing);
 	}
 
 	@Override

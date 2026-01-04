@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import entities.Player;
+import main.AudioHandler;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
@@ -33,6 +34,7 @@ public class Attila extends JPanel implements Runnable
 	JLabel top;
 	GameTimer game_timer;
 	KeyHandler key_handler;
+	AudioHandler game_audio;
 	int player_x_passing;
 	int player_y_passing;
 	
@@ -62,7 +64,7 @@ public class Attila extends JPanel implements Runnable
 	int falling_speed = 14;
 	int[][] player_keys_pos;
 
-	public Attila(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
+	public Attila(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x, int player_y)
 	{
 		super();
 			this.width 	= frame.getWidth();
@@ -76,6 +78,7 @@ public class Attila extends JPanel implements Runnable
 		this.top				= top;
 		this.game_timer			= game_timer;
 		this.key_handler		= key_handler;
+		this.game_audio			= game_audio;
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 		
@@ -221,10 +224,10 @@ public class Attila extends JPanel implements Runnable
 
 			top.setText("Vada a Bordo, Cazzo!");
 			
-			new StartMenu(frame, top);
+			new StartMenu(frame, top, game_audio);
 		}
 		else
-			new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+			new GamePanel(frame, top, game_timer, key_handler, game_audio, player_x_passing, player_y_passing);
 	}
 
 	private void updatePlayer()

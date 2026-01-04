@@ -34,6 +34,7 @@ public class GamePanel extends JPanel
 	
 	Enemy[] enemies;
 	GameTimer game_timer;
+	AudioHandler game_audio;
 	
 	Thread game_thread, enemies_thread;
 	
@@ -56,7 +57,7 @@ public class GamePanel extends JPanel
 	int GOAL_X = 854;
 	int GOAL_Y = 772;
 	
-	public GamePanel(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x0, int player_y0)
+	public GamePanel(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x0, int player_y0)
 	{
 		super();
 			this.width 	= frame.getWidth();
@@ -103,6 +104,7 @@ public class GamePanel extends JPanel
 		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 
 		// Check that player-spawn != any enemy-spawn
+		int buffer_zone = 10;
 		int enemy_i = 0;
 		while(enemy_i < enemies.length)
 		{
@@ -119,17 +121,17 @@ public class GamePanel extends JPanel
 			// Enemy above player
 			int y_diff_2 = Math.abs(player_y0 - (enemies[enemy_i].getEnemy_y() + entity_height));
 			
-			if(x_diff_1 <= 5)
-				player_x0 -= 5;
-			else if(x_diff_2 <= 5)
-				player_x0 += 5;
+			if(x_diff_1 <= buffer_zone)
+				player_x0 -= buffer_zone;
+			else if(x_diff_2 <= buffer_zone)
+				player_x0 += buffer_zone;
 			else
 				valid_x = true;
 				
-			if(y_diff_1 <= 5)
-				player_y0 -= 5;
-			else if(y_diff_2 <= 5)
-				player_y0 += 5;
+			if(y_diff_1 <= buffer_zone)
+				player_y0 -= buffer_zone;
+			else if(y_diff_2 <= buffer_zone)
+				player_y0 += buffer_zone;
 			else
 				valid_y = true;
 			
@@ -144,6 +146,7 @@ public class GamePanel extends JPanel
 		this.top 		 = top;
 		this.key_handler = key_handler;
 		this.game_timer  = game_timer;
+		this.game_audio  = game_audio;
 		
 		// Integer matrix with map boundaries
 		map_constraints = loadMapConstraints(this.width, this.height);
@@ -557,27 +560,27 @@ public class GamePanel extends JPanel
 		switch(enemy_collision_index)
 		{
 			case 0:
-				new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
+				new Lulle(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 1:
 				game_timer.setTime_coeff(-1);
-				new Albin(frame, top, game_timer, key_handler, player_x, player_y);
+				new Albin(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 2:
-				new Lkab(frame, top, game_timer, key_handler, player_x, player_y);
+				new Lkab(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 3:
-				new SSC(frame, top, game_timer, key_handler, player_x, player_y);
+				new SSC(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 4:
 				game_timer.setTime_coeff(25);
-				new Slusk(frame, top, game_timer, key_handler, player_x, player_y);
+				new Slusk(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 5:
-				new Attila(frame, top, game_timer, key_handler, player_x, player_y);
+				new Attila(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 6:
-				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
+				new Pauline(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 		}
 	}
@@ -643,7 +646,7 @@ public class GamePanel extends JPanel
 		frame.removeKeyListener(key_handler);
 		frame.remove(this);
 		
-		new EndMenu(frame, top, final_time_str);
+		new EndMenu(frame, top, game_audio, final_time_str);
 	}
 	
 	private void initStartMenu()
@@ -656,7 +659,7 @@ public class GamePanel extends JPanel
 
 		top.setText("Vada a Bordo, Cazzo!");
 		
-		new StartMenu(frame, top);
+		new StartMenu(frame, top, game_audio);
 	}
 
 	@Override

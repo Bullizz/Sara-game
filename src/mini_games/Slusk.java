@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import main.AudioHandler;
 import main.GamePanel;
 import main.GameTimer;
 import main.KeyHandler;
@@ -33,6 +34,7 @@ public class Slusk extends JPanel implements Runnable
 	JLabel top;
 	GameTimer game_timer;
 	KeyHandler key_handler;
+	AudioHandler game_audio;
 	int player_x_passing;
 	int player_y_passing;
 	
@@ -55,7 +57,7 @@ public class Slusk extends JPanel implements Runnable
 	int space_x 	 	= 251;
 	int space_y 	 	= 319;
 	
-	public Slusk(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
+	public Slusk(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x, int player_y)
 	{
 		super();
 			this.width = frame.getWidth();
@@ -80,6 +82,7 @@ public class Slusk extends JPanel implements Runnable
 		this.top				= top;
 		this.game_timer			= game_timer;
 		this.key_handler		= key_handler;
+		this.game_audio			= game_audio;
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 		
@@ -130,15 +133,30 @@ public class Slusk extends JPanel implements Runnable
 					
 					// Enough points to 'clear' a liquid level
 					if(paint_liquid_1 && current_points >= points_1)
+					{
 						paint_liquid_1 = false;
+						playSFX();
+					}
 					if(paint_liquid_2 && current_points >= points_1 + points_2)
+					{
 						paint_liquid_2 = false;
+						playSFX();
+					}
 					if(paint_liquid_3 && current_points >= points_1 + points_2 + points_3)
+					{
 						paint_liquid_3 = false;
+						playSFX();
+					}
 					if(paint_liquid_4 && current_points >= points_1 + points_2 + points_3 + points_4)
+					{
 						paint_liquid_4 = false;
+						playSFX();
+					}
 					if(paint_liquid_5 && current_points >= points_MAX)
+					{
 						paint_liquid_5 = false;
+						playSFX();
+					}
 					
 					repaint();
 					
@@ -172,12 +190,12 @@ public class Slusk extends JPanel implements Runnable
 
 			top.setText("Vada a Bordo, Cazzo!");
 			
-			new StartMenu(frame, top);
+			new StartMenu(frame, top, game_audio);
 		}
 		else
-			new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+			new GamePanel(frame, top, game_timer, key_handler, game_audio, player_x_passing, player_y_passing);
 	}
-	
+
 	// Randomize value to be assigned to points
 	private void assignPoints()
 	{
@@ -201,6 +219,13 @@ public class Slusk extends JPanel implements Runnable
 			space_sign = true;
 	}
 	
+	private void playSFX()
+	{
+		int play_sfx = (int) (Math.random() * 2);
+		if(play_sfx == 0)
+			new AudioHandler("sfx/vine-boom.wav", false, -1);
+	}
+	
 	@Override
 	public void paintComponent(Graphics g_1d)
 	{
@@ -208,7 +233,6 @@ public class Slusk extends JPanel implements Runnable
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Paint background
-//		g_2d.setColor(Color.CYAN);
 		g_2d.drawImage(background_img, 0, 0, width, height, null);
 		
 		// Paint space sign
