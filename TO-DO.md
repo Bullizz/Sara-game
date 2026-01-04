@@ -10,7 +10,7 @@
     - #### ~~Add map "scenery"~~
     - #### ~~Fix player img~~
     - #### ~~Fix lulle img~~
-    - #### Set enemies to (x0, y0) if noclip happens
+    - #### ~~Set enemies to (x0, y0) if no-clip happens~~
   - ### Lulle
     - #### ~~Improve hitbox~~
     - #### ~~Assign max-points RNG value~~
@@ -22,10 +22,10 @@
     - #### ~~Background img~~
     - #### ~~Change upper limit~~
     - #### ~~SoundFX~~
-  - ### Albin
+  - ### ~~Albin~~
     - #### ~~SoundFX~~
     - #### ~~Lower GameAudio~~
-  - ### Pauline
+  - ### ~~Pauline~~
     - #### ~~Background img~~
     - #### ~~Add buffer columns so fall-items != table | trashbin~~
 - ## ~~Log game-time~~
