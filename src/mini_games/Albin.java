@@ -57,9 +57,9 @@ public class Albin extends JPanel
 		
 		try
 		{
-			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/albin/background_img.png"));
-			car_left		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/albin/volvo_LEFT.png"));
-			car_right		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/albin/volvo_RIGHT.png"));
+			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/albin/background_img.png"));
+			car_left		= ImageIO.read(getClass().getResourceAsStream("/image_files/albin/volvo_LEFT.png"));
+			car_right		= ImageIO.read(getClass().getResourceAsStream("/image_files/albin/volvo_RIGHT.png"));
 		} catch(IOException e)
 		{
 			e.printStackTrace();
