@@ -17,6 +17,7 @@
     - #### ~~Assign max-points RNG value~~
     - #### Background img
     - #### ~~Fix dirt spawn point is valid~~
+    - #### Add cleaning-sfx
   - ### Lkab
     - #### ~~Wire-src imgs~~
     - #### ~~Player speed~~
@@ -41,4 +42,4 @@
 
 - ## General project cleanup
 
-- ## Organize image-folders
+- ## ~~Organize image-folders~~
