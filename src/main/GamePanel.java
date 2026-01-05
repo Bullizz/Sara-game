@@ -15,8 +15,10 @@ import javax.swing.JPanel;
 
 import entities.Enemy;
 import entities.Player;
+
 import menu.EndMenu;
 import menu.StartMenu;
+
 import mini_games.Albin;
 import mini_games.Attila;
 import mini_games.Lkab;
