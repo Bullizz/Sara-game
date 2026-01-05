@@ -247,6 +247,7 @@ public class Slusk extends JPanel implements Runnable
 		// Paint liquid
 		g_2d.setColor(Color.ORANGE);
 		int liquid_y = liquid_height;
+		int liquid_x = this.liquid_x + 1;
 		
 		if(paint_liquid_1)
 			g_2d.fillRect(liquid_x, liquid_y, liquid_width, liquid_height);
@@ -261,11 +262,11 @@ public class Slusk extends JPanel implements Runnable
 		liquid_y += liquid_height;
 		
 		if(paint_liquid_4)
-			g_2d.fillRect(liquid_x, liquid_y, liquid_width, liquid_height);
+			g_2d.fillRect(liquid_x, liquid_y, liquid_width, liquid_height - 1);
 		liquid_y = (height / 2) - liquid_width;
 		
 		if(paint_liquid_5)
-			g_2d.fillRect(liquid_x + liquid_width, liquid_y, liquid_height, liquid_width);
+			g_2d.fillRect(liquid_x + liquid_width, liquid_y, liquid_height, liquid_width - 2);
 		
 		// Paint big-pic
 		g_2d.drawImage(big_pic, big_x, 0, big_width, big_height, null);

@@ -26,7 +26,7 @@
     - #### ~~Background img~~
     - #### ~~Change upper limit~~
     - #### ~~SoundFX~~
-    - #### Fix liquid-**leak** around bong
+    - #### ~~Fix liquid-**leak** around bong~~
   - ### ~~Albin~~
     - #### ~~SoundFX~~
     - #### ~~Lower GameAudio~~
