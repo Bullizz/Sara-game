@@ -103,7 +103,7 @@ public class Attila extends JPanel implements Runnable
 		try
 		{
 			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/background.png"));
-			player_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/body_2.png"));
+			player_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/player.png"));
 			attila_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/attila.png"));
 			
 			w_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/W_active.png"));

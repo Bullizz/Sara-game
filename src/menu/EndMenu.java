@@ -53,7 +53,6 @@ public class EndMenu extends JPanel
 		this.game_audio = game_audio;
 		this.top = top;
 		
-		
 		if(!final_time_str.equals(""))
 			initUserInpGUI(final_time_str);
 		else

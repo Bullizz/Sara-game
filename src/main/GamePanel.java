@@ -68,12 +68,11 @@ public class GamePanel extends JPanel
 		
 		try
 		{
-//			map_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/background_map.png"));
-			map_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/map3.png"));
+			map_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/world_map.png"));
 			player_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/player.png"));
 			
 			lulle_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle.png")); 
-			albin_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/albin2.png"));
+			albin_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/albin.png"));
 			lkab_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab.png"));
 			ssc_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc.png"));
 			slusk_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk.png"));
@@ -86,9 +85,7 @@ public class GamePanel extends JPanel
 		}
 		
 		frame.add(this);
-		if(!frame.isVisible())
-			frame.setVisible(true);
-
+		
 		int entity_width  = this.width  / 30;
 		int entity_height = this.height / 30;
 		
@@ -106,7 +103,7 @@ public class GamePanel extends JPanel
 		// Check that player-spawn != any enemy-spawn
 		int buffer_zone = 10;
 		int enemy_i = 0;
-		while(enemy_i < enemies.length)
+		while(enemy_i < enemy_amount)
 		{
 			boolean valid_x = false;			
 			boolean valid_y = false;

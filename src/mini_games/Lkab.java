@@ -87,9 +87,9 @@ public class Lkab extends JPanel implements Runnable
 		
 		try
 		{
-			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/gallivare_swamp_2.png"));
-			player_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_left_float-transp.png"));
-			player_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_right_float-transp.png"));
+			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/gallivare_swamp.png"));
+			player_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_LEFT.png"));
+			player_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_RIGHT.png"));
 			player_img			= player_img_RIGHT;
 			
 			src_img_RED			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/wire_src_RED.png"));

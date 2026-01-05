@@ -68,9 +68,9 @@ public class Slusk extends JPanel implements Runnable
 		try
 		{
 			background_img 		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/background.png"));
-			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/big_pic-transp.png"));
-			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar_2-transp.png"));
-			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar-transp.png"));
+			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/big_pic.png"));
+			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar_active.png"));
+			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar_inactive.png"));
 		} catch (IOException e)
 		{
 			e.printStackTrace();

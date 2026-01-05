@@ -30,6 +30,8 @@ public class Lulle extends JPanel implements Runnable
 	final int RNG 			  = 100;
 	// 1 in <RNG> chance that dirt is generated ~every millisecond
 
+	BufferedImage background_img;
+
 	// Arguments
 	JFrame frame;
 	JLabel top;
@@ -95,9 +97,10 @@ public class Lulle extends JPanel implements Runnable
 		
 		try
 		{
-			player_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/player_1-transp.png"));
-			npc_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/lulle_1-transp.png"));
-			dirt_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/dirt-transp.png"));
+//			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/"));
+			player_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/player.png"));
+			npc_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/lulle.png"));
+			dirt_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/dirt.png"));
 		} catch(IOException e)
 		{
 			System.err.println("Err ImageIO.read()");
