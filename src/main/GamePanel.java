@@ -202,7 +202,6 @@ public class GamePanel extends JPanel
 							if(collision_params[0] == 1)
 							{
 								killThreads();
-								
 								enemy_collision_index = collision_params[1];
 							}
 							
@@ -213,7 +212,6 @@ public class GamePanel extends JPanel
 								if(player.getPlayer_x() < GOAL_X && GOAL_X < (player.getPlayer_x() + player.player_width))
 								{	
 									killThreads();
-
 									game_timer.setTime_coeff(0);
 								}
 							}
@@ -272,12 +270,12 @@ public class GamePanel extends JPanel
 						{
 							updateEnemies();
 							
-							// Enemies move away from player for first 15 frames
+							// Enemies move away from player for first 30 frames
 							if(anti_spawn)
 							{
 //								0, 3, 1, 2, 1, 0, 2
 								spawn_counter++;
-								if(spawn_counter % 15 == 0)
+								if(spawn_counter % 30 == 0)
 								{
 									enemies[0].setFollow_type(0);
 									enemies[1].setFollow_type(3);

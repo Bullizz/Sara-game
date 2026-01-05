@@ -17,22 +17,23 @@
     - #### ~~Assign max-points RNG value~~
     - #### Background img
     - #### ~~Fix dirt spawn point is valid~~
-    - #### Add cleaning-sfx
+    - #### ~~Add cleaning-sfx~~
   - ### Lkab
     - #### ~~Wire-src imgs~~
     - #### ~~Player speed~~
     - #### Paint player after placed wire
-  - ### ~~Slusk~~
+  - ### Slusk
     - #### ~~Background img~~
     - #### ~~Change upper limit~~
     - #### ~~SoundFX~~
+    - #### Fix liquid-**leak** around bong
   - ### ~~Albin~~
     - #### ~~SoundFX~~
     - #### ~~Lower GameAudio~~
   - ### Pauline
     - #### ~~Background img~~
     - #### ~~Add buffer columns so fall-items != table | trashbin~~
-    - #### Add thrashing-sfx
+    - #### ~~Add thrashing-sfx~~
 - ## ~~Log game-time~~
 
 - ## End menu

@@ -312,6 +312,8 @@ public class Lulle extends JPanel implements Runnable
 		{
 			points++;
 			dirt_placed = false;
+			AudioHandler cleaning_sound = new AudioHandler("sfx/broom-sweep.wav", false, -1);
+			cleaning_sound.raiseVolume(6);
 		}
 	}
 

@@ -273,6 +273,8 @@ public class Pauline extends JPanel implements Runnable
 					item_array[1][i] = default_str;
 					item_array[2][i] = "-1";
 					item_array[3][i] = String.valueOf(-item_height);
+					
+					new AudioHandler("sfx/trash-bin-sfx.wav", false, -1);
 				}
 				
 				// Placing held item on table
