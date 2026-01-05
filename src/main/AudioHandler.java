@@ -118,6 +118,8 @@ public class AudioHandler implements LineListener
 					break;
 				}
 			}
+			
+			i = 0;
 		}
 		
 		current_song_index = new_song_index;

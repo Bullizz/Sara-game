@@ -55,7 +55,7 @@ public class Attila extends JPanel implements Runnable
 	char[] keys_arr = {'w', 'a', 's', 'd'};
 	int[][] falling_keys;
 	int time_to_key_fall;
-	char active_key;// = '\0';
+	char active_key;
 	
 	int key_dim = 128;
 	int x_ws = 192;
@@ -63,7 +63,7 @@ public class Attila extends JPanel implements Runnable
 	int x_d = 320;
 	int falling_speed = 14;
 	int[][] player_keys_pos;
-
+	
 	public Attila(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x, int player_y)
 	{
 		super();
@@ -102,20 +102,20 @@ public class Attila extends JPanel implements Runnable
 		
 		try
 		{
-			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/background.png"));
-			player_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/body_2.png"));
-			attila_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/attila.png"));
+			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/background.png"));
+			player_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/player.png"));
+			attila_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/attila.png"));
 			
-			w_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/W_active.png"));
-			a_img_active 		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/A_active.png"));
-			s_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/S_active.png"));
-			d_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/D_active.png"));
+			w_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/W_active.png"));
+			a_img_active 		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/A_active.png"));
+			s_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/S_active.png"));
+			d_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/D_active.png"));
 			active_key_imgs 	= new BufferedImage[]{w_img_active, a_img_active, s_img_active, d_img_active};
 			
-			w_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/W_inactive.png"));
-			a_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/A_inactive.png"));
-			s_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/S_inactive.png"));
-			d_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/D_inactive.png"));
+			w_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/W_inactive.png"));
+			a_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/A_inactive.png"));
+			s_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/S_inactive.png"));
+			d_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/D_inactive.png"));
 			inactive_key_imgs	= new BufferedImage[]{w_img, a_img, s_img, d_img};
 			
 		} catch(IOException e)

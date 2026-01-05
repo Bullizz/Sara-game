@@ -46,7 +46,7 @@ public class Slusk extends JPanel implements Runnable
 	boolean paint_liquid_5 = true;
 	
 	int liquid_width  = 58;
-	int liquid_height = 97; // = bong_height / 5, bong-tratt height, liquid-1, liquid-2, liquid-3, and liquid-4
+	int liquid_height = 97; // = bong_height / 5 = bong-tratt height, liquid-1, liquid-2, liquid-3, and liquid-4
 	int liquid_x	  = 930;
 
 	// Space sign parameters
@@ -67,10 +67,10 @@ public class Slusk extends JPanel implements Runnable
 		
 		try
 		{
-			background_img 		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/background.png"));
-			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/big_pic-transp.png"));
-			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar_2-transp.png"));
-			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar-transp.png"));
+			background_img 		= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/background.png"));
+			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/big_pic.png"));
+			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/space_bar_active.png"));
+			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/space_bar_inactive.png"));
 		} catch (IOException e)
 		{
 			e.printStackTrace();
