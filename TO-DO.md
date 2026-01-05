@@ -23,10 +23,10 @@
     - #### ~~Background img~~
     - #### ~~Change upper limit~~
     - #### ~~SoundFX~~
-  - ### Albin
+  - ### ~~Albin~~
     - #### ~~SoundFX~~
     - #### ~~Lower GameAudio~~
-  - ### Pauline
+  - ### ~~Pauline~~
     - #### ~~Background img~~
     - #### ~~Add buffer columns so fall-items != table | trashbin~~
 - ## ~~Log game-time~~
