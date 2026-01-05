@@ -52,23 +52,8 @@ public class StartMenu extends JPanel
 				play_btn.setAudioHandler(game_audio);
 				optn_container.add(play_btn);
 				
-/*				JPanel music_optn = new JPanel();
-				music_optn.setLayout(new GridLayout(1, 2));
-				optn_container.add(music_optn);
-					// Name of current song
-					String current_song_name = game_audio.getCurrentSongStr();
-					JLabel current_song = new JLabel(current_song_name, JLabel.CENTER);
-					current_song.setBackground(blue);
-					current_song.setForeground(yellow);
-					current_song.setFont(font);
-					current_song.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, yellow));
-					current_song.setOpaque(true);
-					music_optn.add(current_song);
-					*/
-						
-					// Ability to change song, (randomize new)
+				// Ability to change song (randomize new)
 				MenuButton switch_song_btn = new MenuButton("Switch Song", 2, 4, 2, 4);
-//				switch_song_btn.setText("<html><p> Switch </p><p> Song </p></htlm>");
 				switch_song_btn.setFrame(frame);
 				switch_song_btn.setTop(top);
 				switch_song_btn.setPanel(this);

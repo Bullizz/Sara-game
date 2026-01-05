@@ -80,12 +80,12 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 				break;
 			case "Leaderboard":
 				frame.remove(current_panel);
-				new EndMenu(frame, top, game_audio, "");
+				new EndMenu(frame, top, game_audio, "", top.getText());
 				break;
 			case "Clear Leaderboard":
 				clearLeaderboard();
 				frame.remove(current_panel);
-				new EndMenu(frame, top, game_audio, "");
+				new EndMenu(frame, top, game_audio, "", top.getText());
 				break;
 			case "Exit":
 				System.exit(0);

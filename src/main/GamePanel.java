@@ -231,6 +231,7 @@ public class GamePanel extends JPanel
 					if(enemy_collision_index > -1)
 						launchMiniGame(enemy_collision_index);
 					
+					// Player exit
 					else if(key_handler.GamePanel_space_pressed)
 						initStartMenu();
 					
@@ -667,7 +668,7 @@ public class GamePanel extends JPanel
 		frame.removeKeyListener(key_handler);
 		frame.remove(this);
 		
-		new EndMenu(frame, top, game_audio, final_time_str);
+		new EndMenu(frame, top, game_audio, final_time_str, "Good Job!");
 	}
 	
 	private void initStartMenu()
