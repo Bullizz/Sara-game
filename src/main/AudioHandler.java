@@ -44,6 +44,7 @@ public class AudioHandler implements LineListener
 			clip.open(AudioSystem.getAudioInputStream(file));
 			float_ctrl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 			float_ctrl.setValue(0);
+			clip.start();
 		} catch (LineUnavailableException lue)
 		{
 			lue.printStackTrace();
@@ -53,9 +54,7 @@ public class AudioHandler implements LineListener
 		} catch(UnsupportedAudioFileException uafe)
 		{
 			uafe.printStackTrace();
-		}
-		
-		clip.start();
+		}		
 	}
 	
 	@Override

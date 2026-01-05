@@ -161,7 +161,7 @@ public class Pauline extends JPanel implements Runnable
 					checkPlacedStatus();
 					
 					// User exit
-					if(key_handler.GamePanel_space_pressed)
+					if(key_handler.GamePanel_esc_pressed)
 					{
 						pauline_thread = null;
 						frame.remove(this);
@@ -172,7 +172,7 @@ public class Pauline extends JPanel implements Runnable
 				}
 			} // End of slave loop
 		} // End of master-loop
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			

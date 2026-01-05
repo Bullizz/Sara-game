@@ -185,7 +185,7 @@ public class Attila extends JPanel implements Runnable
 					repaint();
 					
 					 // Game completed
-					 if(player.getPlayer_x() + player.player_width >= attila_x + key_dim || key_handler.GamePanel_space_pressed)
+					 if(player.getPlayer_x() + player.player_width >= attila_x + key_dim || key_handler.GamePanel_esc_pressed)
 					 {
 						 key_handler.setAttila_active(false);
 						 
@@ -215,7 +215,7 @@ public class Attila extends JPanel implements Runnable
 				}
 			} // End of slave game-loop
 		} // End of master game-loop
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			

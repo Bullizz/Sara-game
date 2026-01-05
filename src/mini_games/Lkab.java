@@ -171,7 +171,7 @@ public class Lkab extends JPanel implements Runnable
 					delta = 0;
 					
 					// All wires placed
-					if(IntStream.of(wire_src_1_placed).sum() == 3 || key_handler.GamePanel_space_pressed)
+					if(IntStream.of(wire_src_1_placed).sum() == 3 || key_handler.GamePanel_esc_pressed)
 					{
 						lkab_thread = null;
 						frame.remove(this);
@@ -180,7 +180,7 @@ public class Lkab extends JPanel implements Runnable
 				}
 			} // End of slave game-loop
 		} // End of master game_loop
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			

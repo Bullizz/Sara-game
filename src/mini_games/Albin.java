@@ -100,7 +100,7 @@ public class Albin extends JPanel
 			public void run()
 			{
 				// Cycle 1 done
-				if(car_x > width || key_handler.GamePanel_space_pressed)
+				if(car_x > width || key_handler.GamePanel_esc_pressed)
 				{
 					timer_1.cancel();
 					car_dir = 'l';
@@ -119,7 +119,7 @@ public class Albin extends JPanel
 			public void run()
 			{
 				// Cycle 2 done
-				if(car_x + car_width < 0 || key_handler.GamePanel_space_pressed)
+				if(car_x + car_width < 0 || key_handler.GamePanel_esc_pressed)
 				{
 					timer_2.cancel();
 					try
@@ -145,7 +145,7 @@ public class Albin extends JPanel
 	{
 		game_timer.setTime_coeff(1);
 		frame.remove(this);
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			

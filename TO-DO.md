@@ -2,7 +2,8 @@
 - ## ~~Exit game system (gamePanel --> StartMenu)~~
 
 - ## GAME
-  - ### ~~Music~~
+  - ### Music
+    - #### Same Game_Audio is not stored if clip end in minigame, i.e. Switch Song -btn init. new song
   - ### ~~GamePanel~~
     - #### ~~Enemy imgs~~
     - #### ~~Goal pos. at milano~~
@@ -16,9 +17,10 @@
     - #### ~~Assign max-points RNG value~~
     - #### Background img
     - #### ~~Fix dirt spawn point is valid~~
-  - ### ~~Lkab~~
+  - ### Lkab
     - #### ~~Wire-src imgs~~
     - #### ~~Player speed~~
+    - #### Paint player after placed wire
   - ### ~~Slusk~~
     - #### ~~Background img~~
     - #### ~~Change upper limit~~
@@ -26,12 +28,14 @@
   - ### ~~Albin~~
     - #### ~~SoundFX~~
     - #### ~~Lower GameAudio~~
-  - ### ~~Pauline~~
+  - ### Pauline
     - #### ~~Background img~~
     - #### ~~Add buffer columns so fall-items != table | trashbin~~
+    - #### Add thrashing-sfx
 - ## ~~Log game-time~~
 
-- ## ~~End menu~~
+- ## End menu
+  - ### Add "vada a bordo cazzo"-sfx
 
 - ## Error mngmt
 

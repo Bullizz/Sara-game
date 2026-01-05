@@ -150,7 +150,7 @@ public class Lulle extends JPanel implements Runnable
 					repaint();
 					
 					// Minigame finished or esc. pressed
-					if(points == MAX_POINTS || key_handler.GamePanel_space_pressed)
+					if(points == MAX_POINTS || key_handler.GamePanel_esc_pressed)
 					{
 						lulle_thread = null;
 						frame.remove(this);
@@ -161,7 +161,7 @@ public class Lulle extends JPanel implements Runnable
 				}
 			} // End of slave game-loop
 		} // End of master game-loop
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			

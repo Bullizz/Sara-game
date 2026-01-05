@@ -49,9 +49,9 @@ public class EndMenu extends JPanel
 		frame.add(this);
 		top.setText(top_text);
 		
-		this.frame = frame;
-		this.game_audio = game_audio;
-		this.top = top;
+		this.frame		= frame;
+		this.game_audio	= game_audio;
+		this.top		= top;
 		
 		if(!final_time_str.equals(""))
 			initUserInpGUI(final_time_str);

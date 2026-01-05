@@ -161,7 +161,7 @@ public class Slusk extends JPanel implements Runnable
 					repaint();
 					
 					// Minigame completed
-					if(current_points > points_MAX || key_handler.GamePanel_space_pressed)
+					if(current_points >= points_MAX || key_handler.GamePanel_esc_pressed)
 					{
 						key_handler.setSlusk_active(false);
 						game_loop_running = false;
@@ -181,7 +181,7 @@ public class Slusk extends JPanel implements Runnable
 				}
 			} // End  of slave game-loop
 		} // End of master game-loop
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			

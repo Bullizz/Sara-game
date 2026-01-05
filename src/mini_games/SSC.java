@@ -147,7 +147,7 @@ public class SSC extends JPanel implements Runnable
 					}
 					
 					// Minigame completed or esc. pressed
-					if(cycle_counter >= rocket_cycles || key_handler.GamePanel_space_pressed)
+					if(cycle_counter >= rocket_cycles || key_handler.GamePanel_esc_pressed)
 					{
 						frame.remove(this);
 						
@@ -161,7 +161,7 @@ public class SSC extends JPanel implements Runnable
 				}
 			} // End  of slave game-loop
 		} // End of master game-loop
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			

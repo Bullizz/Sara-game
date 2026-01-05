@@ -218,7 +218,7 @@ public class GamePanel extends JPanel
 								}
 							}
 							
-							if(key_handler.GamePanel_space_pressed)
+							if(key_handler.GamePanel_esc_pressed)
 								killThreads();
 							
 							delta = 0;
@@ -230,15 +230,14 @@ public class GamePanel extends JPanel
 						launchMiniGame(enemy_collision_index);
 					
 					// Player exit
-					else if(key_handler.GamePanel_space_pressed)
+					else if(key_handler.GamePanel_esc_pressed)
 						initStartMenu();
 					
-					// No collision, game finished
+					// No collision, game won
 					else
 						endGame();
 				} // End of master game-loop
 			}
-
 		});
 		game_thread.start();
 	}
