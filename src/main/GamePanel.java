@@ -270,12 +270,12 @@ public class GamePanel extends JPanel
 						{
 							updateEnemies();
 							
-							// Enemies move away from player for first 30 frames
+							// Enemies move away from player for first 20 frames
 							if(anti_spawn)
 							{
 //								0, 3, 1, 2, 1, 0, 2
 								spawn_counter++;
-								if(spawn_counter % 30 == 0)
+								if(spawn_counter % 20 == 0)
 								{
 									enemies[0].setFollow_type(0);
 									enemies[1].setFollow_type(3);
@@ -662,6 +662,8 @@ public class GamePanel extends JPanel
 		
 		frame.removeKeyListener(key_handler);
 		frame.remove(this);
+		
+		new AudioHandler("sfx/vada-a-borde-cazzo-sfx.wav", false, -1);
 		
 		new EndMenu(frame, top, game_audio, final_time_str, "Good Job!");
 	}

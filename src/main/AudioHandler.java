@@ -78,18 +78,20 @@ public class AudioHandler implements LineListener
 	private String getRNGSong(int old_song_index)
 	{
 		String[] song_names = {"ram_ranch_46.wav",
+							   "vada_a_borde_cazzo-remix.wav",
 							   "canelloni_macaroni.wav",
 							   "caramelldansen.wav",
 							   "italian_sfx.wav",
 							   "miss_li.wav"};
 		
-		double[][] nums = new double[5][2];
-		nums[0][0]	= 1; // Ram Ranch			- 4%
-		nums[1][0]	= 6; // Canelloni Macaroni	- 22%
-		nums[2][0]	= 6; // Caramelldansen		- 22%
-		nums[3][0]	= 6; // Italian SFX			- 22%
-		nums[4][0]	= 8; // Miss Li				- 30%
-		
+		double[][] nums = new double[6][2];
+		nums[0][0]	= 1;  // Ram Ranch			 - 2%
+		nums[1][0]	= 4;  // Vada a bordo, Cazzo - 8%
+		nums[2][0]	= 10; // Canelloni Macaroni	 - 20%
+		nums[3][0]	= 10; // Caramelldansen		 - 20%
+		nums[4][0]	= 10; // Italian SFX		 - 20%
+		nums[5][0]	= 14; // Miss Li			 - 29%
+
 		nums[0][1] = 1;
 		for(int i = 1; i < nums.length; i++)
 			nums[i][1] = nums[i][0] + nums[i - 1][1];
