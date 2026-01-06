@@ -18,10 +18,10 @@
     - #### Background img
     - #### ~~Fix dirt spawn point is valid~~
     - #### ~~Add cleaning-sfx~~
-  - ### Lkab
+  - ### ~~Lkab~~
     - #### ~~Wire-src imgs~~
     - #### ~~Player speed~~
-    - #### Paint player after placed wire
+    - #### ~~Paint player after placed wire~~
   - ### Slusk
     - #### ~~Background img~~
     - #### ~~Change upper limit~~

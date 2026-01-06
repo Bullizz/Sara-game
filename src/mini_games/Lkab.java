@@ -56,7 +56,7 @@ public class Lkab extends JPanel implements Runnable
 	
 	// Wire sources parameters
 	BufferedImage src_img_RED, src_img_GREEN, src_img_BLUE;
-	int len					= 3;			 // Length all arrays
+	int len					= 3;			 // Length of all arrays
 	char[] wire_src_1		= new char[len]; // Left side src
 	int[] wire_src_1_placed	= {0, 0, 0};
 	char[] wire_src_2		= new char[len]; // Right side src
@@ -108,7 +108,6 @@ public class Lkab extends JPanel implements Runnable
 		wire_src_width  = width / 20;
 		wire_src_height = height / 7;
 		wire_width		= wire_src_height / 5;
-
 		
 		initLkabThread();
 	}
@@ -508,9 +507,6 @@ public class Lkab extends JPanel implements Runnable
 		// Paint swamp
 		g_2d.drawImage(background_img, 0, 0, this.width, this.height, null);
 		
-		// Paint player
-		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
-		
 		// Paint placed wire
 		if(IntStream.of(wire_src_1_placed).sum() > 0)
 		{
@@ -554,6 +550,9 @@ public class Lkab extends JPanel implements Runnable
 				}
 			}
 		}
+		
+		// Paint player
+		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
 		
 		// Paint dragging wire
 		if(active_color != null)
