@@ -22,7 +22,7 @@
     - #### ~~Wire-src imgs~~
     - #### ~~Player speed~~
     - #### ~~Paint player after placed wire~~
-  - ### Slusk
+  - ### ~~Slusk~~
     - #### ~~Background img~~
     - #### ~~Change upper limit~~
     - #### ~~SoundFX~~
@@ -30,14 +30,16 @@
   - ### ~~Albin~~
     - #### ~~SoundFX~~
     - #### ~~Lower GameAudio~~
-  - ### Pauline
+  - ### ~~Pauline~~
     - #### ~~Background img~~
     - #### ~~Add buffer columns so fall-items != table | trashbin~~
     - #### ~~Add thrashing-sfx~~
+  - ### Attila
+    - #### Remove initial follow-type?
 - ## ~~Log game-time~~
 
-- ## End menu
-  - ### Add "vada a bordo cazzo"-sfx
+- ## ~~End menu~~
+  - ### ~~Add "vada a bordo cazzo"-sfx~~
 
 - ## Error mngmt
 
