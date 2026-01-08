@@ -57,9 +57,9 @@ public class Albin extends JPanel
 		
 		try
 		{
-			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/albin/background_img.png"));
-			car_left		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/albin/volvo_tot_LEFT-transp.png"));
-			car_right		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/albin/volvo_tot_RIGHT-transp.png"));
+			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/albin/background_img.png"));
+			car_left		= ImageIO.read(getClass().getResourceAsStream("/image_files/albin/volvo_LEFT.png"));
+			car_right		= ImageIO.read(getClass().getResourceAsStream("/image_files/albin/volvo_RIGHT.png"));
 		} catch(IOException e)
 		{
 			e.printStackTrace();
@@ -100,7 +100,7 @@ public class Albin extends JPanel
 			public void run()
 			{
 				// Cycle 1 done
-				if(car_x > width || key_handler.GamePanel_space_pressed)
+				if(car_x > width || key_handler.GamePanel_esc_pressed)
 				{
 					timer_1.cancel();
 					car_dir = 'l';
@@ -119,7 +119,7 @@ public class Albin extends JPanel
 			public void run()
 			{
 				// Cycle 2 done
-				if(car_x + car_width < 0 || key_handler.GamePanel_space_pressed)
+				if(car_x + car_width < 0 || key_handler.GamePanel_esc_pressed)
 				{
 					timer_2.cancel();
 					try
@@ -145,7 +145,7 @@ public class Albin extends JPanel
 	{
 		game_timer.setTime_coeff(1);
 		frame.remove(this);
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			

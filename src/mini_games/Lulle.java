@@ -27,8 +27,10 @@ public class Lulle extends JPanel implements Runnable
 	int width, height;
 	boolean dirt_placed 	  = false;
 	boolean game_loop_running = true;
-	final int RNG 			  = 100;
 	// 1 in <RNG> chance that dirt is generated ~every millisecond
+	final int RNG 			  = 100;
+
+	BufferedImage background_img;
 
 	// Arguments
 	JFrame frame;
@@ -95,9 +97,10 @@ public class Lulle extends JPanel implements Runnable
 		
 		try
 		{
-			player_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/player_1-transp.png"));
-			npc_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/lulle_1-transp.png"));
-			dirt_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/dirt-transp.png"));
+//			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/"));
+			player_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/player.png"));
+			npc_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/lulle.png"));
+			dirt_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/dirt.png"));
 		} catch(IOException e)
 		{
 			System.err.println("Err ImageIO.read()");
@@ -147,7 +150,7 @@ public class Lulle extends JPanel implements Runnable
 					repaint();
 					
 					// Minigame finished or esc. pressed
-					if(points == MAX_POINTS || key_handler.GamePanel_space_pressed)
+					if(points == MAX_POINTS || key_handler.GamePanel_esc_pressed)
 					{
 						lulle_thread = null;
 						frame.remove(this);
@@ -158,7 +161,7 @@ public class Lulle extends JPanel implements Runnable
 				}
 			} // End of slave game-loop
 		} // End of master game-loop
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			
@@ -273,9 +276,12 @@ public class Lulle extends JPanel implements Runnable
 		int dirt_rng = (int) (Math.random() * RNG);
 		if(dirt_rng == 0 && !dirt_placed)
 		{
-			dirt_placed = true;
 			dirt_x = npc_x;
 			dirt_y = npc_y + (entity_height / 2);
+			
+			// Ensure dirt cannot be placed where player cannot reach
+			if(npc_y > (entity_height / 2))
+				dirt_placed = true;
 		}
 		
 		npc.setEnemy_x(npc_x);
@@ -306,6 +312,8 @@ public class Lulle extends JPanel implements Runnable
 		{
 			points++;
 			dirt_placed = false;
+			AudioHandler cleaning_sound = new AudioHandler("sfx/broom-sweep.wav", false, -1);
+			cleaning_sound.raiseVolume(6);
 		}
 	}
 

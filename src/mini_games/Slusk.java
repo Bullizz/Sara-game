@@ -46,7 +46,7 @@ public class Slusk extends JPanel implements Runnable
 	boolean paint_liquid_5 = true;
 	
 	int liquid_width  = 58;
-	int liquid_height = 97; // = bong_height / 5, bong-tratt height, liquid-1, liquid-2, liquid-3, and liquid-4
+	int liquid_height = 97; // = bong_height / 5 = bong-tratt height, liquid-1, liquid-2, liquid-3, and liquid-4
 	int liquid_x	  = 930;
 
 	// Space sign parameters
@@ -67,10 +67,10 @@ public class Slusk extends JPanel implements Runnable
 		
 		try
 		{
-			background_img 		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/background.png"));
-			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/big_pic-transp.png"));
-			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar_2-transp.png"));
-			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar-transp.png"));
+			background_img 		= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/background.png"));
+			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/big_pic.png"));
+			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/space_bar_active.png"));
+			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/space_bar_inactive.png"));
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -161,7 +161,7 @@ public class Slusk extends JPanel implements Runnable
 					repaint();
 					
 					// Minigame completed
-					if(current_points > points_MAX || key_handler.GamePanel_space_pressed)
+					if(current_points >= points_MAX || key_handler.GamePanel_esc_pressed)
 					{
 						key_handler.setSlusk_active(false);
 						game_loop_running = false;
@@ -181,7 +181,7 @@ public class Slusk extends JPanel implements Runnable
 				}
 			} // End  of slave game-loop
 		} // End of master game-loop
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			
@@ -221,12 +221,8 @@ public class Slusk extends JPanel implements Runnable
 	
 	private void playSFX()
 	{
-		int play_sfx = (int) (Math.random() * 2);
-		if(play_sfx == 0)
-		{
-			AudioHandler slusk_audio = new AudioHandler("sfx/vine-boom.wav", false, -1);
-			slusk_audio.raiseVolume(6);
-		}
+		AudioHandler slusk_audio = new AudioHandler("sfx/vine-boom.wav", false, -1);
+		slusk_audio.raiseVolume(6);
 	}
 	
 	@Override
@@ -251,6 +247,7 @@ public class Slusk extends JPanel implements Runnable
 		// Paint liquid
 		g_2d.setColor(Color.ORANGE);
 		int liquid_y = liquid_height;
+		int liquid_x = this.liquid_x + 1;
 		
 		if(paint_liquid_1)
 			g_2d.fillRect(liquid_x, liquid_y, liquid_width, liquid_height);
@@ -265,11 +262,11 @@ public class Slusk extends JPanel implements Runnable
 		liquid_y += liquid_height;
 		
 		if(paint_liquid_4)
-			g_2d.fillRect(liquid_x, liquid_y, liquid_width, liquid_height);
+			g_2d.fillRect(liquid_x, liquid_y, liquid_width, liquid_height - 1);
 		liquid_y = (height / 2) - liquid_width;
 		
 		if(paint_liquid_5)
-			g_2d.fillRect(liquid_x + liquid_width, liquid_y, liquid_height, liquid_width);
+			g_2d.fillRect(liquid_x + liquid_width, liquid_y, liquid_height, liquid_width - 2);
 		
 		// Paint big-pic
 		g_2d.drawImage(big_pic, big_x, 0, big_width, big_height, null);

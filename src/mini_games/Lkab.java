@@ -56,7 +56,7 @@ public class Lkab extends JPanel implements Runnable
 	
 	// Wire sources parameters
 	BufferedImage src_img_RED, src_img_GREEN, src_img_BLUE;
-	int len					= 3;			 // Length all arrays
+	int len					= 3;			 // Length of all arrays
 	char[] wire_src_1		= new char[len]; // Left side src
 	int[] wire_src_1_placed	= {0, 0, 0};
 	char[] wire_src_2		= new char[len]; // Right side src
@@ -87,14 +87,14 @@ public class Lkab extends JPanel implements Runnable
 		
 		try
 		{
-			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/gallivare_swamp_2.png"));
-			player_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_left_float-transp.png"));
-			player_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_right_float-transp.png"));
+			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/gallivare_swamp.png"));
+			player_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/player_LEFT.png"));
+			player_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/player_RIGHT.png"));
 			player_img			= player_img_RIGHT;
 			
-			src_img_RED			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/wire_src_RED.png"));
-			src_img_GREEN		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/wire_src_GREEN.png"));
-			src_img_BLUE		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/wire_src_BLUE.png"));
+			src_img_RED			= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_RED.png"));
+			src_img_GREEN		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_GREEN.png"));
+			src_img_BLUE		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_BLUE.png"));
 		} catch(IOException e)
 		{
 			e.printStackTrace();
@@ -108,7 +108,6 @@ public class Lkab extends JPanel implements Runnable
 		wire_src_width  = width / 20;
 		wire_src_height = height / 7;
 		wire_width		= wire_src_height / 5;
-
 		
 		initLkabThread();
 	}
@@ -171,7 +170,7 @@ public class Lkab extends JPanel implements Runnable
 					delta = 0;
 					
 					// All wires placed
-					if(IntStream.of(wire_src_1_placed).sum() == 3 || key_handler.GamePanel_space_pressed)
+					if(IntStream.of(wire_src_1_placed).sum() == 3 || key_handler.GamePanel_esc_pressed)
 					{
 						lkab_thread = null;
 						frame.remove(this);
@@ -180,7 +179,7 @@ public class Lkab extends JPanel implements Runnable
 				}
 			} // End of slave game-loop
 		} // End of master game_loop
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			
@@ -508,9 +507,6 @@ public class Lkab extends JPanel implements Runnable
 		// Paint swamp
 		g_2d.drawImage(background_img, 0, 0, this.width, this.height, null);
 		
-		// Paint player
-		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
-		
 		// Paint placed wire
 		if(IntStream.of(wire_src_1_placed).sum() > 0)
 		{
@@ -554,6 +550,9 @@ public class Lkab extends JPanel implements Runnable
 				}
 			}
 		}
+		
+		// Paint player
+		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
 		
 		// Paint dragging wire
 		if(active_color != null)

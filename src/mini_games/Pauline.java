@@ -58,10 +58,10 @@ public class Pauline extends JPanel implements Runnable
 	int item_height		   = 100;
 	int item_held_y		   = 23;
 	int item_speed		   = 5;
-	int[][] item_table_pos = {{251, 0},
-							  {251, 200},
-							  {251, 400},
-							  {251, 600}};
+	int[][] item_table_pos = {{180, 0},
+							  {180, 200},
+							  {180, 400},
+							  {180, 600}};
 	BufferedImage[] item_imgs = new BufferedImage[rng_lim];
 	
 	// Trash bin parameters
@@ -90,24 +90,23 @@ public class Pauline extends JPanel implements Runnable
 		trash_x  	   = this.width - player.player_width;
 		trash_y  	   = player.getPlayer_y() + trash_height;
 		
-		falling_column = this.width / 6;
+		falling_column = this.width / 8;
 		
 		try
 		{
-			player_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/player.png"));
-			trash_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/trashbin.png"));
-			table_img 	 = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/table.png"));
+			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/backg_img.png"));
+			player_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/player.png"));
+			trash_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/trashbin.png"));
+			table_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/table.png"));
 			
-			
-			item_imgs[0] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmax_songbook.png"));
-			item_imgs[1] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/julmust.png")); 
-			item_imgs[2] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/pain_suprise.png")); 
-			item_imgs[3] = ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/pauline/xmas_card.png")); 
+			item_imgs[0]	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/xmax_songbook.png"));
+			item_imgs[1] 	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/julmust.png")); 
+			item_imgs[2]	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/pain_suprise.png")); 
+			item_imgs[3]	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/xmas_card.png")); 
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
-		
 		
 		this.frame				= frame;
 		this.top				= top;
@@ -162,7 +161,7 @@ public class Pauline extends JPanel implements Runnable
 					checkPlacedStatus();
 					
 					// User exit
-					if(key_handler.GamePanel_space_pressed)
+					if(key_handler.GamePanel_esc_pressed)
 					{
 						pauline_thread = null;
 						frame.remove(this);
@@ -173,7 +172,7 @@ public class Pauline extends JPanel implements Runnable
 				}
 			} // End of slave loop
 		} // End of master-loop
-		if(key_handler.GamePanel_space_pressed)
+		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
 			
@@ -191,7 +190,7 @@ public class Pauline extends JPanel implements Runnable
 	private void updatePlayer()
 	{
 		int[] direction_arr = key_handler.getDirection_arr();
-
+		
 		int player_speed_x = player.getPlayer_speed_x();
 		
 		// Get positive/negative direction of player
@@ -229,7 +228,7 @@ public class Pauline extends JPanel implements Runnable
 					// Assign falling info to item_array
 					item_array[1][i] = falling_str;
 					
-					falling_index += 2;
+					falling_index += 3;
 					
 					// X-position of item
 					int item_x = (falling_column * falling_index) + ((falling_column - item_width) / 2);
@@ -274,6 +273,8 @@ public class Pauline extends JPanel implements Runnable
 					item_array[1][i] = default_str;
 					item_array[2][i] = "-1";
 					item_array[3][i] = String.valueOf(-item_height);
+					
+					new AudioHandler("sfx/trash-bin-sfx.wav", false, -1);
 				}
 				
 				// Placing held item on table
@@ -304,7 +305,7 @@ public class Pauline extends JPanel implements Runnable
 			// Falling index of current item_array element
 			int current_falling_position = Integer.valueOf(item_array[2][i]);
 			int current_falling_index = ((2 * current_falling_position) - falling_column + item_width) / (2 * falling_column);
-			current_falling_index -= 2;
+			current_falling_index -= 3;
 			
 			if(falling_index != current_falling_index)
 				valid_index_counter++;
@@ -312,7 +313,7 @@ public class Pauline extends JPanel implements Runnable
 		
 		// If generated column has item in it, init. item fall outside of game panel
 		if(valid_index_counter != i)
-			falling_index = rng_lim;
+			falling_index = rng_lim + 1;
 		
 		
 		return falling_index;
@@ -352,7 +353,7 @@ public class Pauline extends JPanel implements Runnable
 			player_x += player.player_width;
 		
 		// Left
-		if(dx < 0 && player_x > this.width / 3)
+		if(dx < 0 && player_x > 2 * falling_column)
 			return true;
 		// Right
 		else if(dx > 0 && player_x < this.trash_x)
@@ -387,8 +388,7 @@ public class Pauline extends JPanel implements Runnable
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Paint room
-		g_2d.setColor(Color.BLUE);
-		g_2d.fillRect(0, 0, width, height);
+		g_2d.drawImage(background_img, 0, 0, width, height, null);
 		
 		// Paint table
 		g_2d.drawImage(table_img, 0, 0, 2 * falling_column, height, null);

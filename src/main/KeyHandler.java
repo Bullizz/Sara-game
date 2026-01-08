@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 
 public class KeyHandler implements KeyListener
 {
-	public boolean GamePanel_space_pressed = false;
+	public boolean GamePanel_esc_pressed = false;
 	public boolean UP, LEFT, DOWN, RIGHT;
 	int[] direction_arr = {0, 0};
 	
@@ -30,7 +30,7 @@ public class KeyHandler implements KeyListener
 		int dy = getDirection_arr()[1];
 		
 		if(user_inp == KeyEvent.VK_ESCAPE)
-			GamePanel_space_pressed = true;
+			GamePanel_esc_pressed = true;
 		
 		// For slusk minigame
 		if(slusk_active)
@@ -68,25 +68,21 @@ public class KeyHandler implements KeyListener
 			if((user_inp == KeyEvent.VK_UP || user_inp == KeyEvent.VK_W))// && !DOWN)
 			{
 				UP = true;
-//				DOWN = false;
 				dy = -1;
 			}
 			if((user_inp == KeyEvent.VK_LEFT || user_inp == KeyEvent.VK_A))// && !RIGHT)
 			{
 				LEFT = true;
-//				RIGHT = false;
 				dx = -1;
 			}
 			if((user_inp == KeyEvent.VK_DOWN || user_inp == KeyEvent.VK_S))// && !UP)
 			{
 				DOWN = true;
-//				UP = false;
 				dy = 1;
 			}
 			if((user_inp == KeyEvent.VK_RIGHT || user_inp == KeyEvent.VK_D))// && !LEFT)
 			{
 				RIGHT = true;
-//				LEFT = false;
 				dx = 1;
 			}
 			
