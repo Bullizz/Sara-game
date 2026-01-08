@@ -94,15 +94,15 @@ public class Pauline extends JPanel implements Runnable
 		
 		try
 		{
-			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/backg_img.png"));
-			player_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/player.png"));
-			trash_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/trashbin.png"));
-			table_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/table.png"));
+			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/Pauline/backg_img.png"));
+			player_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/Pauline/player.png"));
+			trash_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/Pauline/trashbin.png"));
+			table_img 	 	= ImageIO.read(getClass().getResourceAsStream("/image_files/Pauline/table.png"));
 			
-			item_imgs[0]	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/xmax_songbook.png"));
-			item_imgs[1] 	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/julmust.png")); 
-			item_imgs[2]	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/pain_suprise.png")); 
-			item_imgs[3]	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/xmas_card.png")); 
+			item_imgs[0]	= ImageIO.read(getClass().getResourceAsStream("/image_files/Pauline/xmax_songbook.png"));
+			item_imgs[1] 	= ImageIO.read(getClass().getResourceAsStream("/image_files/Pauline/julmust.png")); 
+			item_imgs[2]	= ImageIO.read(getClass().getResourceAsStream("/image_files/Pauline/pain_suprise.png")); 
+			item_imgs[3]	= ImageIO.read(getClass().getResourceAsStream("/image_files/Pauline/xmas_card.png")); 
 		} catch (IOException e)
 		{
 			e.printStackTrace();

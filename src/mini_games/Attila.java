@@ -102,20 +102,20 @@ public class Attila extends JPanel implements Runnable
 		
 		try
 		{
-			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/background.png"));
-			player_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/player.png"));
-			attila_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/attila.png"));
+			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/background.png"));
+			player_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/player.png"));
+			attila_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/attila.png"));
 			
-			w_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/W_active.png"));
-			a_img_active 		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/A_active.png"));
-			s_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/S_active.png"));
-			d_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/D_active.png"));
+			w_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/W_active.png"));
+			a_img_active 		= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/A_active.png"));
+			s_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/S_active.png"));
+			d_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/D_active.png"));
 			active_key_imgs 	= new BufferedImage[]{w_img_active, a_img_active, s_img_active, d_img_active};
 			
-			w_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/W_inactive.png"));
-			a_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/A_inactive.png"));
-			s_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/S_inactive.png"));
-			d_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/D_inactive.png"));
+			w_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/W_inactive.png"));
+			a_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/A_inactive.png"));
+			s_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/S_inactive.png"));
+			d_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/D_inactive.png"));
 			inactive_key_imgs	= new BufferedImage[]{w_img, a_img, s_img, d_img};
 			
 		} catch(IOException e)

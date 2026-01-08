@@ -69,15 +69,15 @@ public class SSC extends JPanel implements Runnable
 		
 		try
 		{
-			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc/background_img.png"));
-			player_img_left		= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc/player_LEFT.png"));
-			player_img_right	= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc/player_RIGHT.png"));
+			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/SSC/background_img.png"));
+			player_img_left		= ImageIO.read(getClass().getResourceAsStream("/image_files/SSC/player_LEFT.png"));
+			player_img_right	= ImageIO.read(getClass().getResourceAsStream("/image_files/SSC/player_RIGHT.png"));
 			player_img			= player_img_right;
 			
-			rocket_img_UP		= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc/rocket_UP.png"));
-			rocket_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc/rocket_LEFT.png"));
-			rocket_img_DOWN		= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc/rocket_DOWN.png"));
-			rocket_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc/rocket_RIGHT.png"));
+			rocket_img_UP		= ImageIO.read(getClass().getResourceAsStream("/image_files/SSC/rocket_UP.png"));
+			rocket_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/SSC/rocket_LEFT.png"));
+			rocket_img_DOWN		= ImageIO.read(getClass().getResourceAsStream("/image_files/SSC/rocket_DOWN.png"));
+			rocket_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/SSC/rocket_RIGHT.png"));
 		} catch (IOException e)
 		{
 			e.printStackTrace();

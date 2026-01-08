@@ -98,9 +98,9 @@ public class Lulle extends JPanel implements Runnable
 		try
 		{
 //			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/"));
-			player_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/player.png"));
-			npc_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/lulle.png"));
-			dirt_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/dirt.png"));
+			player_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/Lulle/player.png"));
+			npc_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/Lulle/lulle.png"));
+			dirt_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/Lulle/dirt.png"));
 		} catch(IOException e)
 		{
 			System.err.println("Err ImageIO.read()");
