@@ -670,7 +670,7 @@ public class GamePanel extends JPanel
 		frame.removeKeyListener(key_handler);
 		frame.remove(this);
 		
-		new AudioHandler("sfx/vada-a-borde-cazzo-sfx.wav", false, -1);
+		AudioHandler end_sfx = new AudioHandler("sfx/vada-a-borde-cazzo-sfx.wav", false, -1);
 		
 		new EndMenu(frame, top, game_audio, final_time_str, "Good Job!");
 	}
