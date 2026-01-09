@@ -3,7 +3,7 @@
 
 - ## GAME
   - ### Music
-    - #### Same Game_Audio is not stored if clip end in minigame, i.e. Switch Song -btn init. new song
+    - #### Same game_audio is not stored if clip end in minigame, i.e. Switch Song -btn init. new song
   - ### ~~GamePanel~~
     - #### ~~Enemy imgs~~
     - #### ~~Goal pos. at milano~~
@@ -30,10 +30,11 @@
   - ### ~~Albin~~
     - #### ~~SoundFX~~
     - #### ~~Lower GameAudio~~
-  - ### ~~Pauline~~
+  - ### Pauline
     - #### ~~Background img~~
     - #### ~~Add buffer columns so fall-items != table | trashbin~~
     - #### ~~Add thrashing-sfx~~
+    - #### Add picture of Sara & Pauline
   - ### Attila
     - #### Remove initial follow-type?
 - ## ~~Log game-time~~
@@ -46,3 +47,5 @@
 - ## General project cleanup
 
 - ## ~~Organize image-folders~~
+
+- ## Restructure handlers

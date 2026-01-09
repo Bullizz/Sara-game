@@ -2,6 +2,7 @@ package main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -14,14 +15,17 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class AudioHandler implements LineListener
 {
-	String file_name = "src/audio_files/";
+//	String file_name = "src/audio_files/";
+	String file_name = "src/audio_files/short_ver/";
 	boolean repeat;
+	boolean audio_finished = false;
 	
 	Clip clip;
 	FloatControl float_ctrl;
+//	CountDownLatch playingFinished;
 	
-	int current_song_index;
-	boolean user_stop = false;
+	int current_audio_index;
+//	boolean user_stop = false;
 	
 	public AudioHandler(String file_name, boolean repeat, int current_song_index)
 	{
@@ -40,11 +44,13 @@ public class AudioHandler implements LineListener
 		try
 		{
 			clip = (Clip) AudioSystem.getLine(new Line.Info(Clip.class));
-			clip.addLineListener(this);
 			clip.open(AudioSystem.getAudioInputStream(file));
+			clip.addLineListener(this);
 			float_ctrl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 			float_ctrl.setValue(0);
 			clip.start();
+			
+			audio_finished = false;
 		} catch (LineUnavailableException lue)
 		{
 			lue.printStackTrace();
@@ -64,14 +70,24 @@ public class AudioHandler implements LineListener
 		if(event.getType() == LineEvent.Type.STOP)
 		{				
 			clip.close();
+			/*
 			if(repeat && !user_stop)
 				new AudioHandler("", true, current_song_index);
+			*/
+//			if(repeat)
+
+			audio_finished = true;
 		}
 	}
 
-	public int getCurrent_song_index()
+	public boolean isAudio_finished()
 	{
-		return current_song_index;
+		return audio_finished;
+	}
+
+	public int getCurrent_audio_index()
+	{
+		return current_audio_index;
 	}
 	
 	// Randomize next song
@@ -123,14 +139,14 @@ public class AudioHandler implements LineListener
 			i = 0;
 		}
 		
-		current_song_index = new_song_index;
-		return song_names[new_song_index];
+		current_audio_index = new_song_index;
+		return song_names[current_audio_index];
 	}
 
 	public void endCurrentSong()
 	{
-		user_stop = true;
-		clip.close();
+//		user_stop = true;
+		clip.stop();
 	}
 	
 	public void raiseVolume(int level)

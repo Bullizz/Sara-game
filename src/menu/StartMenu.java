@@ -26,7 +26,7 @@ public class StartMenu extends JPanel
 	{
 		super();
 			this.width  = frame.getWidth();
-			this.height = (9 * frame.getHeight()) / 10;
+			this.height = (9 * frame.getHeight()) / 10;			
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
 		setBackground(blue);

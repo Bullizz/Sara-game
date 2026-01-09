@@ -167,8 +167,6 @@ public class Lkab extends JPanel implements Runnable
 					
 					repaint();
 					
-					delta = 0;
-					
 					// All wires placed
 					if(IntStream.of(wire_src_1_placed).sum() == 3 || key_handler.GamePanel_esc_pressed)
 					{
@@ -176,6 +174,15 @@ public class Lkab extends JPanel implements Runnable
 						frame.remove(this);
 						game_loop_running = false;
 					}
+
+					// If playing audio file is ended
+					if(game_audio.isAudio_finished())
+					{
+						int current_audio_index = game_audio.getCurrent_audio_index();
+						game_audio = new AudioHandler("", true, current_audio_index);
+					}
+					
+					delta = 0;
 				}
 			} // End of slave game-loop
 		} // End of master game_loop

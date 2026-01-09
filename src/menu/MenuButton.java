@@ -72,9 +72,10 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 				new StartMenu(frame, top, game_audio);
 				break;
 			case "Switch Song":
-				int current_song_index = game_audio.getCurrent_song_index();
+				int current_song_index = game_audio.getCurrent_audio_index();
 				game_audio.endCurrentSong();
 				game_audio = new AudioHandler("", true, current_song_index);
+				
 				frame.remove(current_panel);
 				new StartMenu(frame, top, game_audio);
 				break;
