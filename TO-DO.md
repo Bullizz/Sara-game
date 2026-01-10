@@ -50,4 +50,4 @@
 
 - ## ~~Organize image-folders~~
 
-- ## Restructure handlers
+- ## ~~Restructure handlers~~
