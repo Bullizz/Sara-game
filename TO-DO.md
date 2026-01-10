@@ -2,8 +2,8 @@
 - ## ~~Exit game system (gamePanel --> StartMenu)~~
 
 - ## GAME
-  - ### Music
-    - #### Same game_audio is not stored if clip end in minigame, i.e. Switch Song -btn init. new song
+  - ### ~~Music~~
+    - #### ~~Same game_audio is not stored if clip end in minigame, i.e. Switch Song -btn init. new song~~
   - ### ~~GamePanel~~
     - #### ~~Enemy imgs~~
     - #### ~~Goal pos. at milano~~
