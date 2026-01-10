@@ -102,7 +102,7 @@ public class GamePanel extends JPanel
 		lkab	= new Enemy("lkab",		664,   313,  entity_height, entity_width);
 		ssc		= new Enemy("ssc",		1645,  100,  entity_height, entity_width);
 		slusk	= new Enemy("slusk",	1402,  567,  entity_height, entity_width);
-		attila	= new Enemy("attila",	807,   739,  entity_height, entity_width);
+		attila	= new Enemy("attila",	817,   729,  entity_height, entity_width);
 		pauline = new Enemy("pauline",  504,   647,  entity_height, entity_width);
 		
 		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
@@ -415,8 +415,8 @@ public class GamePanel extends JPanel
 			double enemy_x = current_enemy.getEnemy_x();
 			double enemy_y = current_enemy.getEnemy_y();
 			
-			int delta_x	   = player_x - (int) enemy_x;
-			int delta_y    = player_y - (int) enemy_y;
+			int delta_x = player_x - (int) enemy_x;
+			int delta_y = player_y - (int) enemy_y;
 			
 			// Get direction needed to reach player
 			try
@@ -477,8 +477,8 @@ public class GamePanel extends JPanel
 			entity_x += entity_width;
 		
 		/* 
-		 * 	  enemy_x	  enemy_x + player_width
-		 * 	 		<--- --->
+		 * 	 entity_x	  	entity_x + entity_width
+		 * 	 		<------->
 		 * 			
 		 * (x, y1)  --------
 		 *   		|      |
@@ -491,7 +491,7 @@ public class GamePanel extends JPanel
 		 * 
 		 */
 		
-		for(int i = 1; i <= 13; i++)
+		for(int i = 0; i <= 13; i++)
 		{
 			entity_x += direction_arr;
 			
@@ -517,11 +517,11 @@ public class GamePanel extends JPanel
 		
 		/* 
 		 * 			
-		 *		   (x1, y)  --------- (x2, y)
+		 *		   (x1, y) <---------> (x2, y)
 		 *  				|		|
 		 *    			/\	|       |
 		 *    			|	|	    |
-		 *     player  	|	|	    |
+		 *     entity  	|	|	    |
 		 *     height  	|	|	    |
 		 *    			|	|	    |
 		 *    			\/	|	    |
@@ -529,7 +529,7 @@ public class GamePanel extends JPanel
 		 * 
 		 */
 		
-		for(int i = 1; i <= 13; i++)
+		for(int i = 0; i <= 13; i++)
 		{
 			entity_y += direction_arr;
 			try
