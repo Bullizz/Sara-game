@@ -36,6 +36,7 @@
     - #### ~~Add thrashing-sfx~~
     - #### Add picture of Sara & Pauline
   - ### Attila
+    - #### Fix user-pressed *activation* time?
     - #### Remove initial follow-type?
 - ## ~~Log game-time~~
 
