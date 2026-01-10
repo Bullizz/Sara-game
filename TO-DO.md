@@ -31,11 +31,11 @@
   - ### ~~Albin~~
     - #### ~~SoundFX~~
     - #### ~~Lower GameAudio~~
-  - ### Pauline
+  - ### ~~Pauline~~
     - #### ~~Background img~~
     - #### ~~Add buffer columns so fall-items != table | trashbin~~
     - #### ~~Add thrashing-sfx~~
-    - #### Add picture of Sara & Pauline
+    - #### ~~Add picture of Sara & Pauline~~
   - ### ~~Attila~~
     - #### ~~Fix user-pressed *activation* time~~
     - #### ~~Fix no-clip at start~~
