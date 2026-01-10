@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 
 public class GameTimer extends JLabel
 {
-	Timer timer;
+	public Timer timer;
 	TimerTask timer_task;
 	double total_time = 0;
 	double random_speed_coeff;
@@ -90,7 +90,6 @@ public class GameTimer extends JLabel
 				
 				if(time_str != null)
 				{
-//					System.out.println(time_str_buffer.toString());
 					setTime_str(time_str_buffer.toString());
 					top.setText(time_str_buffer.toString());
 				}
@@ -116,7 +115,7 @@ public class GameTimer extends JLabel
 	}
 	public void setRandom_speed_coeff()
 	{
-		random_speed_coeff = (Math.random() * (1 - (-1))) + (-1);
+		random_speed_coeff = (Math.random() * (2 - (-1))) + (-1);
 	}
 
 	public String getTime_str()

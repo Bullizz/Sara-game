@@ -1,9 +1,21 @@
 # bin files
 bin/
 
+leaderboard.txt
+
+/src/audio_files/ram_ranch_46.wav
+
 # Machine specifics, different JRE vers. on different machnines
 
 # JDT-specific (Eclipse Java Development Tools)     
 .classpath
 
+# Jar file
+sara-game.jar
+
 settings/
+
+# Log files
+hs_err_pid15048.log
+hs_err_pid16804.log
+replay_pid15048.log

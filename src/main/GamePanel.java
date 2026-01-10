@@ -1,6 +1,5 @@
 package main;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,15 +13,22 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import entities.Player;
 import entities.Enemy;
-import mini_games.Lulle;
+import entities.Player;
+
+import menu.EndMenu;
+import menu.StartMenu;
+
+import handlers.KeyHandler;
+import handlers.AudioHandler;
+
 import mini_games.Albin;
+import mini_games.Attila;
 import mini_games.Lkab;
+import mini_games.Lulle;
+import mini_games.Pauline;
 import mini_games.SSC;
 import mini_games.Slusk;
-import mini_games.Attila;
-import mini_games.Pauline;
 
 public class GamePanel extends JPanel
 {
@@ -33,28 +39,30 @@ public class GamePanel extends JPanel
 	
 	Enemy[] enemies;
 	GameTimer game_timer;
+	AudioHandler game_audio;
 	
 	Thread game_thread, enemies_thread;
 	
 	final int width;
 	final int height;
 	
-	boolean game_loop_running, game_paused, enemies_updating;
+	boolean game_loop_running, enemies_updating;
 	double random_speed_coeff;
 	
 	JFrame frame;
 	JLabel top;
 	
 	BufferedImage map_img, player_img;
+	BufferedImage lulle_img, albin_img, lkab_img, ssc_img, slusk_img, attila_img, pauline_img;
 	
 	int[][] map_constraints;
 	
 	int enemy_collision_index = -1;
-	double delta = 0;
 	
-	MouseList ml;
+	int GOAL_X = 854;
+	int GOAL_Y = 772;
 	
-	public GamePanel(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x0, int player_y0)
+	public GamePanel(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x0, int player_y0)
 	{
 		super();
 			this.width 	= frame.getWidth();
@@ -65,25 +73,31 @@ public class GamePanel extends JPanel
 		
 		try
 		{
-			map_img = ImageIO.read(getClass().getResourceAsStream("/image_files/europe_4.png"));
-			player_img = ImageIO.read(getClass().getResourceAsStream("/image_files/sara-transp.png"));			
+			map_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/world_map.png"));
+			player_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/player.png"));
+			
+			lulle_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/lulle.png")); 
+			albin_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/albin.png"));
+			lkab_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/lkab.png"));
+			ssc_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/ssc.png"));
+			slusk_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/slusk.png"));
+			attila_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/attila.png"));
+			pauline_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/pauline.png"));
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 		
 		frame.add(this);
-		if(!frame.isVisible())
-			frame.setVisible(true);
-
-		int entity_width  = this.width / 40;
-		int entity_height = this.height / 40;
+		
+		int entity_width  = this.width  / 30;
+		int entity_height = this.height / 30;
 		
 		// Init. enemies
 		lulle 	= new Enemy("lulle",	1460,  259,  entity_height, entity_width);
 		albin	= new Enemy("albin",	1468,  356,  entity_height, entity_width);
 		lkab	= new Enemy("lkab",		664,   313,  entity_height, entity_width);
-		ssc		= new Enemy("ssc",		1665,  107,  entity_height, entity_width);
+		ssc		= new Enemy("ssc",		1645,  100,  entity_height, entity_width);
 		slusk	= new Enemy("slusk",	1402,  567,  entity_height, entity_width);
 		attila	= new Enemy("attila",	807,   739,  entity_height, entity_width);
 		pauline = new Enemy("pauline",  504,   647,  entity_height, entity_width);
@@ -91,17 +105,39 @@ public class GamePanel extends JPanel
 		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 
 		// Check that player-spawn != any enemy-spawn
-		for(int enemy_i = 0; enemy_i < enemies.length; enemy_i++)
+		int buffer_zone = 10;
+		int enemy_i = 0;
+		while(enemy_i < enemy_amount)
 		{
-			if(enemies[enemy_i].getEnemy_x() - (player_x0 + entity_width) <= 5)
-				player_x0 -= 5;
-			else if(player_x0 - (enemies[enemy_i].getEnemy_x() + entity_width) <= 5)
-				player_x0 += 5;
+			boolean valid_x = false;			
+			boolean valid_y = false;
+			
+			// Enemy to the right
+			int x_diff_1 = Math.abs(enemies[enemy_i].getEnemy_x() - (player_x0 + entity_width));
+			// Enemy to the left			
+			int x_diff_2 = Math.abs(player_x0 - (enemies[enemy_i].getEnemy_x() + entity_width));
+			
+			// Enemy below player
+			int y_diff_1 = Math.abs(enemies[enemy_i].getEnemy_y() - (player_y0 + entity_height));
+			// Enemy above player
+			int y_diff_2 = Math.abs(player_y0 - (enemies[enemy_i].getEnemy_y() + entity_height));
+			
+			if(x_diff_1 <= buffer_zone)
+				player_x0 -= buffer_zone;
+			else if(x_diff_2 <= buffer_zone)
+				player_x0 += buffer_zone;
+			else
+				valid_x = true;
 				
-			if(enemies[enemy_i].getEnemy_y() - (player_y0 + entity_height) <= 5)
-				player_y0 -= 5;
-			else if(player_y0 - (enemies[enemy_i].getEnemy_y() + entity_height) <= 5)
-				player_y0 += 5;
+			if(y_diff_1 <= buffer_zone)
+				player_y0 -= buffer_zone;
+			else if(y_diff_2 <= buffer_zone)
+				player_y0 += buffer_zone;
+			else
+				valid_y = true;
+			
+			if(valid_x && valid_y)
+				enemy_i++;
 		}
 			
 		// Init. player
@@ -111,22 +147,12 @@ public class GamePanel extends JPanel
 		this.top 		 = top;
 		this.key_handler = key_handler;
 		this.game_timer  = game_timer;
+		this.game_audio  = game_audio;
 		
 		// Integer matrix with map boundaries
 		map_constraints = loadMapConstraints(this.width, this.height);
 		
-//		ml = new MouseList(this.width, this.height, frame.getHeight() / 10);
-//		frame.addMouseMotionListener(ml);
-		
-//		addMouseListener(new MouseAdapter() {
-//			public void mousePressed(MouseEvent e)
-//			{
-//				JOptionPane.showMessageDialog(null, e.getX() + ", " + e.getY());
-////				System.out.println(e.getX() + ", " + e.getY());
-////				System.exit(0);
-//			}
-//		});
-		
+		game_audio.setParent_frame(game_audio.string_GamePanel);
 		initGameThread();
 		initEnemiesThread();
 	}
@@ -139,6 +165,7 @@ public class GamePanel extends JPanel
 			game_timer = new GameTimer();
 			game_timer.initTimer(top);
 		}
+		game_timer.setTime_coeff(1);
 		
 		game_loop_running = true;
 		game_thread = new Thread(new Runnable()
@@ -159,15 +186,8 @@ public class GamePanel extends JPanel
 					long last_time = System.nanoTime();
 					long current_time;
 					
-					boolean game_paused = key_handler.isGame_paused();
-					
-					// Assign timer first value to start it
-					// (only when master loop is started)
-					if(!game_paused && game_loop_running)
-						game_timer.setTime_coeff(1);
-					
 					// Slave game-loop
-					while(game_loop_running && !game_paused)
+					while(game_loop_running)
 					{
 						// Cont. time-to-update logic
 						current_time = System.nanoTime();
@@ -185,8 +205,29 @@ public class GamePanel extends JPanel
 							// Collision
 							if(collision_params[0] == 1)
 							{
+								killThreads();
 								enemy_collision_index = collision_params[1];
-								game_loop_running = false;
+							}
+							
+							// Reach goal y-pos.
+							if(player.getPlayer_y() < GOAL_Y && GOAL_Y < (player.getPlayer_y() + player.player_height))
+							{
+								// Reach goal x-pos.
+								if(player.getPlayer_x() < GOAL_X && GOAL_X < (player.getPlayer_x() + player.player_width))
+								{	
+									killThreads();
+									game_timer.setTime_coeff(0);
+								}
+							}
+							
+							if(key_handler.GamePanel_esc_pressed)
+								killThreads();
+							
+							// If playing audio file is ended
+							if(game_audio.isAudio_finished())
+							{
+								int current_audio_index = game_audio.getCurrent_audio_index();
+								game_audio = new AudioHandler("", current_audio_index);
 							}
 							
 							delta = 0;
@@ -195,15 +236,15 @@ public class GamePanel extends JPanel
 					
 					// Collision detected
 					if(enemy_collision_index > -1)
-					{
-						game_loop_running = false;
-						game_thread		  = null;
-						
-						enemies_updating  = false;
-						enemies_thread	  = null;
-						
 						launchMiniGame(enemy_collision_index);
-					}
+					
+					// Player exit
+					else if(key_handler.GamePanel_esc_pressed)
+						initStartMenu();
+					
+					// No collision, game won
+					else
+						endGame();
 				} // End of master game-loop
 			}
 		});
@@ -231,7 +272,7 @@ public class GamePanel extends JPanel
 					int spawn_counter   = 0;
 					
 					// Slave game-loop
-					while(enemies_updating && !game_paused)
+					while(enemies_updating)
 					{
 						current_time = System.nanoTime();
 						delta += (current_time - last_time) / draw_interval;
@@ -240,12 +281,12 @@ public class GamePanel extends JPanel
 						{
 							updateEnemies();
 							
-							// Enemies move away from player for first 15 frames
+							// Enemies move away from player for first 20 frames
 							if(anti_spawn)
 							{
 //								0, 3, 1, 2, 1, 0, 2
 								spawn_counter++;
-								if(spawn_counter % 15 == 0)
+								if(spawn_counter % 20 == 0)
 								{
 									enemies[0].setFollow_type(0);
 									enemies[1].setFollow_type(3);
@@ -261,8 +302,8 @@ public class GamePanel extends JPanel
 							
 							delta = 0;
 						}
-					} // End of slave game-loop
-				} // End of master game-loop
+					} // End of [enemy] slave game-loop
+				} // End of [enemy] master game-loop
 			}
 		});
 		enemies_thread.start();
@@ -298,9 +339,9 @@ public class GamePanel extends JPanel
 		int player_y = player.getPlayer_y();
 		
 		// If within map constraints
-		if(moveableX2(player_x, player_y, player.player_width, player.player_height, player_dx))
+		if(moveableX(player_x, player_y, player.player_width, player.player_height, player_dx) == 1)
 			player_x += player_speed_x * player_dx;
-		if(moveableY2(player_x, player_y, player.player_width, player.player_height, player_dy))
+		if(moveableY(player_x, player_y, player.player_width, player.player_height, player_dy) == 1)
 			player_y += player_speed_y * player_dy;
 		
 		player.setPlayer_x(player_x);
@@ -394,18 +435,29 @@ public class GamePanel extends JPanel
 			}
 
 			// Enemy stays within map constraints
-			if(moveableX2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]))
-				current_enemy.setEnemy_x((int) (enemy_x + speed_x));
-			if(moveableY2(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[1]))
-				current_enemy.setEnemy_y((int) (enemy_y + speed_y));
+			int moving_x = moveableX(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[0]);
+			int moving_y = moveableY(enemy_x, enemy_y, current_enemy.width, current_enemy.height, direction_arr[1]);
+			
+			if(moving_x == 1)
+				enemy_x += speed_x;
+			if(moving_y == 1)
+				enemy_y += speed_y;
+			if(moving_x == -1 || moving_y == -1)
+			{				
+				enemy_x = current_enemy.x0;
+				enemy_y = current_enemy.y0;
+			}
+			
+			current_enemy.setEnemy_x((int) enemy_x);
+			current_enemy.setEnemy_y((int) enemy_y);
 		}
 	}
 
 	// Moveable within x-direction
-	private boolean moveableX2(double enemy_x, double enemy_y, int player_width, int player_height, double direction_arr)
+	private int moveableX(double entity_x, double entity_y, int entity_width, int entity_height, double direction_arr)
 	{
 		if(direction_arr > 0)
-			enemy_x += player_width;
+			entity_x += entity_width;
 		
 		/* 
 		 * 	  enemy_x	  enemy_x + player_width
@@ -422,25 +474,29 @@ public class GamePanel extends JPanel
 		 * 
 		 */
 		
-//		int y1 = map_constraints[(int) Enemy_y][(int) Enemy_x];
-//		int y2 = map_constraints[(int) Enemy_y + player_height][(int) Enemy_x];
-		
 		for(int i = 1; i <= 13; i++)
 		{
-			enemy_x += direction_arr;
-			// 				  			(x, y1)																	(x, y2)
-			if(map_constraints[(int) enemy_y][(int) enemy_x] == 1 || map_constraints[(int) enemy_y + player_height][(int) enemy_x] == 1)
-				return false;
+			entity_x += direction_arr;
+			
+			try
+			{				
+				// 				  			   (x, y1)																   (x, y2)
+				if(map_constraints[(int) entity_y][(int) entity_x] == 1 || map_constraints[(int) entity_y + entity_height][(int) entity_x] == 1)
+					return 0;
+			} catch(Exception e)
+			{
+				return -1;
+			}
 		}
 		
-		return true;
+		return 1;
 	}
 
 	// Moveable within y-direction
-	private boolean moveableY2(double enemy_x, double enemy_y, int player_width, int player_height, double direction_arr)
+	private int moveableY(double entity_x, double entity_y, int entity_width, int entity_height, double direction_arr)
 	{
 		if(direction_arr > 0)
-			enemy_y += player_height;
+			entity_y += entity_height;
 		
 		/* 
 		 * 			
@@ -456,21 +512,21 @@ public class GamePanel extends JPanel
 		 * 
 		 */
 		
-//		int x1 = map_constraints[(int) Enemy_y][(int) Enemy_x];
-//		int x2 = map_constraints[(int) Enemy_y][(int) Enemy_x + player_width];
-		
 		for(int i = 1; i <= 13; i++)
 		{
-			enemy_y += direction_arr;
+			entity_y += direction_arr;
 			try
 			{
-				// 				  			(x1, y)																	(x2, y)
-				if(map_constraints[(int) enemy_y][(int) enemy_x] == 1 || map_constraints[(int) enemy_y][(int) enemy_x + player_width] == 1)
-					return false;
-			} catch(Exception e){return false;}
+				// 				  			  (x1, y)												  (x2, y)
+				if(map_constraints[(int) entity_y][(int) entity_x] == 1 || map_constraints[(int) entity_y][(int) entity_x + entity_width] == 1)
+					return 0;
+			} catch(Exception e)
+			{
+				return -1;
+			}
 		}
 		
-		return true;
+		return 1;
 	}
 	
 	// Check if entity collides with any enemy
@@ -526,55 +582,36 @@ public class GamePanel extends JPanel
 		int player_x = player.getPlayer_x();
 		int player_y = player.getPlayer_y();
 		
-//		clearChildren();
-		frame.remove(this);
 		key_handler.setDirection_arr(new int[] {0, 0});
+		frame.remove(this);
 		
 		switch(enemy_collision_index)
 		{
 			case 0:
-				new Lulle(frame, top, game_timer, key_handler, player_x, player_y);
+				new Lulle(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 1:
 				game_timer.setTime_coeff(-1);
-				new Albin(frame, top, game_timer, key_handler, player_x, player_y);
+				new Albin(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 2:
-				new Lkab(frame, top, game_timer, key_handler, player_x, player_y);
+				new Lkab(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 3:
-				new SSC(frame, top, game_timer, key_handler, player_x, player_y);
+				new SSC(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 4:
 				game_timer.setTime_coeff(25);
-				new Slusk(frame, top, game_timer, key_handler, player_x, player_y);
+				new Slusk(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 5:
-//				new Attila(frame, top, game_timer, key_handler, player_x, player_y);				
-				new Albin(frame, top, game_timer, key_handler, player_x, player_y);
+				new Attila(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 			case 6:
-				new Pauline(frame, top, game_timer, key_handler, player_x, player_y);
+				new Pauline(frame, top, game_timer, key_handler, game_audio, player_x, player_y);
 				break;
 		}
 	}
-	
-	// Nullify all, to then be collected by the garbage collector,
-	// a.k.a. clears memory
-	/*
-	private void clearChildren()
-	{
-		player 	= null;
-		lulle 	= null;
-		albin 	= null;
-		lkab 	= null;
-		ssc 	= null;
-		slusk 	= null;
-		attila 	= null;
-		pauline = null;
-		enemies = null;
-	}
-	*/
 	
 	// Load file with map boundaries
 	private int[][] loadMapConstraints(int cols, int rows)
@@ -585,7 +622,7 @@ public class GamePanel extends JPanel
 		
 		try
 		{
-			File file = new File("map-4.txt");
+			File file = new File("map.txt");
 			Scanner reader = new Scanner(file);
 			while(reader.hasNextLine())
 			{
@@ -619,6 +656,40 @@ public class GamePanel extends JPanel
 		return map;
 	}
 
+	private void killThreads()
+	{
+		game_loop_running	= false;
+		game_thread			= null;
+		
+		enemies_updating	= false;
+		enemies_thread		= null;
+	}
+	
+	// End GamePanel
+	private void endGame()
+	{
+		String final_time_str = game_timer.getTime_str();
+		game_timer.timer.cancel();
+		
+		frame.removeKeyListener(key_handler);
+		frame.remove(this);
+		
+		AudioHandler end_sfx = new AudioHandler("sfx/vada-a-borde-cazzo-sfx.wav", -1);
+		end_sfx.raiseVolume(6);
+		
+		new EndMenu(frame, top, game_audio, final_time_str, "Good Job!", "user_inp");
+	}
+	
+	private void initStartMenu()
+	{
+		killThreads();
+		game_timer.timer.cancel();
+		frame.removeKeyListener(key_handler);
+		frame.remove(this);
+		top.setText("Vada a Bordo, Cazzo!");
+		new StartMenu(frame, top, game_audio);
+	}
+
 	@Override
 	public void paintComponent(Graphics g_1d)
 	{
@@ -627,34 +698,42 @@ public class GamePanel extends JPanel
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Draw background
-		if(map_img != null)
-			g_2d.drawImage(map_img, 0, 0, this.width, this.height, null);
-		else
-		{
-			
-		}
-
+		g_2d.drawImage(map_img, 0, 0, this.width, this.height, null);
+		
 		// Paint player
 		if(player != null)
-			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height(), null);
-		
+			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
 		
 		if(enemies_updating)
 		{
 			// Paint enemies
 			for(int i = 0; i < enemy_amount; i++)
 			{
-				try
-				{					
-					Enemy current_Enemy = enemies[i];
-					
-					g_2d.setColor(Color.BLACK);
-					g_2d.fillRect(current_Enemy.getEnemy_x(), current_Enemy.getEnemy_y(), current_Enemy.width, current_Enemy.height);
-					g_2d.setColor(Color.WHITE);
-					g_2d.drawString(current_Enemy.id_string, current_Enemy.getEnemy_x(), current_Enemy.getEnemy_y() + 15);
-				} catch(Exception e)
+				Enemy current_enemy = enemies[i];
+				
+				switch(current_enemy.id_string)
 				{
-					System.out.println(e.getCause());
+					case "lulle":
+						g_2d.drawImage(lulle_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "albin":
+						g_2d.drawImage(albin_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "lkab":
+						g_2d.drawImage(lkab_img,    current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "ssc":
+						g_2d.drawImage(ssc_img,     current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "slusk":
+						g_2d.drawImage(slusk_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "attila":
+						g_2d.drawImage(attila_img,  current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "pauline":
+						g_2d.drawImage(pauline_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
 				}
 			}
 		}

@@ -13,15 +13,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import entities.Player;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+import menu.StartMenu;
 
 public class Attila extends JPanel implements Runnable
 {
 	Thread lulle_thread;
 	int width, height;
-	boolean game_loop_running, game_paused = false;
+	boolean game_loop_running;
 	Thread attila_thread;
 	BufferedImage background_img;
 	int background_x = 0;
@@ -32,6 +36,7 @@ public class Attila extends JPanel implements Runnable
 	JLabel top;
 	GameTimer game_timer;
 	KeyHandler key_handler;
+	AudioHandler game_audio;
 	int player_x_passing;
 	int player_y_passing;
 	
@@ -52,16 +57,16 @@ public class Attila extends JPanel implements Runnable
 	char[] keys_arr = {'w', 'a', 's', 'd'};
 	int[][] falling_keys;
 	int time_to_key_fall;
-	char active_key;// = '\0';
+	char active_key;
 	
 	int key_dim = 128;
 	int x_ws = 192;
 	int x_a = 64;
 	int x_d = 320;
-	int falling_speed = 10;
+	int falling_speed = 14;
 	int[][] player_keys_pos;
-
-	public Attila(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
+	
+	public Attila(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x, int player_y)
 	{
 		super();
 			this.width 	= frame.getWidth();
@@ -75,6 +80,7 @@ public class Attila extends JPanel implements Runnable
 		this.top				= top;
 		this.game_timer			= game_timer;
 		this.key_handler		= key_handler;
+		this.game_audio			= game_audio;
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 		
@@ -98,20 +104,20 @@ public class Attila extends JPanel implements Runnable
 		
 		try
 		{
-			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/background.png"));
-			player_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/body_2.png"));
-			attila_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/attila.png"));
+			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/background.png"));
+			player_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/player.png"));
+			attila_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/attila.png"));
 			
-			w_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/W_active.png"));
-			a_img_active 		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/A_active.png"));
-			s_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/S_active.png"));
-			d_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/D_active.png"));
+			w_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/W_active.png"));
+			a_img_active 		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/A_active.png"));
+			s_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/S_active.png"));
+			d_img_active		= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/D_active.png"));
 			active_key_imgs 	= new BufferedImage[]{w_img_active, a_img_active, s_img_active, d_img_active};
 			
-			w_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/W_inactive.png"));
-			a_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/A_inactive.png"));
-			s_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/S_inactive.png"));
-			d_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/attila/D_inactive.png"));
+			w_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/W_inactive.png"));
+			a_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/A_inactive.png"));
+			s_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/S_inactive.png"));
+			d_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/D_inactive.png"));
 			inactive_key_imgs	= new BufferedImage[]{w_img, a_img, s_img, d_img};
 			
 		} catch(IOException e)
@@ -148,9 +154,9 @@ public class Attila extends JPanel implements Runnable
 			
 			int frame_counter  = 0;
 			int stripe_counter = 0;
-			boolean game_paused = key_handler.isGame_paused();
+			
 			// Slave game-loop
-			while(game_loop_running && !game_paused)
+			while(game_loop_running)
 			{
 				current_time = System.nanoTime();
 				delta += (current_time - last_time) / draw_interval;
@@ -181,7 +187,7 @@ public class Attila extends JPanel implements Runnable
 					repaint();
 					
 					 // Game completed
-					 if(player.getPlayer_x() + player.getPlayer_width() >= attila_x + key_dim)
+					 if(player.getPlayer_x() + player.player_width >= attila_x + key_dim || key_handler.GamePanel_esc_pressed)
 					 {
 						 key_handler.setAttila_active(false);
 						 
@@ -200,18 +206,37 @@ public class Attila extends JPanel implements Runnable
 					}
 					
 					stripe_counter++;
-					// Player/Attila animation
+					// Player|Attila animation
 					if(stripe_counter % 30 == 0)
 					{
 						toggleAngle();
 						stripe_counter = 0;
 					}
 					
+					// If playing audio file is ended
+					if(game_audio.isAudio_finished())
+					{
+						int current_audio_index = game_audio.getCurrent_audio_index();
+						game_audio = new AudioHandler("", current_audio_index);
+					}
+					
 					delta = 0;
 				}
 			} // End of slave game-loop
 		} // End of master game-loop
-		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+		if(key_handler.GamePanel_esc_pressed)
+		{
+			game_timer.timer.cancel();
+			
+			frame.removeKeyListener(key_handler);
+			frame.remove(this);
+
+			top.setText("Vada a Bordo, Cazzo!");
+			
+			new StartMenu(frame, top, game_audio);
+		}
+		else
+			new GamePanel(frame, top, game_timer, key_handler, game_audio, player_x_passing, player_y_passing);
 	}
 
 	private void updatePlayer()
@@ -372,9 +397,9 @@ public class Attila extends JPanel implements Runnable
 		g_2d.drawImage(background_img, background_x, 0, 5 * width, height, null);
 		
 		// Paint player
-		g_2d.rotate(Math.toRadians(angle), player.getPlayer_x() + (player.getPlayer_width() / 2), player.getPlayer_y() + (player.getPlayer_height() / 2));
-		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height(), null);
-		g_2d.rotate(Math.toRadians(-angle), player.getPlayer_x() + (player.getPlayer_width() / 2), player.getPlayer_y() + (player.getPlayer_height() / 2));
+		g_2d.rotate(Math.toRadians(angle), player.getPlayer_x() + (player.player_width / 2), player.getPlayer_y() + (player.player_height / 2));
+		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
+		g_2d.rotate(Math.toRadians(-angle), player.getPlayer_x() + (player.player_width / 2), player.getPlayer_y() + (player.player_height / 2));
 	
 		// Paint attila
 		g_2d.rotate(Math.toRadians(-angle), attila_x + (key_dim / 2), attila_y + (key_dim / 2));

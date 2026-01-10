@@ -1,13 +1,15 @@
 ## MENU
 - ### Start Menu
    - #### Play
-   - #### Options
-      - Song choice
-        - Randomized
+   - #### Randomize song
+        - Ram Ranch 46
+        - Miss Li
+        - Canneloni Macaroni
+        - フニクリ フニクラ
+   - ##### Leaderboard
    - ##### Exit
 - ### Game Menu
-   - #### "Warning, progress won't be saved if you quit the game"
-   - #### <Yes|No>
+   - #### Go back to the Start menu
 
 - ## GAME
    -  ### Kiruna --> Italy
@@ -18,11 +20,13 @@
             - #### Need to bong
             - #### Really increases time
             - #### Button mash, press space-button <RNG> amount of times
+            - #### Vine boom (for slow bong)
          - #### Lulle
             - #### Need to clean up after him
-         - #### Albin (hero?)
+         - #### Albin (hero!)
             - #### Time goes down
             - #### RNG amount of time restored
+            - #### car sfx
          - #### LKAB
             - #### Need to go through swamp
             - #### Player speed ~50%
@@ -34,7 +38,6 @@
               - Julmust
               - Pain suprise
               - Christmas card
-            - #### Currently trash bin implemented, but items stop falling after placed on table
          - #### Attila
          	- #### Need to catch him
          	- #### Falling WASD like dance dance revolution
@@ -47,3 +50,6 @@
 - ## FINISH
    - ### Show completion time
    - ### Log and disp. leaderboard
+- ## Game music
+   - ### Check for audio-finish-status throughout **each** game-thread
+   - ### Assign minigame SFX to variables to be safe

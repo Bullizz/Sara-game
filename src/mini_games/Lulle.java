@@ -8,36 +8,43 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import entities.Enemy;
 import entities.Player;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+
+import menu.StartMenu;
 
 public class Lulle extends JPanel implements Runnable
 {
 	Thread lulle_thread;
 	int width, height;
-	boolean game_paused 	  = false;
 	boolean dirt_placed 	  = false;
 	boolean game_loop_running = true;
-	final int RNG 			  = 100;
 	// 1 in <RNG> chance that dirt is generated ~every millisecond
+	final int RNG 			  = 100;
+
+	BufferedImage background_img;
 
 	// Arguments
 	JFrame frame;
 	JLabel top;
 	GameTimer game_timer;
 	KeyHandler key_handler;
+	AudioHandler game_audio;
 	int player_x_passing;
 	int player_y_passing;
 	
-	int MAX_POINTS  = 4;
+	// Max points 4 - 8
+	int MAX_POINTS  = (int) ((Math.random() * (8 - 4)) + 4);
 	int points 		= 0;
 	
 	// General entity parameters
@@ -64,7 +71,7 @@ public class Lulle extends JPanel implements Runnable
 	int index2 			  = (int) (Math.random() * 2);
 	BufferedImage npc_img;
 	
-	public Lulle(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
+	public Lulle(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x, int player_y)
 	{
 		super();
 			this.width 	= frame.getWidth();
@@ -78,6 +85,7 @@ public class Lulle extends JPanel implements Runnable
 		this.top				= top;
 		this.game_timer			= game_timer;
 		this.key_handler		= key_handler;
+		this.game_audio			= game_audio;
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 	
@@ -91,9 +99,10 @@ public class Lulle extends JPanel implements Runnable
 		
 		try
 		{
-			player_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/player_1-transp.png"));
-			npc_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/lulle_1-transp.png"));
-			dirt_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lulle/dirt-transp.png"));
+//			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/"));
+			player_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/player.png"));
+			npc_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/lulle.png"));
+			dirt_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/dirt.png"));
 		} catch(IOException e)
 		{
 			System.err.println("Err ImageIO.read()");
@@ -125,10 +134,8 @@ public class Lulle extends JPanel implements Runnable
 			long last_time = System.nanoTime();
 			long current_time;
 			
-			boolean game_paused = key_handler.isGame_paused();
-			
 			// Slave game-loop
-			while(game_loop_running && !game_paused)
+			while(game_loop_running)
 			{
 				current_time = System.nanoTime();
 				delta += (current_time - last_time) / draw_interval;
@@ -144,19 +151,38 @@ public class Lulle extends JPanel implements Runnable
 
 					repaint();
 					
-					// Minigame finished
-					if(points == MAX_POINTS)
+					// Minigame finished or esc. pressed
+					if(points == MAX_POINTS || key_handler.GamePanel_esc_pressed)
 					{
 						lulle_thread = null;
 						frame.remove(this);
 						game_loop_running = false;
 					}
-						
+					
+					// If playing audio file is ended
+					if(game_audio.isAudio_finished())
+					{
+						int current_audio_index = game_audio.getCurrent_audio_index();
+						game_audio = new AudioHandler("", current_audio_index);
+					}
+					
 					delta = 0;
 				}
 			} // End of slave game-loop
 		} // End of master game-loop
-		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+		if(key_handler.GamePanel_esc_pressed)
+		{
+			game_timer.timer.cancel();
+			
+			frame.removeKeyListener(key_handler);
+			frame.remove(this);
+
+			top.setText("Vada a Bordo, Cazzo!");
+			
+			new StartMenu(frame, top, game_audio);
+		}
+		else
+			new GamePanel(frame, top, game_timer, key_handler, game_audio, player_x_passing, player_y_passing);
 	}
 	
 	private void updatePlayer()
@@ -259,9 +285,12 @@ public class Lulle extends JPanel implements Runnable
 		int dirt_rng = (int) (Math.random() * RNG);
 		if(dirt_rng == 0 && !dirt_placed)
 		{
-			dirt_placed = true;
 			dirt_x = npc_x;
 			dirt_y = npc_y + (entity_height / 2);
+			
+			// Ensure dirt cannot be placed where player cannot reach
+			if(npc_y > (entity_height / 2))
+				dirt_placed = true;
 		}
 		
 		npc.setEnemy_x(npc_x);
@@ -283,8 +312,8 @@ public class Lulle extends JPanel implements Runnable
 		if(Math.abs(player_x - dirt_x) <= (0.2 * (double) entity_width))
 			valid_x = true;
 		
-		// If dirt-height completely within player-height
-		if(player_y < dirt_y && (dirt_y + dirt_heigth) < (player_y + entity_height))
+		// If dirt-y ~= broom
+		if(player_y + (entity_height / 2) < dirt_y && dirt_y + (dirt_heigth / 2) <= player_y + entity_height)
 			valid_y = true;
 		
 		// Player covered enough dirt a.k.a. clean
@@ -292,6 +321,8 @@ public class Lulle extends JPanel implements Runnable
 		{
 			points++;
 			dirt_placed = false;
+			AudioHandler cleaning_sound = new AudioHandler("sfx/broom-sweep.wav", -1);
+			cleaning_sound.raiseVolume(6);
 		}
 	}
 

@@ -3,18 +3,21 @@ package entities;
 public class Enemy
 {
 	int x, y;
+	public int x0, y0;
 	int speed_x, speed_y;
 
-	final public int width, height;
+	public int width, height;
 	final public String id_string;
 	public int follow_type = 3;
-	public final int max_speed = 5;
+	public final int max_speed = 4;
 	
 	public Enemy(String id_string, int x, int y, int width, int height)
 	{
 		this.id_string 	 = id_string;
 		this.x 			 = x;
+			x0			 = x;
 		this.y			 = y;
+			y0			 = y;
 		this.width		 = width;
 		this.height		 = height;
 	}
@@ -63,6 +66,5 @@ public class Enemy
 	public void setSpeed_y(int speed_y)
 	{
 		this.speed_y = speed_y;
-	}
-		
+	}		
 }

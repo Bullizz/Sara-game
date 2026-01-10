@@ -15,15 +15,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import entities.Player;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+import menu.StartMenu;
 
 public class Lkab extends JPanel implements Runnable
 {
 	int width, height;
 	Thread lkab_thread;
-	boolean game_loop_running, game_paused = false;
+	boolean game_loop_running;
 	BufferedImage background_img;
 	
 	// Arguments
@@ -31,6 +35,7 @@ public class Lkab extends JPanel implements Runnable
 	JLabel top;
 	GameTimer game_timer;
 	KeyHandler key_handler;
+	AudioHandler game_audio;
 	int player_x_passing;
 	int player_y_passing;
 	
@@ -52,7 +57,8 @@ public class Lkab extends JPanel implements Runnable
 	Color BLUE	= Color.BLUE;
 	
 	// Wire sources parameters
-	int len					= 3;			 // Length all arrays
+	BufferedImage src_img_RED, src_img_GREEN, src_img_BLUE;
+	int len					= 3;			 // Length of all arrays
 	char[] wire_src_1		= new char[len]; // Left side src
 	int[] wire_src_1_placed	= {0, 0, 0};
 	char[] wire_src_2		= new char[len]; // Right side src
@@ -60,7 +66,7 @@ public class Lkab extends JPanel implements Runnable
 	int wire_src_width;
 	int wire_src_height;
 	
-	public Lkab(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
+	public Lkab(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x, int player_y)
 	{
 		super();
 			this.width  = frame.getWidth();
@@ -74,18 +80,23 @@ public class Lkab extends JPanel implements Runnable
 		this.top				= top;
 		this.game_timer			= game_timer;
 		this.key_handler		= key_handler;
+		this.game_audio			= game_audio;
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 		
 		player = new Player(1689, 584, 112, 145);
-		player_max_speed = player.max_speed / 2;
+		player_max_speed = player.max_speed - 1;
 		
 		try
 		{
-			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/gallivare_swamp_2.png"));
-			player_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_left_float-transp.png"));
-			player_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/lkab/player_right_float-transp.png"));
+			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/gallivare_swamp.png"));
+			player_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/player_LEFT.png"));
+			player_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/player_RIGHT.png"));
 			player_img			= player_img_RIGHT;
+			
+			src_img_RED			= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_RED.png"));
+			src_img_GREEN		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_GREEN.png"));
+			src_img_BLUE		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_BLUE.png"));
 		} catch(IOException e)
 		{
 			e.printStackTrace();
@@ -96,10 +107,9 @@ public class Lkab extends JPanel implements Runnable
 		
 		wire_src_1 		= initWireSrcArr();
 		wire_src_2 		= initWireSrcArr();
-		wire_src_width  = width / 40;
+		wire_src_width  = width / 20;
 		wire_src_height = height / 7;
 		wire_width		= wire_src_height / 5;
-
 		
 		initLkabThread();
 	}
@@ -145,9 +155,8 @@ public class Lkab extends JPanel implements Runnable
 			long last_time = System.nanoTime();
 			long current_time;
 			
-			boolean game_paused = key_handler.isGame_paused();
 			// Slave game-loop
-			while(game_loop_running && !game_paused)
+			while(game_loop_running)
 			{
 				current_time = System.nanoTime();
 				delta += (current_time - last_time) / draw_interval;
@@ -160,21 +169,38 @@ public class Lkab extends JPanel implements Runnable
 					
 					repaint();
 					
-					delta = 0;
-					
 					// All wires placed
-					if(IntStream.of(wire_src_1_placed).sum() == 3)
+					if(IntStream.of(wire_src_1_placed).sum() == 3 || key_handler.GamePanel_esc_pressed)
 					{
 						lkab_thread = null;
 						frame.remove(this);
 						game_loop_running = false;
 					}
+
+					// If playing audio file is ended
+					if(game_audio.isAudio_finished())
+					{
+						int current_audio_index = game_audio.getCurrent_audio_index();
+						game_audio = new AudioHandler("", current_audio_index);
+					}
 					
-//					frame.setTitle(String.valueOf(IntStream.of(wire_src_1_placed).sum()));
+					delta = 0;
 				}
 			} // End of slave game-loop
 		} // End of master game_loop
-		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+		if(key_handler.GamePanel_esc_pressed)
+		{
+			game_timer.timer.cancel();
+			
+			frame.removeKeyListener(key_handler);
+			frame.remove(this);
+
+			top.setText("Vada a Bordo, Cazzo!");
+			
+			new StartMenu(frame, top, game_audio);
+		}
+		else
+			new GamePanel(frame, top, game_timer, key_handler, game_audio, player_x_passing, player_y_passing);
 	}
 	
 	private void updatePlayer()
@@ -227,7 +253,7 @@ public class Lkab extends JPanel implements Runnable
 	private boolean moveableX(int x, int dx)
 	{
 		if(dx > 0)
-			x += player.getPlayer_width();
+			x += player.player_width;
 
 		int player_speed_x = player.getPlayer_speed_x();
 		// Left
@@ -244,7 +270,7 @@ public class Lkab extends JPanel implements Runnable
 	private boolean moveableY(int y, int dy)
 	{		
 		if(dy > 0)
-			y += player.getPlayer_height();
+			y += player.player_height;
 
 		int player_speed_y = player.getPlayer_speed_y();
 		// Up
@@ -334,14 +360,14 @@ public class Lkab extends JPanel implements Runnable
 			int player_y = player.getPlayer_y();
 			
 			// If player covers top half of wire_src
-			if(player_y < y && (player_y + player.getPlayer_height()) > (y + (wire_src_height / 2)))
+			if(player_y < y && (player_y + player.player_height) > (y + (wire_src_height / 2)))
 			{
 				crossing_y = true;
 				break;
 			}
 			
 			// If player covers bottom half of wire_src
-			else if((player_y + player.getPlayer_height()) > (y + wire_src_height) && player_y < (y + (wire_src_height / 2)))
+			else if((player_y + player.player_height) > (y + wire_src_height) && player_y < (y + (wire_src_height / 2)))
 			{
 				crossing_y = true;
 				break;
@@ -358,14 +384,14 @@ public class Lkab extends JPanel implements Runnable
 			// Left-hand-side wire_src
 			if(player_x < wire_src_width / 2)
 			{
-				wire_x = wire_src_width;
+				wire_x = wire_src_width / 2;
 				crossing_x = true;
 			}
 
 			// Right-hand-side wire_src
-			else if(player_x + player.getPlayer_width() > this.width - (wire_src_width / 2))
+			else if(player_x + player.player_width > this.width - (wire_src_width / 2))
 			{
-				wire_x = this.width - wire_src_width;
+				wire_x = this.width - (wire_src_width / 2);
 				crossing_x = true;
 			}
 		}
@@ -490,50 +516,11 @@ public class Lkab extends JPanel implements Runnable
 		// Paint swamp
 		g_2d.drawImage(background_img, 0, 0, this.width, this.height, null);
 		
-		// Paint player
-		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.getPlayer_width(), player.getPlayer_height(), null);
-		
-		// Paint wire sources
-		for(int i = 0; i < len; i++)
-		{
-			// Left set of wire-src
-			char color_1 = wire_src_1[i];
-			switch(color_1)
-			{
-				case 'r':
-					g_2d.setColor(RED);
-					break;
-				case 'g':
-					g_2d.setColor(GREEN);
-					break;
-				case 'b':
-					g_2d.setColor(BLUE);
-					break;
-			}
-			g_2d.fillRect(0, ((i * 2) + 1) * wire_src_height, wire_src_width, wire_src_height);
-
-			// Right set of wire-src
-			char color_2 = wire_src_2[i];
-			switch(color_2)
-			{
-				case 'r':
-					g_2d.setColor(RED);
-					break;
-				case 'g':
-					g_2d.setColor(GREEN);
-					break;
-				case 'b':
-					g_2d.setColor(BLUE);
-					break;
-			}
-			g_2d.fillRect(this.width - wire_src_width, ((i * 2) + 1) * wire_src_height, wire_src_width, wire_src_height);
-		}
-		
 		// Paint placed wire
 		if(IntStream.of(wire_src_1_placed).sum() > 0)
 		{
-			int wire_x_1 = wire_src_width;
-			int wire_x_2 = this.width - wire_src_width;
+			int wire_x_1 = wire_src_width / 2;
+			int wire_x_2 = this.width - (wire_src_width / 2);
 
 			int wire_y_1 = 0;
 			int wire_y_2 = 0;
@@ -573,12 +560,52 @@ public class Lkab extends JPanel implements Runnable
 			}
 		}
 		
+		// Paint player
+		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
+		
 		// Paint dragging wire
 		if(active_color != null)
 		{
 			g_2d.setColor(active_color);
 			g_2d.setStroke(new BasicStroke((float) wire_width));
-			g_2d.drawLine(wire_x, wire_y, player.getPlayer_x() + wire_width, player.getPlayer_y() + (player.getPlayer_height() / 2));
+			g_2d.drawLine(wire_x, wire_y, player.getPlayer_x() + wire_width, player.getPlayer_y() + (player.player_height / 2));
+		}
+		
+		// Paint wire sources
+		BufferedImage img = null;
+		for(int i = 0; i < len; i++)
+		{
+			// Left set of wire-src
+			char color_1 = wire_src_1[i];
+			switch(color_1)
+			{
+			case 'r':
+				img = src_img_RED;
+				break;
+			case 'g':
+				img = src_img_GREEN;
+				break;
+			case 'b':
+				img = src_img_BLUE;
+				break;
+			}
+			g_2d.drawImage(img, 0, ((i * 2) + 1) * wire_src_height, wire_src_width, wire_src_height, null);
+			
+			// Right set of wire-src
+			char color_2 = wire_src_2[i];
+			switch(color_2)
+			{
+			case 'r':
+				img = src_img_RED;
+				break;
+			case 'g':
+				img = src_img_GREEN;
+				break;
+			case 'b':
+				img = src_img_BLUE;
+				break;
+			}
+			g_2d.drawImage(img, this.width - wire_src_width, ((i * 2) + 1) * wire_src_height, wire_src_width, wire_src_height, null);
 		}
 		
 		g_2d.dispose();

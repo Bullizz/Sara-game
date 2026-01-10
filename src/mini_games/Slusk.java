@@ -14,14 +14,18 @@ import javax.swing.JPanel;
 
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+
+import menu.StartMenu;
 
 public class Slusk extends JPanel implements Runnable
 {
 	int width, height;
 	Thread slusk_thread;
 	
-	boolean game_loop_running, game_paused = false;
+	boolean game_loop_running;
 	BufferedImage background_img;
 	int points_1, points_2, points_3, points_4, points_5, points_MAX;
 	BufferedImage big_pic;
@@ -32,6 +36,7 @@ public class Slusk extends JPanel implements Runnable
 	JLabel top;
 	GameTimer game_timer;
 	KeyHandler key_handler;
+	AudioHandler game_audio;
 	int player_x_passing;
 	int player_y_passing;
 	
@@ -43,7 +48,7 @@ public class Slusk extends JPanel implements Runnable
 	boolean paint_liquid_5 = true;
 	
 	int liquid_width  = 58;
-	int liquid_height = 97; // = bong_height / 5, bong-tratt height, liquid-1, liquid-2, liquid-3, and liquid-4
+	int liquid_height = 97; // = bong_height / 5 = bong-tratt height, liquid-1, liquid-2, liquid-3, and liquid-4
 	int liquid_x	  = 930;
 
 	// Space sign parameters
@@ -54,7 +59,7 @@ public class Slusk extends JPanel implements Runnable
 	int space_x 	 	= 251;
 	int space_y 	 	= 319;
 	
-	public Slusk(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, int player_x, int player_y)
+	public Slusk(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x, int player_y)
 	{
 		super();
 			this.width = frame.getWidth();
@@ -64,10 +69,10 @@ public class Slusk extends JPanel implements Runnable
 		
 		try
 		{
-//			background_img 		= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/background_img.png"));
-			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/big_pic-transp.png"));
-			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar_2-transp.png"));
-			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/minigame_imgs/slusk/space_bar-transp.png"));
+			background_img 		= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/background.png"));
+			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/big_pic.png"));
+			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/space_bar_active.png"));
+			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/space_bar_inactive.png"));
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -79,6 +84,7 @@ public class Slusk extends JPanel implements Runnable
 		this.top				= top;
 		this.game_timer			= game_timer;
 		this.key_handler		= key_handler;
+		this.game_audio			= game_audio;
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 		
@@ -117,9 +123,8 @@ public class Slusk extends JPanel implements Runnable
 			long current_time;
 			
 			int time_counter = 0;
-			boolean game_paused = key_handler.isGame_paused();
 			// Slave game-loop
-			while(game_loop_running && !game_paused)
+			while(game_loop_running)
 			{
 				current_time = System.nanoTime();
 				delta += (current_time - last_time) / draw_interval;
@@ -130,20 +135,35 @@ public class Slusk extends JPanel implements Runnable
 					
 					// Enough points to 'clear' a liquid level
 					if(paint_liquid_1 && current_points >= points_1)
+					{
 						paint_liquid_1 = false;
+						playSFX();
+					}
 					if(paint_liquid_2 && current_points >= points_1 + points_2)
+					{
 						paint_liquid_2 = false;
+						playSFX();
+					}
 					if(paint_liquid_3 && current_points >= points_1 + points_2 + points_3)
+					{
 						paint_liquid_3 = false;
+						playSFX();
+					}
 					if(paint_liquid_4 && current_points >= points_1 + points_2 + points_3 + points_4)
+					{
 						paint_liquid_4 = false;
+						playSFX();
+					}
 					if(paint_liquid_5 && current_points >= points_MAX)
+					{
 						paint_liquid_5 = false;
+						playSFX();
+					}
 					
 					repaint();
 					
 					// Minigame completed
-					if(current_points > points_MAX)
+					if(current_points >= points_MAX || key_handler.GamePanel_esc_pressed)
 					{
 						key_handler.setSlusk_active(false);
 						game_loop_running = false;
@@ -159,18 +179,37 @@ public class Slusk extends JPanel implements Runnable
 						time_counter = 0;
 					}
 					
+					// If playing audio file is ended
+					if(game_audio.isAudio_finished())
+					{
+						int current_audio_index = game_audio.getCurrent_audio_index();
+						game_audio = new AudioHandler("", current_audio_index);
+					}
+					
 					delta = 0;
 				}
 			} // End  of slave game-loop
 		} // End of master game-loop
-		new GamePanel(frame, top, game_timer, key_handler, player_x_passing, player_y_passing);
+		if(key_handler.GamePanel_esc_pressed)
+		{
+			game_timer.timer.cancel();
+			
+			frame.removeKeyListener(key_handler);
+			frame.remove(this);
+
+			top.setText("Vada a Bordo, Cazzo!");
+			
+			new StartMenu(frame, top, game_audio);
+		}
+		else
+			new GamePanel(frame, top, game_timer, key_handler, game_audio, player_x_passing, player_y_passing);
 	}
-	
+
 	// Randomize value to be assigned to points
 	private void assignPoints()
 	{
 		int min = 5;
-		int max = 15;
+		int max = 10;
 		
 		points_1 = (int) ((Math.random() * (max - min)) + min);
 		points_2 = (int) ((Math.random() * (max - min)) + min);
@@ -189,6 +228,12 @@ public class Slusk extends JPanel implements Runnable
 			space_sign = true;
 	}
 	
+	private void playSFX()
+	{
+		AudioHandler slusk_audio = new AudioHandler("sfx/vine-boom.wav", -1);
+		slusk_audio.raiseVolume(6);
+	}
+	
 	@Override
 	public void paintComponent(Graphics g_1d)
 	{
@@ -196,8 +241,7 @@ public class Slusk extends JPanel implements Runnable
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Paint background
-		g_2d.setColor(Color.CYAN);
-		g_2d.fillRect(0, 0, width, height);
+		g_2d.drawImage(background_img, 0, 0, width, height, null);
 		
 		// Paint space sign
 		g_2d.rotate(Math.toRadians(-45), space_x + (space_width / 2), space_y + (space_height / 2));
@@ -212,6 +256,7 @@ public class Slusk extends JPanel implements Runnable
 		// Paint liquid
 		g_2d.setColor(Color.ORANGE);
 		int liquid_y = liquid_height;
+		int liquid_x = this.liquid_x + 1;
 		
 		if(paint_liquid_1)
 			g_2d.fillRect(liquid_x, liquid_y, liquid_width, liquid_height);
@@ -226,11 +271,11 @@ public class Slusk extends JPanel implements Runnable
 		liquid_y += liquid_height;
 		
 		if(paint_liquid_4)
-			g_2d.fillRect(liquid_x, liquid_y, liquid_width, liquid_height);
+			g_2d.fillRect(liquid_x, liquid_y, liquid_width, liquid_height - 1);
 		liquid_y = (height / 2) - liquid_width;
 		
 		if(paint_liquid_5)
-			g_2d.fillRect(liquid_x + liquid_width, liquid_y, liquid_height, liquid_width);
+			g_2d.fillRect(liquid_x + liquid_width, liquid_y, liquid_height, liquid_width - 2);
 		
 		// Paint big-pic
 		g_2d.drawImage(big_pic, big_x, 0, big_width, big_height, null);
