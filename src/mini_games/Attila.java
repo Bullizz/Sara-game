@@ -59,10 +59,10 @@ public class Attila extends JPanel implements Runnable
 	int time_to_key_fall;
 	char active_key;
 	
-	int key_dim = 128;
-	int x_ws = 192;
-	int x_a = 64;
-	int x_d = 320;
+	int key_dim		  = 128;
+	int x_ws		  = 192;
+	int x_a			  = 64;
+	int x_d			  = 320;
 	int falling_speed = 14;
 	int[][] player_keys_pos;
 	
@@ -128,6 +128,7 @@ public class Attila extends JPanel implements Runnable
 		frame.add(this);
 		frame.repaint();
 		
+		this.key_handler.setKey_available(true);
 		initAttilaThread();
 	}
 
@@ -154,6 +155,7 @@ public class Attila extends JPanel implements Runnable
 			
 			int frame_counter  = 0;
 			int stripe_counter = 0;
+			int active_key_counter = 0;
 			
 			// Slave game-loop
 			while(game_loop_running)
@@ -168,7 +170,18 @@ public class Attila extends JPanel implements Runnable
 					updateFallingKeys();
 					
 					// User pressed key
-					active_key = key_handler.getCurrent_key();
+					if(key_handler.isKey_available())
+						active_key = key_handler.getCurrent_key();
+					if(active_key != '\0')
+					{
+						active_key_counter++;
+						if(active_key_counter % 10 == 0)
+						{
+							key_handler.setKey_available(false);
+							active_key = '\0';
+							active_key_counter = 0;
+						}
+					}
 					
 					int[] collision = checkCollision(active_key);
 					int index = collision[1];
@@ -206,7 +219,7 @@ public class Attila extends JPanel implements Runnable
 					}
 					
 					stripe_counter++;
-					// Player|Attila animation
+					// Player & Attila animation
 					if(stripe_counter % 30 == 0)
 					{
 						toggleAngle();

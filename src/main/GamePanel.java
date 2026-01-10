@@ -153,6 +153,14 @@ public class GamePanel extends JPanel
 		map_constraints = loadMapConstraints(this.width, this.height);
 		
 		game_audio.setParent_frame(game_audio.string_GamePanel);
+		
+		// Reset key-parameters
+		this.key_handler.setDirection_arr(new int[]{0, 0});
+		this.key_handler.UP		= false;
+		this.key_handler.LEFT	= false;
+		this.key_handler.DOWN	= false;
+		this.key_handler.RIGHT	= false;
+		
 		initGameThread();
 		initEnemiesThread();
 	}
