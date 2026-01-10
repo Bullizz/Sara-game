@@ -215,7 +215,7 @@ public class Attila extends JPanel implements Runnable
 					if(game_audio.isAudio_finished())
 					{
 						int current_audio_index = game_audio.getCurrent_audio_index();
-						game_audio = new AudioHandler("", true, current_audio_index);
+						game_audio = new AudioHandler("", current_audio_index);
 					}
 					
 					delta = 0;

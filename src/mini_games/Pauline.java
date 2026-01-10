@@ -172,7 +172,7 @@ public class Pauline extends JPanel implements Runnable
 					if(game_audio.isAudio_finished())
 					{
 						int current_audio_index = game_audio.getCurrent_audio_index();
-						game_audio = new AudioHandler("", true, current_audio_index);
+						game_audio = new AudioHandler("", current_audio_index);
 					}
 					
 					delta = 0;
@@ -281,7 +281,7 @@ public class Pauline extends JPanel implements Runnable
 					item_array[2][i] = "-1";
 					item_array[3][i] = String.valueOf(-item_height);
 					
-					new AudioHandler("sfx/trash-bin-sfx.wav", false, -1);
+					new AudioHandler("sfx/trash-bin-sfx.wav", -1);
 				}
 				
 				// Placing held item on table

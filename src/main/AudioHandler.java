@@ -17,7 +17,6 @@ public class AudioHandler implements LineListener
 {
 //	String file_name = "src/audio_files/";
 	String file_name = "src/audio_files/short_ver/";
-	boolean repeat;
 	boolean audio_finished = false;
 	
 	Clip clip;
@@ -37,25 +36,16 @@ public class AudioHandler implements LineListener
 	}
 	public String string_StartMenu				= "StartMenu",
 				  string_GamePanel				= "GamePanel",
-	/*			  string_Albin					= "Albin",
-				  string_Attila					= "Attila",
-				  string_Lkab					= "Lkab",
-				  string_Lulle					= "Lulle",
-				  string_Pauline				= "Pauline",
-				  string_Slusk					= "Slusk",
-				  string_SSC					= "SSC",
-	*/
 				  string_Leaderboard			= "string_Leaderboard",
 				  string_Leaderboard_cleared	= "string_Leaderboard_cleared",
 				  string_EndMenu				= "EndMenu";
 	
-	public AudioHandler(String file_name, boolean repeat, int current_song_index)
+	public AudioHandler(String file_name, int current_song_index)
 	{
 		if(file_name.equals(""))
 			this.file_name += getRNGSong(current_song_index);
 		else
 			this.file_name += file_name;
-		this.repeat = repeat;
 		
 		File file = new File(this.file_name);
 		if(file.exists())

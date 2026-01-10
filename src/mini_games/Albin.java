@@ -104,7 +104,7 @@ public class Albin extends JPanel
 				if(game_audio.isAudio_finished())
 				{
 					int current_audio_index = game_audio.getCurrent_audio_index();
-					game_audio = new AudioHandler("", true, current_audio_index);
+					game_audio = new AudioHandler("", current_audio_index);
 					game_audio.lowerVolume();
 					setGame_audio(game_audio);
 				}
@@ -132,7 +132,7 @@ public class Albin extends JPanel
 				if(game_audio.isAudio_finished())
 				{
 					int current_audio_index = game_audio.getCurrent_audio_index();
-					game_audio = new AudioHandler("", true, current_audio_index);
+					game_audio = new AudioHandler("", current_audio_index);
 					game_audio.lowerVolume();
 					setGame_audio(game_audio);
 				}
@@ -152,7 +152,7 @@ public class Albin extends JPanel
 		};
 		
 		game_audio.lowerVolume();
-		albin_audio = new AudioHandler("sfx/car.wav", false, -1);
+		albin_audio = new AudioHandler("sfx/car.wav", -1);
 		timer_1.scheduleAtFixedRate(task1, 0, time_1 / width);
 	}
 

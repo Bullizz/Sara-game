@@ -224,7 +224,7 @@ public class GamePanel extends JPanel
 							if(game_audio.isAudio_finished())
 							{
 								int current_audio_index = game_audio.getCurrent_audio_index();
-								game_audio = new AudioHandler("", true, current_audio_index);
+								game_audio = new AudioHandler("", current_audio_index);
 							}
 							
 							delta = 0;
@@ -671,7 +671,7 @@ public class GamePanel extends JPanel
 		frame.removeKeyListener(key_handler);
 		frame.remove(this);
 		
-		AudioHandler end_sfx = new AudioHandler("sfx/vada-a-borde-cazzo-sfx.wav", false, -1);
+		AudioHandler end_sfx = new AudioHandler("sfx/vada-a-borde-cazzo-sfx.wav", -1);
 		end_sfx.raiseVolume(6);
 		
 		new EndMenu(frame, top, game_audio, final_time_str, "Good Job!", "user_inp");

@@ -84,7 +84,7 @@ public class EndMenu extends JPanel
 				if(this_game_audio.isAudio_finished())
 				{
 					int current_audio_index = this_game_audio.getCurrent_audio_index();
-					this_game_audio = new AudioHandler("", false, current_audio_index);
+					this_game_audio = new AudioHandler("", current_audio_index);
 					
 					// Update buttons only after initEndPanel() has been called, i.e. after buttons has been init.
 					if(!leaderboard_status.equals(string_user_inp))

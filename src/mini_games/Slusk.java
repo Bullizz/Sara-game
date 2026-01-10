@@ -181,7 +181,7 @@ public class Slusk extends JPanel implements Runnable
 					if(game_audio.isAudio_finished())
 					{
 						int current_audio_index = game_audio.getCurrent_audio_index();
-						game_audio = new AudioHandler("", true, current_audio_index);
+						game_audio = new AudioHandler("", current_audio_index);
 					}
 					
 					delta = 0;
@@ -228,7 +228,7 @@ public class Slusk extends JPanel implements Runnable
 	
 	private void playSFX()
 	{
-		AudioHandler slusk_audio = new AudioHandler("sfx/vine-boom.wav", false, -1);
+		AudioHandler slusk_audio = new AudioHandler("sfx/vine-boom.wav", -1);
 		slusk_audio.raiseVolume(6);
 	}
 	

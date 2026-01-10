@@ -161,7 +161,7 @@ public class Lulle extends JPanel implements Runnable
 					if(game_audio.isAudio_finished())
 					{
 						int current_audio_index = game_audio.getCurrent_audio_index();
-						game_audio = new AudioHandler("", true, current_audio_index);
+						game_audio = new AudioHandler("", current_audio_index);
 					}
 					
 					delta = 0;
@@ -319,7 +319,7 @@ public class Lulle extends JPanel implements Runnable
 		{
 			points++;
 			dirt_placed = false;
-			AudioHandler cleaning_sound = new AudioHandler("sfx/broom-sweep.wav", false, -1);
+			AudioHandler cleaning_sound = new AudioHandler("sfx/broom-sweep.wav", -1);
 			cleaning_sound.raiseVolume(6);
 		}
 	}

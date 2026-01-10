@@ -106,7 +106,7 @@ public class StartMenu extends JPanel
 				if(updating_game_audio.isAudio_finished())
 				{
 					int current_audio_index = updating_game_audio.getCurrent_audio_index();
-					updating_game_audio = new AudioHandler("", false, current_audio_index);
+					updating_game_audio = new AudioHandler("", current_audio_index);
 					updating_game_audio.setParent_frame(updating_game_audio.string_StartMenu);
 
 					play_btn.setAudioHandler(updating_game_audio);
