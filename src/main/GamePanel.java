@@ -149,6 +149,7 @@ public class GamePanel extends JPanel
 		// Integer matrix with map boundaries
 		map_constraints = loadMapConstraints(this.width, this.height);
 		
+		game_audio.setParent_frame(game_audio.string_GamePanel);
 		initGameThread();
 		initEnemiesThread();
 	}
@@ -671,8 +672,9 @@ public class GamePanel extends JPanel
 		frame.remove(this);
 		
 		AudioHandler end_sfx = new AudioHandler("sfx/vada-a-borde-cazzo-sfx.wav", false, -1);
+		end_sfx.raiseVolume(6);
 		
-		new EndMenu(frame, top, game_audio, final_time_str, "Good Job!");
+		new EndMenu(frame, top, game_audio, final_time_str, "Good Job!", "user_inp");
 	}
 	
 	private void initStartMenu()

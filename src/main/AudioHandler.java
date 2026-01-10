@@ -27,6 +27,28 @@ public class AudioHandler implements LineListener
 	int current_audio_index;
 //	boolean user_stop = false;
 	
+	String parent_frame;
+	public String getParent_frame()
+	{
+		return parent_frame;
+	}
+	public void setParent_frame(String parent_frame)
+	{
+		this.parent_frame = parent_frame;
+	}
+	public String string_StartMenu				= "StartMenu",
+				  string_GamePanel				= "GamePanel",
+				  string_Albin					= "Albin",
+				  string_Attila					= "Attila",
+				  string_Lkab					= "Lkab",
+				  string_Lulle					= "Lulle",
+				  string_Pauline				= "Pauline",
+				  string_Slusk					= "Slusk",
+				  string_SSC					= "SSC",
+				  string_Leaderboard			= "string_Leaderboard",
+				  string_Leaderboard_cleared	= "string_Leaderboard_cleared",
+				  string_EndMenu				= "EndMenu";
+	
 	public AudioHandler(String file_name, boolean repeat, int current_song_index)
 	{
 		if(file_name.equals(""))

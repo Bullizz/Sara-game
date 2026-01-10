@@ -14,6 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,7 +28,7 @@ public class EndMenu extends JPanel
 {
 	JFrame frame;
 	JLabel top;
-	AudioHandler game_audio;
+	AudioHandler this_game_audio;
 	
 	int width, height;
 	
@@ -35,14 +37,26 @@ public class EndMenu extends JPanel
 	
 	Font font = new Font("Arial", Font.BOLD, 40);
 	
+	MenuButton menu_btn, clear_leaderboard_btn;
+	
+	String leaderboard_status;
+	String leaderboard_default 	= "leaderboard_default",
+		   leaderboard_cleared 	= "leaderboard_cleared",
+		   string_user_inp		= "user_inp";
+	
 	boolean key_pressed = false;
 	
-	public EndMenu(JFrame frame, JLabel top, AudioHandler game_audio, String final_time_str, String top_text)
+	/*
+	 * Audio descr. in this class
+	 * 		Considering the structure of the passing of (AudioHandler) game_audio, it gave a lot of issues when clearing the leaderboard.
+	 *  	This class (and game_audio) needs to know if the leaderboard is cleared or not to properly end the check_for_audio_status.
+	 *  	The variable leaderboard_status will be either default (when JPanel entered) or cleared (when 'Clear Leaderboard' button is pressed)
+	 */
+	public EndMenu(JFrame frame, JLabel top, AudioHandler game_audio, String final_time_str, String top_text, String passing_leaderboard_status)
 	{
 		super();
 			this.width  = frame.getWidth();
 			this.height = (9 * frame.getHeight()) / 10;
-		
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
 		setBackground(blue);
@@ -50,18 +64,64 @@ public class EndMenu extends JPanel
 		top.setText(top_text);
 		
 		this.frame		= frame;
-		this.game_audio	= game_audio;
+		this_game_audio	= game_audio;
 		this.top		= top;
+		leaderboard_status = passing_leaderboard_status;
 		
 		if(!final_time_str.equals(""))
 			initUserInpGUI(final_time_str);
 		else
 			initEndPanel(null, "");
+		
+		Timer check_for_audio_status = new Timer();
+		TimerTask task = new TimerTask()
+		{
+//			AudioHandler this_game_audio = this_game_audio;
+			@Override
+			public void run()
+			{
+				if(this_game_audio.isAudio_finished())
+				{
+					int current_audio_index = this_game_audio.getCurrent_audio_index();
+					this_game_audio = new AudioHandler("", false, current_audio_index);
+					if(!leaderboard_status.equals(string_user_inp))
+					{						
+						menu_btn.setAudioHandler(this_game_audio);
+						clear_leaderboard_btn.setAudioHandler(this_game_audio);
+						
+						// Leaderboard has not been cleared
+						if(leaderboard_status.equals(leaderboard_default))
+							this_game_audio.setParent_frame(this_game_audio.string_Leaderboard);
+						// Leaderboard has been cleared
+						else if(leaderboard_status.equals(leaderboard_cleared))
+							this_game_audio.setParent_frame(this_game_audio.string_Leaderboard_cleared);
+					}
+				}
+				// User-inp panel
+//				if(leaderboard_status.equals(string_user_inp)
+//						&& !updating_game_audio.getParent_frame().equals(updating_game_audio.string_EndMenu))
+//					check_for_audio_status.cancel();
+//				if(!leaderboard_status.equals(string_user_inp)
+//						&& this_game_audio.getParent_frame().equals(this_game_audio.string_EndMenu))
+//				{
+					if(leaderboard_status.equals(leaderboard_default) &&
+							!this_game_audio.getParent_frame().equals(this_game_audio.string_Leaderboard))
+						check_for_audio_status.cancel();
+					if(leaderboard_status.equals(leaderboard_cleared) &&
+							!this_game_audio.getParent_frame().equals(this_game_audio.string_Leaderboard_cleared))
+						check_for_audio_status.cancel();
+//				}
+			}
+		};
+		check_for_audio_status.scheduleAtFixedRate(task, 0, 500);
 	}
 	
 	// Name-input panel
 	private void initUserInpGUI(String final_time_str)
 	{
+		leaderboard_status = string_user_inp;
+		this_game_audio.setParent_frame(this_game_audio.string_EndMenu);
+		
 		setLayout(new GridLayout(3, 3));
 		for(int i = 0; i < 4; i++)
 		{
@@ -123,6 +183,13 @@ public class EndMenu extends JPanel
 	// Panel with leaderboard and cont. options
 	public void initEndPanel(String user_name, String final_time_str)
 	{
+		if(leaderboard_status.equals(string_user_inp))
+			leaderboard_status = leaderboard_default;
+		if(leaderboard_status.equals(leaderboard_default))
+			this_game_audio.setParent_frame(this_game_audio.string_Leaderboard);
+		if(leaderboard_status.equals(leaderboard_cleared))
+			this_game_audio.setParent_frame(this_game_audio.string_Leaderboard_cleared);
+		
 		String[] leaderboard_matrix = null;
 		int leaderboard_len = 0;
 		
@@ -192,23 +259,23 @@ public class EndMenu extends JPanel
 			filler_top.setBackground(blue);
 			rest.add(filler_top);
 			
-			MenuButton menu_btn = new MenuButton("Main Menu", 4, 4, 4, 4);
+			menu_btn = new MenuButton("Main Menu", 4, 4, 4, 4);
 			menu_btn.setFrame(frame);
 			menu_btn.setTop(top);
 			menu_btn.setPanel(this);
-			menu_btn.setAudioHandler(game_audio);
+			menu_btn.setAudioHandler(this_game_audio);
 			rest.add(menu_btn);
 			
 			JPanel filler_mid = new JPanel();
 			filler_mid.setBackground(blue);
 			rest.add(filler_mid);
 			
-			MenuButton clearLeaderboardBtn = new MenuButton("Clear Leaderboard", 4, 4, 4, 4);
-			clearLeaderboardBtn.setFrame(frame);
-			clearLeaderboardBtn.setTop(top);
-			clearLeaderboardBtn.setPanel(this);
-			clearLeaderboardBtn.setAudioHandler(game_audio);
-			rest.add(clearLeaderboardBtn);
+			clear_leaderboard_btn = new MenuButton("Clear Leaderboard", 4, 4, 4, 4);
+			clear_leaderboard_btn.setFrame(frame);
+			clear_leaderboard_btn.setTop(top);
+			clear_leaderboard_btn.setPanel(this);
+			clear_leaderboard_btn.setAudioHandler(this_game_audio);
+			rest.add(clear_leaderboard_btn);
 			
 			JPanel filler_bottom = new JPanel();
 			filler_bottom.setBackground(blue);
