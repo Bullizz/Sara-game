@@ -18,7 +18,7 @@ import entities.Player;
 
 import handlers.AudioHandler;
 import handlers.KeyHandler;
-
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
 
@@ -83,9 +83,9 @@ public class SSC extends JPanel implements Runnable
 			rocket_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc/rocket_LEFT.png"));
 			rocket_img_DOWN		= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc/rocket_DOWN.png"));
 			rocket_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/ssc/rocket_RIGHT.png"));
-		} catch (IOException e)
+		} catch(Throwable ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.SSC:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		this.frame				= frame;

@@ -16,7 +16,7 @@ import entities.Player;
 
 import handlers.AudioHandler;
 import handlers.KeyHandler;
-
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
 import menu.StartMenu;
@@ -120,9 +120,9 @@ public class Attila extends JPanel implements Runnable
 			d_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/attila/D_inactive.png"));
 			inactive_key_imgs	= new BufferedImage[]{w_img, a_img, s_img, d_img};
 			
-		} catch(IOException e)
+		} catch(Throwable ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.Attila:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		frame.add(this);

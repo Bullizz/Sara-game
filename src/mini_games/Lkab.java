@@ -18,7 +18,7 @@ import entities.Player;
 
 import handlers.AudioHandler;
 import handlers.KeyHandler;
-
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
 import menu.StartMenu;
@@ -99,9 +99,9 @@ public class Lkab extends JPanel implements Runnable
 			src_img_RED			= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_RED.png"));
 			src_img_GREEN		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_GREEN.png"));
 			src_img_BLUE		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_BLUE.png"));
-		} catch(IOException e)
+		} catch(Throwable ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.Lkab:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 
 		frame.add(this);

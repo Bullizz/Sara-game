@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 
 import handlers.AudioHandler;
 import handlers.KeyHandler;
-
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
 import menu.StartMenu;
@@ -62,9 +62,9 @@ public class Albin extends JPanel
 			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/albin/background_img.png"));
 			car_left		= ImageIO.read(getClass().getResourceAsStream("/image_files/albin/volvo_LEFT.png"));
 			car_right		= ImageIO.read(getClass().getResourceAsStream("/image_files/albin/volvo_RIGHT.png"));
-		} catch(IOException e)
+		} catch(Throwable ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.Albin:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		this.frame				= frame;
