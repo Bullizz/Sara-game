@@ -14,10 +14,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import entities.Player;
-import main.AudioHandler;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+
 import menu.StartMenu;
 
 public class Pauline extends JPanel implements Runnable
@@ -42,6 +45,7 @@ public class Pauline extends JPanel implements Runnable
 	BufferedImage player_img;
 	int player_max_speed = 7;
 	boolean carrying	 = false;
+	int logged_dx		 = 0;
 	
 	// Item rain parameters
 	String default_str = "default";
@@ -103,9 +107,9 @@ public class Pauline extends JPanel implements Runnable
 			item_imgs[1] 	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/julmust.png")); 
 			item_imgs[2]	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/pain_suprise.png")); 
 			item_imgs[3]	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/xmas_card.png")); 
-		} catch (IOException e)
+		} catch(Throwable ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.Pauline:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		this.frame				= frame;
@@ -203,6 +207,10 @@ public class Pauline extends JPanel implements Runnable
 		// Get positive/negative direction of player
 		int player_dx = direction_arr[0];
 		
+		// Log dx for player retardation
+		if(player_dx != 0)
+			logged_dx = player_dx;
+		
 		// Horizontal acceleration
 		if((key_handler.LEFT || key_handler.RIGHT) && player_speed_x < player_max_speed)
 			player_speed_x++;
@@ -212,8 +220,8 @@ public class Pauline extends JPanel implements Runnable
 		int player_x = player.getPlayer_x();
 		
 		// If within table and trash bin
-		if(moveable(player_x, player_dx))
-			player_x += player_speed_x * player_dx;
+		if(moveable(player_x, logged_dx))
+			player_x += player_speed_x * logged_dx;
 		
 		player.setPlayer_x(player_x);
 		player.setPlayer_speed_x(player_speed_x);

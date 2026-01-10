@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import main.AudioHandler;
+import handlers.AudioHandler;
 
 public class StartMenu extends JPanel
 {
@@ -32,8 +32,6 @@ public class StartMenu extends JPanel
 		setBackground(blue);
 		setLayout(new GridLayout(1, 3));
 		frame.add(this);
-//		this.game_audio = game_audio;
-		
 			JPanel filler_left = new JPanel();
 			filler_left.setBackground(blue);
 			add(filler_left);

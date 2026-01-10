@@ -12,10 +12,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import main.AudioHandler;
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+
 import menu.StartMenu;
 
 public class Slusk extends JPanel implements Runnable
@@ -71,9 +74,9 @@ public class Slusk extends JPanel implements Runnable
 			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/big_pic.png"));
 			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/space_bar_active.png"));
 			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/space_bar_inactive.png"));
-		} catch (IOException e)
+		} catch(Throwable ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.Slusk:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		assignPoints();

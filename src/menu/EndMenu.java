@@ -22,7 +22,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import main.AudioHandler;
+import handlers.AudioHandler;
+import main.ErrorManagement;
 
 public class EndMenu extends JPanel
 {
@@ -328,9 +329,9 @@ public class EndMenu extends JPanel
 			writer.append('\n');
 
 			writer.close();
-		} catch (IOException e)
+		} catch (IOException ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Write To Leaderboard Error</p></html>", ioe.toString());
 		}
 	}
 
@@ -346,7 +347,7 @@ public class EndMenu extends JPanel
 			reader = new Scanner(file);
 		} catch (FileNotFoundException e)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Scanner Error</p></html>", e.toString());
 		}
 		
 		int index = 0;
@@ -399,9 +400,7 @@ public class EndMenu extends JPanel
 				tot_time = Double.valueOf(tot_time_str);
 			} catch (Exception e)
 			{
-				System.err.println("str --> double");
-				e.printStackTrace();
-				return null;
+				new ErrorManagement("<html><p>menu.EndMenu:</p><p>Data-type Conversion Error</p></html>", e.toString());
 			}
 			
 			tot_time_arr[i] = tot_time;

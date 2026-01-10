@@ -19,6 +19,9 @@ import entities.Player;
 import menu.EndMenu;
 import menu.StartMenu;
 
+import handlers.KeyHandler;
+import handlers.AudioHandler;
+
 import mini_games.Albin;
 import mini_games.Attila;
 import mini_games.Lkab;
@@ -42,6 +45,9 @@ public class GamePanel extends JPanel
 	
 	final int width;
 	final int height;
+	
+	int logged_dx = 0,
+		logged_dy = 0;
 	
 	boolean game_loop_running, enemies_updating;
 	double random_speed_coeff;
@@ -80,9 +86,9 @@ public class GamePanel extends JPanel
 			slusk_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/slusk.png"));
 			attila_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/attila.png"));
 			pauline_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/pauline.png"));
-		} catch (IOException e)
+		} catch(Throwable ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>main.GamePanel:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		frame.add(this);
@@ -96,7 +102,7 @@ public class GamePanel extends JPanel
 		lkab	= new Enemy("lkab",		664,   313,  entity_height, entity_width);
 		ssc		= new Enemy("ssc",		1645,  100,  entity_height, entity_width);
 		slusk	= new Enemy("slusk",	1402,  567,  entity_height, entity_width);
-		attila	= new Enemy("attila",	807,   739,  entity_height, entity_width);
+		attila	= new Enemy("attila",	817,   729,  entity_height, entity_width);
 		pauline = new Enemy("pauline",  504,   647,  entity_height, entity_width);
 		
 		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
@@ -150,6 +156,14 @@ public class GamePanel extends JPanel
 		map_constraints = loadMapConstraints(this.width, this.height);
 		
 		game_audio.setParent_frame(game_audio.string_GamePanel);
+		
+		// Reset key-parameters
+		this.key_handler.setDirection_arr(new int[]{0, 0});
+		this.key_handler.UP		= false;
+		this.key_handler.LEFT	= false;
+		this.key_handler.DOWN	= false;
+		this.key_handler.RIGHT	= false;
+		
 		initGameThread();
 		initEnemiesThread();
 	}
@@ -315,6 +329,12 @@ public class GamePanel extends JPanel
 		int player_dx = player_direction_arr[0];
 		int player_dy = player_direction_arr[1];
 		
+		// Log dx|dy for player retardation
+		if(player_dx != 0)
+			logged_dx = player_dx;
+		if(player_dy != 0)
+			logged_dy = player_dy;
+		
 		// Get current speed of player
 		int player_speed_x = player.getPlayer_speed_x();
 		int player_speed_y = player.getPlayer_speed_y();
@@ -336,10 +356,10 @@ public class GamePanel extends JPanel
 		int player_y = player.getPlayer_y();
 		
 		// If within map constraints
-		if(moveableX(player_x, player_y, player.player_width, player.player_height, player_dx) == 1)
-			player_x += player_speed_x * player_dx;
-		if(moveableY(player_x, player_y, player.player_width, player.player_height, player_dy) == 1)
-			player_y += player_speed_y * player_dy;
+		if(moveableX(player_x, player_y, player.player_width, player.player_height, logged_dx) == 1)
+			player_x += player_speed_x * logged_dx;
+		if(moveableY(player_x, player_y, player.player_width, player.player_height, logged_dy) == 1)
+			player_y += player_speed_y * logged_dy;
 		
 		player.setPlayer_x(player_x);
 		player.setPlayer_y(player_y);
@@ -395,21 +415,22 @@ public class GamePanel extends JPanel
 			double enemy_x = current_enemy.getEnemy_x();
 			double enemy_y = current_enemy.getEnemy_y();
 			
-			int delta_x	   = player_x - (int) enemy_x;
-			int delta_y    = player_y - (int) enemy_y;
+			int delta_x = player_x - (int) enemy_x;
+			int delta_y = player_y - (int) enemy_y;
 			
 			// Get direction needed to reach player
-			try
-			{			
+			if(delta_x != 0 && delta_y != 0)
+			{				
 				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
 				angle = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
-			} catch(Exception e)
-			{
+			}
+			else
+			{				
 				delta_x		  = 1;
 				delta_y		  = 1;
 				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
-				angle 		  = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
 			}
+			angle 		  = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
 			
 			direction_arr[0] *= speed_coeff;
 			direction_arr[1] *= speed_coeff;
@@ -457,8 +478,8 @@ public class GamePanel extends JPanel
 			entity_x += entity_width;
 		
 		/* 
-		 * 	  enemy_x	  enemy_x + player_width
-		 * 	 		<--- --->
+		 * 	 entity_x	  	entity_x + entity_width
+		 * 	 		<------->
 		 * 			
 		 * (x, y1)  --------
 		 *   		|      |
@@ -471,19 +492,20 @@ public class GamePanel extends JPanel
 		 * 
 		 */
 		
-		for(int i = 1; i <= 13; i++)
+		for(int i = 0; i <= 13; i++)
 		{
 			entity_x += direction_arr;
 			
-			try
+			// Check that position is within map.txt boundaries
+			if((direction_arr < 0 && 0 < entity_x) ||
+					(direction_arr > 0 && entity_x < width))
 			{				
 				// 				  			   (x, y1)																   (x, y2)
 				if(map_constraints[(int) entity_y][(int) entity_x] == 1 || map_constraints[(int) entity_y + entity_height][(int) entity_x] == 1)
 					return 0;
-			} catch(Exception e)
-			{
-				return -1;
 			}
+			else if(direction_arr != 0)
+				return -1;
 		}
 		
 		return 1;
@@ -497,11 +519,11 @@ public class GamePanel extends JPanel
 		
 		/* 
 		 * 			
-		 *		   (x1, y)  --------- (x2, y)
+		 *		   (x1, y) <---------> (x2, y)
 		 *  				|		|
 		 *    			/\	|       |
 		 *    			|	|	    |
-		 *     player  	|	|	    |
+		 *     entity  	|	|	    |
 		 *     height  	|	|	    |
 		 *    			|	|	    |
 		 *    			\/	|	    |
@@ -509,18 +531,18 @@ public class GamePanel extends JPanel
 		 * 
 		 */
 		
-		for(int i = 1; i <= 13; i++)
+		for(int i = 0; i <= 13; i++)
 		{
 			entity_y += direction_arr;
-			try
-			{
+			if((direction_arr < 0 && entity_y > 0) ||
+					(direction_arr > 0 && entity_y < height))
+			{				
 				// 				  			  (x1, y)												  (x2, y)
 				if(map_constraints[(int) entity_y][(int) entity_x] == 1 || map_constraints[(int) entity_y][(int) entity_x + entity_width] == 1)
 					return 0;
-			} catch(Exception e)
-			{
-				return -1;
 			}
+			else if(direction_arr != 0)
+				return -1;
 		}
 		
 		return 1;
@@ -647,7 +669,7 @@ public class GamePanel extends JPanel
 			reader.close();
 		} catch(Exception file_except)
 		{
-			file_except.printStackTrace();
+			new ErrorManagement("<html><p>main.GamePanel:</p><p>Loading Map Error</p></html>", file_except.toString());
 		}
 		
 		return map;

@@ -8,17 +8,19 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import entities.Enemy;
 import entities.Player;
-import main.AudioHandler;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+
 import menu.StartMenu;
 
 public class Lulle extends JPanel implements Runnable
@@ -41,8 +43,8 @@ public class Lulle extends JPanel implements Runnable
 	int player_x_passing;
 	int player_y_passing;
 	
-	// Max points 4 - 8
-	int MAX_POINTS  = (int) ((Math.random() * (8 - 4)) + 4);
+	// Max points 4 - 6
+	int MAX_POINTS  = (int) ((Math.random() * (6 - 4)) + 4);
 	int points 		= 0;
 	
 	// General entity parameters
@@ -60,6 +62,8 @@ public class Lulle extends JPanel implements Runnable
 	// Player parameters
 	Player player;
 	BufferedImage player_img;
+	int logged_dx = 0,
+		logged_dy = 0;
 	
 	// NPC parameters
 	Enemy npc;
@@ -101,10 +105,9 @@ public class Lulle extends JPanel implements Runnable
 			player_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/player.png"));
 			npc_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/lulle.png"));
 			dirt_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/dirt.png"));
-		} catch(IOException e)
+		} catch(Throwable ioe)
 		{
-			System.err.println("Err ImageIO.read()");
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.Lulle:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		frame.add(this);
@@ -191,6 +194,12 @@ public class Lulle extends JPanel implements Runnable
 		int player_dx = direction_arr[0];
 		int player_dy = direction_arr[1];
 		
+		// Log dx|dy for player retardation
+		if(player_dx != 0)
+			logged_dx = player_dx;
+		if(player_dy != 0)
+			logged_dy = player_dy;
+		
 		int player_speed_x = player.getPlayer_speed_x();
 		int player_speed_y = player.getPlayer_speed_y();
 		
@@ -210,10 +219,10 @@ public class Lulle extends JPanel implements Runnable
 		int player_y = player.getPlayer_y();
 		
 		// If within map constraints
-		if(moveableX(player_x, player_dx))
-			player_x += player_speed_x * player_dx;
-		if(moveableY(player_y, player_dy))
-			player_y += player_speed_y * player_dy;
+		if(moveableX(player_x, logged_dx))
+			player_x += player_speed_x * logged_dx;
+		if(moveableY(player_y, logged_dy))
+			player_y += player_speed_y * logged_dy;
 		
 		player.setPlayer_x(player_x);
 		player.setPlayer_y(player_y);

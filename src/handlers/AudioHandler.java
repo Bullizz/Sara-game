@@ -1,8 +1,7 @@
-package main;
+package handlers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -13,10 +12,11 @@ import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import main.ErrorManagement;
+
 public class AudioHandler implements LineListener
 {
-//	String file_name = "src/audio_files/";
-	String file_name = "src/audio_files/short_ver/";
+	String file_name = "src/audio_files/";
 	boolean audio_finished = false;
 	
 	Clip clip;
@@ -65,13 +65,13 @@ public class AudioHandler implements LineListener
 			audio_finished = false;
 		} catch (LineUnavailableException lue)
 		{
-			lue.printStackTrace();
+			new ErrorManagement("<html><p>handler.AudioHandler:</p><p>Line Unavailable Error</p></html>", lue.toString());
 		} catch(IOException ioe)
 		{
-			ioe.printStackTrace();
+			new ErrorManagement("<html><p>handler.AudioHandler:</p><p>Reading File Error</p><html>", ioe.toString());
 		} catch(UnsupportedAudioFileException uafe)
 		{
-			uafe.printStackTrace();
+			new ErrorManagement("<html><p>handler.AudioHandler:</p><p>Unsupported Audio File Error</p></html>", uafe.toString());
 		}		
 	}
 	

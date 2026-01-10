@@ -2,8 +2,9 @@
 - ## ~~Exit game system (gamePanel --> StartMenu)~~
 
 - ## GAME
-  - ### ~~Music~~
+  - ### Music
     - #### ~~Same game_audio is not stored if clip end in minigame, i.e. Switch Song -btn init. new song~~
+    - #### Remove short-vers.
   - ### ~~GamePanel~~
     - #### ~~Enemy imgs~~
     - #### ~~Goal pos. at milano~~
@@ -30,23 +31,23 @@
   - ### ~~Albin~~
     - #### ~~SoundFX~~
     - #### ~~Lower GameAudio~~
-  - ### Pauline
+  - ### ~~Pauline~~
     - #### ~~Background img~~
     - #### ~~Add buffer columns so fall-items != table | trashbin~~
     - #### ~~Add thrashing-sfx~~
-    - #### Add picture of Sara & Pauline
-  - ### Attila
-    - #### Fix user-pressed *activation* time?
-    - #### Remove initial follow-type?
+    - #### ~~Add picture of Sara & Pauline~~
+  - ### ~~Attila~~
+    - #### ~~Fix user-pressed *activation* time~~
+    - #### ~~Fix no-clip at start~~
 - ## ~~Log game-time~~
 
 - ## ~~End menu~~
   - ### ~~Add "vada a bordo cazzo"-sfx~~
 
-- ## Error mngmt
+- ## ~~Error mngmt~~
 
 - ## General project cleanup
 
 - ## ~~Organize image-folders~~
 
-- ## Restructure handlers
+- ## ~~Restructure handlers~~

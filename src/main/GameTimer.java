@@ -14,11 +14,6 @@ public class GameTimer extends JLabel
 	int time_coeff;
 	
 	String time_str;
-
-//	GAME_TIMER()
-//	{
-//		
-//	}
 	
 	// Game timer that's displayed in top panel
 	public void initTimer(JLabel top)

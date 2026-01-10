@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import menu.StartMenu;
+import handlers.AudioHandler;
 
 public class Main
 {

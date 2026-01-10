@@ -14,9 +14,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 
-import main.AudioHandler;
+import handlers.AudioHandler;
+import main.ErrorManagement;
 import main.GamePanel;
-import main.KeyHandler;
+import handlers.KeyHandler;
 
 public class MenuButton extends JButton implements MouseListener
 {
@@ -134,9 +135,9 @@ public class MenuButton extends JButton implements MouseListener
 			if(file.delete())
 				file.createNewFile();
 			
-		} catch (Exception e)
+		} catch(Exception e)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>menu.MenuButton:</p>Delete/Create File Error<p></p> </html>", e.toString());
 		}
 	}
 }
