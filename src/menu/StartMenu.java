@@ -62,6 +62,7 @@ public class StartMenu extends JPanel
 				switch_song_btn.setAudioHandler(game_audio);
 				optn_container.add(switch_song_btn);
 				
+				// Enter class with leaderboard
 				MenuButton leaderboard_btn = new MenuButton("Leaderboard", 2, 4, 2, 4);
 				leaderboard_btn.setFrame(frame);
 				leaderboard_btn.setTop(top);
@@ -94,7 +95,6 @@ public class StartMenu extends JPanel
 				filler_right.add(esc_info_text);
 		frame.setVisible(true);
 		
-//		game_audio.setParent_switch(false);
 		game_audio.setParent_frame(game_audio.string_StartMenu);
 		Timer check_for_audio_status = new Timer();
 		TimerTask task = new TimerTask()
@@ -119,14 +119,4 @@ public class StartMenu extends JPanel
 		};
 		check_for_audio_status.scheduleAtFixedRate(task, 0, 500);
 	}
-/*
-	public AudioHandler getGame_audio()
-	{
-		return game_audio;
-	}
-	public void setGame_audio(AudioHandler game_audio)
-	{
-		this.game_audio = game_audio;
-	}
-*/
 }

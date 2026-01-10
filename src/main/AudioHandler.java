@@ -22,11 +22,10 @@ public class AudioHandler implements LineListener
 	
 	Clip clip;
 	FloatControl float_ctrl;
-//	CountDownLatch playingFinished;
 	
 	int current_audio_index;
-//	boolean user_stop = false;
 	
+	// Class that is currently on frame, only needed for classes without thread
 	String parent_frame;
 	public String getParent_frame()
 	{
@@ -38,13 +37,14 @@ public class AudioHandler implements LineListener
 	}
 	public String string_StartMenu				= "StartMenu",
 				  string_GamePanel				= "GamePanel",
-				  string_Albin					= "Albin",
+	/*			  string_Albin					= "Albin",
 				  string_Attila					= "Attila",
 				  string_Lkab					= "Lkab",
 				  string_Lulle					= "Lulle",
 				  string_Pauline				= "Pauline",
 				  string_Slusk					= "Slusk",
 				  string_SSC					= "SSC",
+	*/
 				  string_Leaderboard			= "string_Leaderboard",
 				  string_Leaderboard_cleared	= "string_Leaderboard_cleared",
 				  string_EndMenu				= "EndMenu";
@@ -92,12 +92,6 @@ public class AudioHandler implements LineListener
 		if(event.getType() == LineEvent.Type.STOP)
 		{				
 			clip.close();
-			/*
-			if(repeat && !user_stop)
-				new AudioHandler("", true, current_song_index);
-			*/
-//			if(repeat)
-
 			audio_finished = true;
 		}
 	}
@@ -122,7 +116,7 @@ public class AudioHandler implements LineListener
 							   "italian_sfx.wav",
 							   "miss_li.wav"};
 		
-		double[][] nums = new double[6][2];
+		double[][] nums = new double[song_names.length][2];
 		nums[0][0]	= 1;  // Ram Ranch			 - 2%
 		nums[1][0]	= 4;  // Vada a bordo, Cazzo - 8%
 		nums[2][0]	= 10; // Canelloni Macaroni	 - 20%
@@ -167,7 +161,6 @@ public class AudioHandler implements LineListener
 
 	public void endCurrentSong()
 	{
-//		user_stop = true;
 		clip.stop();
 	}
 	
