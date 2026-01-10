@@ -17,6 +17,7 @@ import main.ErrorManagement;
 public class AudioHandler implements LineListener
 {
 	String file_name = "src/audio_files/";
+//	String file_name = "src/audio_files/short_ver/";
 	boolean audio_finished = false;
 	
 	Clip clip;
