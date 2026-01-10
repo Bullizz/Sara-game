@@ -46,6 +46,8 @@ public class SSC extends JPanel implements Runnable
 	BufferedImage player_img, player_img_left, player_img_right;
 	int max_speed;
 	boolean striping = false;
+	int logged_dx = 0,
+		logged_dy = 0;
 	
 	// Rocket parameters
 	BufferedImage rocket_img_UP, rocket_img_LEFT, rocket_img_DOWN, rocket_img_RIGHT;
@@ -194,6 +196,12 @@ public class SSC extends JPanel implements Runnable
 		int player_dx = direction_arr[0];
 		int player_dy = direction_arr[1];
 		
+		// Log dx|dy for player retardation
+		if(player_dx != 0)
+			logged_dx = player_dx;
+		if(player_dy != 0)
+			logged_dy = player_dy;
+		
 		int player_speed_x = player.getPlayer_speed_x();
 		int player_speed_y = player.getPlayer_speed_y();
 		
@@ -213,18 +221,18 @@ public class SSC extends JPanel implements Runnable
 		int player_y = player.getPlayer_y();
 		
 		// If within map constraints
-		if(moveableX(player_x, player_dx))
+		if(moveableX(player_x, logged_dx))
 		{
-			player_x += player_speed_x * player_dx;
+			player_x += player_speed_x * logged_dx;
 			
 			// Update player img
-			if(player_dx > 0)
+			if(logged_dx > 0)
 				player_img = player_img_right;
-			else if(player_dx < 0)
+			else if(logged_dx < 0)
 				player_img = player_img_left;
 		}
-		if(moveableY(player_y, player_dy))
-			player_y += player_speed_y * player_dy;
+		if(moveableY(player_y, logged_dy))
+			player_y += player_speed_y * logged_dy;
 		
 		player.setPlayer_x(player_x);
 		player.setPlayer_y(player_y);

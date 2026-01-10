@@ -45,6 +45,7 @@ public class Pauline extends JPanel implements Runnable
 	BufferedImage player_img;
 	int player_max_speed = 7;
 	boolean carrying	 = false;
+	int logged_dx		 = 0;
 	
 	// Item rain parameters
 	String default_str = "default";
@@ -206,6 +207,10 @@ public class Pauline extends JPanel implements Runnable
 		// Get positive/negative direction of player
 		int player_dx = direction_arr[0];
 		
+		// Log dx for player retardation
+		if(player_dx != 0)
+			logged_dx = player_dx;
+		
 		// Horizontal acceleration
 		if((key_handler.LEFT || key_handler.RIGHT) && player_speed_x < player_max_speed)
 			player_speed_x++;
@@ -215,8 +220,8 @@ public class Pauline extends JPanel implements Runnable
 		int player_x = player.getPlayer_x();
 		
 		// If within table and trash bin
-		if(moveable(player_x, player_dx))
-			player_x += player_speed_x * player_dx;
+		if(moveable(player_x, logged_dx))
+			player_x += player_speed_x * logged_dx;
 		
 		player.setPlayer_x(player_x);
 		player.setPlayer_speed_x(player_speed_x);

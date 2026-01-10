@@ -46,6 +46,9 @@ public class GamePanel extends JPanel
 	final int width;
 	final int height;
 	
+	int logged_dx = 0,
+		logged_dy = 0;
+	
 	boolean game_loop_running, enemies_updating;
 	double random_speed_coeff;
 	
@@ -153,6 +156,14 @@ public class GamePanel extends JPanel
 		map_constraints = loadMapConstraints(this.width, this.height);
 		
 		game_audio.setParent_frame(game_audio.string_GamePanel);
+		
+		// Reset key-parameters
+		this.key_handler.setDirection_arr(new int[]{0, 0});
+		this.key_handler.UP		= false;
+		this.key_handler.LEFT	= false;
+		this.key_handler.DOWN	= false;
+		this.key_handler.RIGHT	= false;
+		
 		initGameThread();
 		initEnemiesThread();
 	}
@@ -318,6 +329,12 @@ public class GamePanel extends JPanel
 		int player_dx = player_direction_arr[0];
 		int player_dy = player_direction_arr[1];
 		
+		// Log dx|dy for player retardation
+		if(player_dx != 0)
+			logged_dx = player_dx;
+		if(player_dy != 0)
+			logged_dy = player_dy;
+		
 		// Get current speed of player
 		int player_speed_x = player.getPlayer_speed_x();
 		int player_speed_y = player.getPlayer_speed_y();
@@ -339,10 +356,10 @@ public class GamePanel extends JPanel
 		int player_y = player.getPlayer_y();
 		
 		// If within map constraints
-		if(moveableX(player_x, player_y, player.player_width, player.player_height, player_dx) == 1)
-			player_x += player_speed_x * player_dx;
-		if(moveableY(player_x, player_y, player.player_width, player.player_height, player_dy) == 1)
-			player_y += player_speed_y * player_dy;
+		if(moveableX(player_x, player_y, player.player_width, player.player_height, logged_dx) == 1)
+			player_x += player_speed_x * logged_dx;
+		if(moveableY(player_x, player_y, player.player_width, player.player_height, logged_dy) == 1)
+			player_y += player_speed_y * logged_dy;
 		
 		player.setPlayer_x(player_x);
 		player.setPlayer_y(player_y);

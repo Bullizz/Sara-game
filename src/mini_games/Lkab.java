@@ -43,7 +43,9 @@ public class Lkab extends JPanel implements Runnable
 	Player player;
 	int player_max_speed;
 	BufferedImage player_img, player_img_LEFT, player_img_RIGHT;
-
+	int logged_dx = 0,
+		logged_dy = 0;
+	
 	// Wires parameters
 	Color active_color;
 	char active_color_ch;
@@ -211,6 +213,12 @@ public class Lkab extends JPanel implements Runnable
 		int player_dx = direction_arr[0];
 		int player_dy = direction_arr[1];
 		
+		// Log dx|dy for player retardation
+		if(player_dx != 0)
+			logged_dx = player_dx;
+		if(player_dy != 0)
+			logged_dy = player_dy;
+		
 		double player_speed_x = player.getPlayer_speed_x();
 		double player_speed_y = player.getPlayer_speed_y();
 		
@@ -230,9 +238,9 @@ public class Lkab extends JPanel implements Runnable
 		int player_y = player.getPlayer_y();
 		
 		// If within map constraints
-		if(moveableX(player_x, player_dx))
+		if(moveableX(player_x, logged_dx))
 		{
-			player_x += player_speed_x * player_dx;
+			player_x += player_speed_x * logged_dx;
 			
 			// Get right or left facing player image
 			if(player_dx < 0)
@@ -240,8 +248,8 @@ public class Lkab extends JPanel implements Runnable
 			else if(player_dx > 0)
 				player_img = player_img_RIGHT;
 		}
-		if(moveableY(player_y, player_dy))
-			player_y += player_speed_y * player_dy;
+		if(moveableY(player_y, logged_dy))
+			player_y += player_speed_y * logged_dy;
 	
 		player.setPlayer_x(player_x);
 		player.setPlayer_y(player_y);
