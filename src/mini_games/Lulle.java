@@ -17,7 +17,7 @@ import entities.Player;
 
 import handlers.AudioHandler;
 import handlers.KeyHandler;
-
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
 
@@ -105,10 +105,9 @@ public class Lulle extends JPanel implements Runnable
 			player_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/player.png"));
 			npc_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/lulle.png"));
 			dirt_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/dirt.png"));
-		} catch(IOException e)
+		} catch(Throwable ioe)
 		{
-			System.err.println("Err ImageIO.read()");
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.Lulle:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		frame.add(this);

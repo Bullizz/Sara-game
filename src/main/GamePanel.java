@@ -86,9 +86,9 @@ public class GamePanel extends JPanel
 			slusk_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/slusk.png"));
 			attila_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/attila.png"));
 			pauline_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/pauline.png"));
-		} catch (IOException e)
+		} catch(Throwable ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>main.GamePanel:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		frame.add(this);
@@ -419,17 +419,18 @@ public class GamePanel extends JPanel
 			int delta_y = player_y - (int) enemy_y;
 			
 			// Get direction needed to reach player
-			try
-			{			
+			if(delta_x != 0 && delta_y != 0)
+			{				
 				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
 				angle = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
-			} catch(Exception e)
-			{
+			}
+			else
+			{				
 				delta_x		  = 1;
 				delta_y		  = 1;
 				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
-				angle 		  = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
 			}
+			angle 		  = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
 			
 			direction_arr[0] *= speed_coeff;
 			direction_arr[1] *= speed_coeff;
@@ -495,15 +496,16 @@ public class GamePanel extends JPanel
 		{
 			entity_x += direction_arr;
 			
-			try
+			// Check that position is within map.txt boundaries
+			if((direction_arr < 0 && 0 < entity_x) ||
+					(direction_arr > 0 && entity_x < width))
 			{				
 				// 				  			   (x, y1)																   (x, y2)
 				if(map_constraints[(int) entity_y][(int) entity_x] == 1 || map_constraints[(int) entity_y + entity_height][(int) entity_x] == 1)
 					return 0;
-			} catch(Exception e)
-			{
-				return -1;
 			}
+			else if(direction_arr != 0)
+				return -1;
 		}
 		
 		return 1;
@@ -532,15 +534,15 @@ public class GamePanel extends JPanel
 		for(int i = 0; i <= 13; i++)
 		{
 			entity_y += direction_arr;
-			try
-			{
+			if((direction_arr < 0 && entity_y > 0) ||
+					(direction_arr > 0 && entity_y < height))
+			{				
 				// 				  			  (x1, y)												  (x2, y)
 				if(map_constraints[(int) entity_y][(int) entity_x] == 1 || map_constraints[(int) entity_y][(int) entity_x + entity_width] == 1)
 					return 0;
-			} catch(Exception e)
-			{
-				return -1;
 			}
+			else if(direction_arr != 0)
+				return -1;
 		}
 		
 		return 1;
@@ -667,7 +669,7 @@ public class GamePanel extends JPanel
 			reader.close();
 		} catch(Exception file_except)
 		{
-			file_except.printStackTrace();
+			new ErrorManagement("<html><p>main.GamePanel:</p><p>Loading Map Error</p></html>", file_except.toString());
 		}
 		
 		return map;

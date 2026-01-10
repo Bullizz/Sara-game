@@ -17,7 +17,7 @@ import entities.Player;
 
 import handlers.AudioHandler;
 import handlers.KeyHandler;
-
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
 
@@ -107,9 +107,9 @@ public class Pauline extends JPanel implements Runnable
 			item_imgs[1] 	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/julmust.png")); 
 			item_imgs[2]	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/pain_suprise.png")); 
 			item_imgs[3]	= ImageIO.read(getClass().getResourceAsStream("/image_files/pauline/xmas_card.png")); 
-		} catch (IOException e)
+		} catch(Throwable ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.Pauline:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		this.frame				= frame;

@@ -44,7 +44,7 @@
 - ## ~~End menu~~
   - ### ~~Add "vada a bordo cazzo"-sfx~~
 
-- ## Error mngmt
+- ## ~~Error mngmt~~
 
 - ## General project cleanup
 
