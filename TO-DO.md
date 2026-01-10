@@ -36,7 +36,7 @@
     - #### ~~Add buffer columns so fall-items != table | trashbin~~
     - #### ~~Add thrashing-sfx~~
     - #### Add picture of Sara & Pauline
-  - ### ~~Attila~~
+  - ### Attila
     - #### ~~Fix user-pressed *activation* time~~
     - #### Remove initial follow-type?
 - ## ~~Log game-time~~
