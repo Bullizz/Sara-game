@@ -33,6 +33,7 @@ public class Albin extends JPanel
 	GameTimer game_timer;
 	KeyHandler key_handler;
 	AudioHandler game_audio;
+
 	int player_x_passing;
 	int player_y_passing;
 
@@ -99,6 +100,15 @@ public class Albin extends JPanel
 			@Override
 			public void run()
 			{
+				AudioHandler game_audio = getGame_audio();
+				if(game_audio.isAudio_finished())
+				{
+					int current_audio_index = game_audio.getCurrent_audio_index();
+					game_audio = new AudioHandler("", current_audio_index);
+					game_audio.lowerVolume();
+					setGame_audio(game_audio);
+				}
+				
 				// Cycle 1 done
 				if(car_x > width || key_handler.GamePanel_esc_pressed)
 				{
@@ -118,14 +128,20 @@ public class Albin extends JPanel
 			@Override
 			public void run()
 			{
+				AudioHandler game_audio = getGame_audio();
+				if(game_audio.isAudio_finished())
+				{
+					int current_audio_index = game_audio.getCurrent_audio_index();
+					game_audio = new AudioHandler("", current_audio_index);
+					game_audio.lowerVolume();
+					setGame_audio(game_audio);
+				}
+				
 				// Cycle 2 done
 				if(car_x + car_width < 0 || key_handler.GamePanel_esc_pressed)
 				{
 					timer_2.cancel();
-					try
-					{
-						albin_audio.endCurrentSong();
-					} catch(Exception e){}
+					albin_audio.endCurrentSong();
 					game_audio.raiseVolume(0);
 					killClass();
 				}
@@ -136,8 +152,17 @@ public class Albin extends JPanel
 		};
 		
 		game_audio.lowerVolume();
-		albin_audio = new AudioHandler("sfx/car.wav", false, -1);
+		albin_audio = new AudioHandler("sfx/car.wav", -1);
 		timer_1.scheduleAtFixedRate(task1, 0, time_1 / width);
+	}
+
+	public AudioHandler getGame_audio()
+	{
+		return game_audio;
+	}
+	public void setGame_audio(AudioHandler game_audio)
+	{
+		this.game_audio = game_audio;
 	}
 	
 	// Remove local GUI-comps. and gen. main GamePanel or StartMenu
@@ -153,7 +178,7 @@ public class Albin extends JPanel
 			frame.remove(this);
 
 			top.setText("Vada a Bordo, Cazzo!");
-			albin_audio.endCurrentSong();
+			//albin_audio.endCurrentSong();
 			
 			new StartMenu(frame, top, game_audio);
 		}

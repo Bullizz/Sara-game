@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import main.AudioHandler;
@@ -32,6 +32,8 @@ public class StartMenu extends JPanel
 		setBackground(blue);
 		setLayout(new GridLayout(1, 3));
 		frame.add(this);
+//		this.game_audio = game_audio;
+		
 			JPanel filler_left = new JPanel();
 			filler_left.setBackground(blue);
 			add(filler_left);
@@ -60,6 +62,7 @@ public class StartMenu extends JPanel
 				switch_song_btn.setAudioHandler(game_audio);
 				optn_container.add(switch_song_btn);
 				
+				// Enter class with leaderboard
 				MenuButton leaderboard_btn = new MenuButton("Leaderboard", 2, 4, 2, 4);
 				leaderboard_btn.setFrame(frame);
 				leaderboard_btn.setTop(top);
@@ -91,5 +94,29 @@ public class StartMenu extends JPanel
 				esc_info_text.setOpaque(true);
 				filler_right.add(esc_info_text);
 		frame.setVisible(true);
+		
+		game_audio.setParent_frame(game_audio.string_StartMenu);
+		Timer check_for_audio_status = new Timer();
+		TimerTask task = new TimerTask()
+		{
+			AudioHandler updating_game_audio = game_audio;
+			@Override
+			public void run()
+			{
+				if(updating_game_audio.isAudio_finished())
+				{
+					int current_audio_index = updating_game_audio.getCurrent_audio_index();
+					updating_game_audio = new AudioHandler("", current_audio_index);
+					updating_game_audio.setParent_frame(updating_game_audio.string_StartMenu);
+
+					play_btn.setAudioHandler(updating_game_audio);
+					switch_song_btn.setAudioHandler(updating_game_audio);
+					leaderboard_btn.setAudioHandler(updating_game_audio);
+				}
+				if(!updating_game_audio.getParent_frame().equals(updating_game_audio.string_StartMenu))
+					check_for_audio_status.cancel();
+			}
+		};
+		check_for_audio_status.scheduleAtFixedRate(task, 0, 500);
 	}
 }

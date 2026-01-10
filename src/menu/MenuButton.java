@@ -18,12 +18,16 @@ import main.AudioHandler;
 import main.GamePanel;
 import main.KeyHandler;
 
-public class MenuButton extends JButton implements /*ActionListener, */MouseListener
+public class MenuButton extends JButton implements MouseListener
 {
 	Color blue = new Color(0, 162, 232);
 	Color yellow = new Color(239, 228, 176);
 	
 	String btn_name;
+	
+	// Status of leaderboard leaderboard_btn or clear_leaderboard_btn is pressed 
+	String leaderboard_default = "leaderboard_default",
+		   leaderboard_cleared = "leaderboard_cleared";
 	
 	Border border;
 	Border hover_border;
@@ -72,20 +76,16 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 				new StartMenu(frame, top, game_audio);
 				break;
 			case "Switch Song":
-				int current_song_index = game_audio.getCurrent_song_index();
 				game_audio.endCurrentSong();
-				game_audio = new AudioHandler("", true, current_song_index);
-				frame.remove(current_panel);
-				new StartMenu(frame, top, game_audio);
 				break;
 			case "Leaderboard":
 				frame.remove(current_panel);
-				new EndMenu(frame, top, game_audio, "", top.getText());
+				new EndMenu(frame, top, game_audio, "", top.getText(), leaderboard_default);
 				break;
 			case "Clear Leaderboard":
 				clearLeaderboard();
 				frame.remove(current_panel);
-				new EndMenu(frame, top, game_audio, "", top.getText());
+				new EndMenu(frame, top, game_audio, "", top.getText(), leaderboard_cleared);
 				break;
 			case "Exit":
 				System.exit(0);

@@ -149,6 +149,7 @@ public class GamePanel extends JPanel
 		// Integer matrix with map boundaries
 		map_constraints = loadMapConstraints(this.width, this.height);
 		
+		game_audio.setParent_frame(game_audio.string_GamePanel);
 		initGameThread();
 		initEnemiesThread();
 	}
@@ -218,6 +219,13 @@ public class GamePanel extends JPanel
 							
 							if(key_handler.GamePanel_esc_pressed)
 								killThreads();
+							
+							// If playing audio file is ended
+							if(game_audio.isAudio_finished())
+							{
+								int current_audio_index = game_audio.getCurrent_audio_index();
+								game_audio = new AudioHandler("", current_audio_index);
+							}
 							
 							delta = 0;
 						}
@@ -663,21 +671,19 @@ public class GamePanel extends JPanel
 		frame.removeKeyListener(key_handler);
 		frame.remove(this);
 		
-		new AudioHandler("sfx/vada-a-borde-cazzo-sfx.wav", false, -1);
+		AudioHandler end_sfx = new AudioHandler("sfx/vada-a-borde-cazzo-sfx.wav", -1);
+		end_sfx.raiseVolume(6);
 		
-		new EndMenu(frame, top, game_audio, final_time_str, "Good Job!");
+		new EndMenu(frame, top, game_audio, final_time_str, "Good Job!", "user_inp");
 	}
 	
 	private void initStartMenu()
 	{
 		killThreads();
 		game_timer.timer.cancel();
-		
 		frame.removeKeyListener(key_handler);
 		frame.remove(this);
-
 		top.setText("Vada a Bordo, Cazzo!");
-		
 		new StartMenu(frame, top, game_audio);
 	}
 
@@ -704,27 +710,27 @@ public class GamePanel extends JPanel
 				
 				switch(current_enemy.id_string)
 				{
-				case "lulle":
-					g_2d.drawImage(lulle_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
-					break;
-				case "albin":
-					g_2d.drawImage(albin_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
-					break;
-				case "lkab":
-					g_2d.drawImage(lkab_img,    current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
-					break;
-				case "ssc":
-					g_2d.drawImage(ssc_img,     current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
-					break;
-				case "slusk":
-					g_2d.drawImage(slusk_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
-					break;
-				case "attila":
-					g_2d.drawImage(attila_img,  current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
-					break;
-				case "pauline":
-					g_2d.drawImage(pauline_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
-					break;
+					case "lulle":
+						g_2d.drawImage(lulle_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "albin":
+						g_2d.drawImage(albin_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "lkab":
+						g_2d.drawImage(lkab_img,    current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "ssc":
+						g_2d.drawImage(ssc_img,     current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "slusk":
+						g_2d.drawImage(slusk_img,   current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "attila":
+						g_2d.drawImage(attila_img,  current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
+					case "pauline":
+						g_2d.drawImage(pauline_img, current_enemy.getEnemy_x(), current_enemy.getEnemy_y(), current_enemy.width, current_enemy.height, null);
+						break;
 				}
 			}
 		}

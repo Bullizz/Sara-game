@@ -211,6 +211,13 @@ public class Attila extends JPanel implements Runnable
 						stripe_counter = 0;
 					}
 					
+					// If playing audio file is ended
+					if(game_audio.isAudio_finished())
+					{
+						int current_audio_index = game_audio.getCurrent_audio_index();
+						game_audio = new AudioHandler("", current_audio_index);
+					}
+					
 					delta = 0;
 				}
 			} // End of slave game-loop

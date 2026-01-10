@@ -9,8 +9,7 @@
    - ##### Leaderboard
    - ##### Exit
 - ### Game Menu
-   - #### "Warning, progress won't be saved if you quit the game"
-   - #### <Yes|No>
+   - #### Go back to the Start menu
 
 - ## GAME
    -  ### Kiruna --> Italy
@@ -24,7 +23,7 @@
             - #### Vine boom (for slow bong)
          - #### Lulle
             - #### Need to clean up after him
-         - #### Albin (hero?)
+         - #### Albin (hero!)
             - #### Time goes down
             - #### RNG amount of time restored
             - #### car sfx
@@ -39,7 +38,6 @@
               - Julmust
               - Pain suprise
               - Christmas card
-            - #### Currently trash bin implemented, but items stop falling after placed on table
          - #### Attila
          	- #### Need to catch him
          	- #### Falling WASD like dance dance revolution
@@ -52,3 +50,6 @@
 - ## FINISH
    - ### Show completion time
    - ### Log and disp. leaderboard
+- ## Game music
+   - ### Check for audio-finish-status throughout **each** game-thread
+   - ### Assign minigame SFX to variables to be safe
