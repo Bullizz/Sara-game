@@ -15,8 +15,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class AudioHandler implements LineListener
 {
-//	String file_name = "src/audio_files/";
-	String file_name = "src/audio_files/short_ver/";
+	String file_name = "src/audio_files/";
 	boolean audio_finished = false;
 	
 	Clip clip;
