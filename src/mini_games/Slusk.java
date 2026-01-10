@@ -12,10 +12,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import main.AudioHandler;
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+
 import menu.StartMenu;
 
 public class Slusk extends JPanel implements Runnable

@@ -8,17 +8,19 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import entities.Enemy;
 import entities.Player;
-import main.AudioHandler;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+
 import menu.StartMenu;
 
 public class Lulle extends JPanel implements Runnable

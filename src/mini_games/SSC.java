@@ -15,10 +15,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import entities.Player;
-import main.AudioHandler;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+
 import menu.StartMenu;
 
 public class SSC extends JPanel implements Runnable

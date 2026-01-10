@@ -19,6 +19,9 @@ import entities.Player;
 import menu.EndMenu;
 import menu.StartMenu;
 
+import handlers.KeyHandler;
+import handlers.AudioHandler;
+
 import mini_games.Albin;
 import mini_games.Attila;
 import mini_games.Lkab;

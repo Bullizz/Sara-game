@@ -14,10 +14,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import main.AudioHandler;
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
 import menu.StartMenu;
 
 public class Albin extends JPanel

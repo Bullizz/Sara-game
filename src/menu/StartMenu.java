@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import main.AudioHandler;
+import handlers.AudioHandler;
 
 public class StartMenu extends JPanel
 {

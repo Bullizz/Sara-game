@@ -22,7 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import main.AudioHandler;
+import handlers.AudioHandler;
 
 public class EndMenu extends JPanel
 {

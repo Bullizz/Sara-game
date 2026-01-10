@@ -14,9 +14,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 
-import main.AudioHandler;
+import handlers.AudioHandler;
 import main.GamePanel;
-import main.KeyHandler;
+import handlers.KeyHandler;
 
 public class MenuButton extends JButton implements MouseListener
 {
