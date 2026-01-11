@@ -81,7 +81,6 @@ public class Lulle extends JPanel implements Runnable
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
 		setFocusable(false);
-		setBackground(new Color(32, 89, 255));
 		
 		this.frame				= frame;
 		this.top				= top;
@@ -101,7 +100,7 @@ public class Lulle extends JPanel implements Runnable
 		
 		try
 		{
-//			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/"));
+			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/background-img-png"));
 			player_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/player.png"));
 			npc_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/lulle.png"));
 			dirt_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/dirt.png"));
@@ -338,6 +337,9 @@ public class Lulle extends JPanel implements Runnable
 	{
 		super.paintComponent(g_1d);
 		Graphics2D g_2d = (Graphics2D) g_1d;
+		
+		// Paint background
+		g_2d.drawImage(background_img, 0, 0, width, height, null);
 		
 		// Paint player
 		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), entity_width, entity_height, null);

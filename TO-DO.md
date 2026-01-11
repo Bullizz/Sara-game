@@ -1,7 +1,7 @@
 - ## ~~Start Menu~~
 - ## ~~Exit game system (gamePanel --> StartMenu)~~
 
-- ## GAME
+- ## ~~GAME~~
   - ### ~~Music~~
     - #### ~~Same game_audio is not stored if clip end in minigame, i.e. Switch Song -btn init. new song~~
     - #### ~~Remove short-vers.~~
@@ -13,10 +13,10 @@
     - #### ~~Fix player img~~
     - #### ~~Fix lulle img~~
     - #### ~~Set enemies to (x0, y0) if noclip happens~~
-  - ### Lulle
+  - ### ~~Lulle~~
     - #### ~~Improve hitbox~~
     - #### ~~Assign max-points RNG value~~
-    - #### Background img
+    - #### ~~Background img~~
     - #### ~~Fix dirt spawn point is valid~~
     - #### ~~Add cleaning-sfx~~
   - ### ~~Lkab~~

@@ -17,6 +17,7 @@ public class Main
 	{
 		JFrame frame = new JFrame();
 		frame.setUndecorated(true);
+		frame.setTitle("Vada a Bordo, Cazzo!");
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setSize(1920, 1080);
 		frame.setLocationRelativeTo(null);
