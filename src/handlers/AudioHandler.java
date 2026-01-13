@@ -24,7 +24,8 @@ public class AudioHandler implements LineListener
 	
 	int current_audio_index;
 	
-	// Class that is currently on frame, only needed for classes without thread
+	// Class that is currently on frame,
+	// only needed for classes without thread
 	String parent_frame;
 	public String getParent_frame()
 	{
@@ -48,8 +49,6 @@ public class AudioHandler implements LineListener
 			this.file_name += file_name;
 		
 		File file = new File(this.file_name);
-		if(file.exists())
-			System.out.println();
 		clip = null;
 		
 		// Play audio file
@@ -99,14 +98,14 @@ public class AudioHandler implements LineListener
 	// Randomize next song
 	private String getRNGSong(int old_song_index)
 	{
-		String[] song_names = {"ram_ranch_46.wav",
-							   "vada_a_borde_cazzo-remix.wav",
-							   "canelloni_macaroni.wav",
-							   "caramelldansen.wav",
-							   "italian_sfx.wav",
-							   "miss_li.wav"};
+		String[] audio_files = {"ram_ranch_46.wav",
+							    "vada_a_bordo_cazzo-remix.wav",
+							    "canelloni_macaroni.wav",
+							    "caramelldansen.wav",
+							    "italian_sfx.wav",
+							    "miss_li.wav"};
 		
-		double[][] nums = new double[song_names.length][2];
+		double[][] nums = new double[audio_files.length][2];
 		nums[0][0]	= 1;  // Ram Ranch			 - 2%
 		nums[1][0]	= 4;  // Vada a bordo, Cazzo - 8%
 		nums[2][0]	= 10; // Canelloni Macaroni	 - 20%
@@ -114,6 +113,8 @@ public class AudioHandler implements LineListener
 		nums[4][0]	= 10; // Italian SFX		 - 20%
 		nums[5][0]	= 14; // Miss Li			 - 29%
 
+		// Assign 'RNG-limit' of each audio file entry
+		// i.e. if RNG-value is within entry-value, entry is picked 
 		nums[0][1] = 1;
 		for(int i = 1; i < nums.length; i++)
 			nums[i][1] = nums[i][0] + nums[i - 1][1];
@@ -123,7 +124,7 @@ public class AudioHandler implements LineListener
 		int new_song_index = old_song_index;
 		int i = 0;
 		
-		// Ensure new song is not the same as the previous one
+		// Iterate until new song is not the same as the previous one
 		while(new_song_index == old_song_index)
 		{
 			double RNG = Math.random() * max;
@@ -146,7 +147,7 @@ public class AudioHandler implements LineListener
 		}
 		
 		current_audio_index = new_song_index;
-		return song_names[current_audio_index];
+		return audio_files[current_audio_index];
 	}
 
 	public void endCurrentSong()

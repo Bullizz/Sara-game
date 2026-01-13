@@ -1,11 +1,10 @@
 package mini_games;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,13 +15,18 @@ import javax.swing.JPanel;
 
 import handlers.AudioHandler;
 import handlers.KeyHandler;
+
 import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
+
 import menu.StartMenu;
 
 public class Albin extends JPanel
 {
+	/**/
+	private static final long serialVersionUID = 6L;
+	
 	int width, height;
 	BufferedImage background_img;
 	int time_1, time_2;
@@ -51,11 +55,10 @@ public class Albin extends JPanel
 	{
 		super();
 			this.width  = frame.getWidth();
-			this.height = 9 * (frame.getHeight() / 10);
+			this.height = (9 * frame.getHeight()) / 10;
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
 		setFocusable(false);
-		setBackground(new Color(0, 64, 0));
 		
 		try
 		{
@@ -79,7 +82,7 @@ public class Albin extends JPanel
 		car_y = (height - car_height) / 2;
 		
 		// Randomize how many seconds mini-game will take,
-		// range: [3, 8] per "cycle"
+		// range: [3, 8] seconds per "cycle"
 		int max = 8;
 		int min = 3;
 		
@@ -93,7 +96,6 @@ public class Albin extends JPanel
 		
 		frame.add(this);
 		frame.repaint();
-		
 		
 		// Timer for cycle 1 (left --> right)
 		task1 = new TimerTask()
@@ -166,7 +168,7 @@ public class Albin extends JPanel
 		this.game_audio = game_audio;
 	}
 	
-	// Remove local GUI-comps. and gen. main GamePanel or StartMenu
+	// Remove local GUI-comps. and gen. GamePanel or StartMenu
 	private void killClass()
 	{
 		game_timer.setTime_coeff(1);
@@ -179,7 +181,6 @@ public class Albin extends JPanel
 			frame.remove(this);
 
 			top.setText("Vada a Bordo, Cazzo!");
-			//albin_audio.endCurrentSong();
 			
 			new StartMenu(frame, top, game_audio);
 		}

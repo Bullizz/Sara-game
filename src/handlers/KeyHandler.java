@@ -9,18 +9,18 @@ public class KeyHandler implements KeyListener
 	public boolean UP, LEFT, DOWN, RIGHT;
 	int[] direction_arr = {0, 0};
 	
-	// Slusk minigame
+	// Slusk minigame -variables
 	int slusk_points;
 	boolean slusk_space_pressed;
 	boolean slusk_active;
 	
-	// Attila minigame
+	// Attila minigame -variables
 	boolean attila_active;
 	boolean key_available;
 	char current_key;
 	
 	@Override
-	public void keyTyped(KeyEvent e){}
+	public void keyTyped(KeyEvent e){} // Unused
 	@Override
 	public void keyPressed(KeyEvent press)
 	{
@@ -44,8 +44,7 @@ public class KeyHandler implements KeyListener
 		// For attila minigame
 		else if(attila_active && key_available)
 		{
-			int user_key = press.getKeyCode();
-			switch(user_key)
+			switch(user_inp)
 			{
 				case KeyEvent.VK_W:
 					current_key = 'w';
@@ -208,11 +207,7 @@ public class KeyHandler implements KeyListener
 	{
 		return current_key;
 	}
-/*	public void setCurrent_key(char current_key)
-	{
-		this.current_key = current_key;
-	}
-*/
+	
 	public boolean isKey_available()
 	{
 		return key_available;

@@ -4,15 +4,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,13 +28,16 @@ import main.ErrorManagement;
 
 public class EndMenu extends JPanel
 {
+	/**/
+	private static final long serialVersionUID = 3L;
+	
 	JFrame frame;
 	JLabel top;
 	AudioHandler this_game_audio;
 	
 	int width, height;
 	
-	Color blue = new Color(0, 162, 232);
+	Color blue	 = new Color(0, 162, 232);
 	Color yellow = new Color(239, 228, 176);
 	
 	Font font = new Font("Arial", Font.BOLD, 40);
@@ -150,8 +154,15 @@ public class EndMenu extends JPanel
 				{
 					int user_inp = press.getKeyCode();
 
+					// Remove "Your Name:" when user pressed key
+					if(!key_pressed)
+					{
+						user_inp_field.setText("");
+						key_pressed = true;
+					}
+					
 					// Commit name
-					if(user_inp == KeyEvent.VK_ENTER)
+					else if(user_inp == KeyEvent.VK_ENTER)
 					{
 						String user_name = user_inp_field.getText();
 						removeAll();
@@ -159,14 +170,6 @@ public class EndMenu extends JPanel
 						// Leaderboard-disp. panel
 						initEndPanel(user_name, final_time_str);
 					}
-					// Remove "Your Name:" when user pressed key
-					else if(!key_pressed)
-						user_inp_field.setText("");
-				}
-				public void keyReleased(KeyEvent release)
-				{
-					if(!key_pressed)
-						key_pressed = true;
 				}
 			});
 			user_inp_panel.add(user_inp_field);
@@ -213,7 +216,7 @@ public class EndMenu extends JPanel
 		setLayout(left);
 		
 		// Top 10 list
-		int width = 3 * (this.width / 5);
+		int width = (3 * this.width) / 5;
 		JPanel leaderboard_container = new JPanel();
 		leaderboard_container.setPreferredSize(new Dimension(width, this.height));
 		leaderboard_container.setLocation(0, 0);

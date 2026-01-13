@@ -15,6 +15,7 @@ public class Main
 {
 	public static void main(String[] args)
 	{
+		// Init. frame
 		JFrame frame = new JFrame();
 		frame.setUndecorated(true);
 		frame.setTitle("Vada a Bordo, Cazzo!");

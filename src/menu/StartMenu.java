@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,9 +16,12 @@ import handlers.AudioHandler;
 
 public class StartMenu extends JPanel
 {
+	/**/
+	private static final long serialVersionUID = 5L;
+
 	int width, height;
 	
-	Color blue = new Color(0, 162, 232);
+	Color blue	 = new Color(0, 162, 232);
 	Color yellow = new Color(239, 228, 176);
 	
 	Font font = new Font("Arial", Font.PLAIN, 30);

@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
@@ -32,11 +31,13 @@ import mini_games.Slusk;
 
 public class GamePanel extends JPanel
 {
+	/**/
+	private static final long serialVersionUID = 1L;
+	
 	KeyHandler key_handler;
 	Player player;
 	Enemy lulle, albin, lkab, ssc, slusk, attila, pauline;
 	final int enemy_amount = 7;
-	
 	Enemy[] enemies;
 	GameTimer game_timer;
 	AudioHandler game_audio;
@@ -55,8 +56,8 @@ public class GamePanel extends JPanel
 	JFrame frame;
 	JLabel top;
 	
-	BufferedImage map_img, player_img;
-	BufferedImage lulle_img, albin_img, lkab_img, ssc_img, slusk_img, attila_img, pauline_img;
+	// All images needed for current class
+	BufferedImage map_img, player_img, lulle_img, albin_img, lkab_img, ssc_img, slusk_img, attila_img, pauline_img;
 	
 	int[][] map_constraints;
 	
@@ -69,7 +70,7 @@ public class GamePanel extends JPanel
 	{
 		super();
 			this.width 	= frame.getWidth();
-			this.height = 9 * (frame.getHeight() / 10);
+			this.height = (9 * frame.getHeight()) / 10;
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
 		setFocusable(false);
@@ -107,7 +108,7 @@ public class GamePanel extends JPanel
 		
 		enemies = new Enemy[]{lulle, albin, lkab, ssc, slusk, attila, pauline};
 
-		// Check that player-spawn != any enemy-spawn
+		// Check that player-spawn does not equal any enemy-spawn
 		int buffer_zone = 10;
 		int enemy_i = 0;
 		while(enemy_i < enemy_amount)
@@ -115,9 +116,9 @@ public class GamePanel extends JPanel
 			boolean valid_x = false;			
 			boolean valid_y = false;
 			
-			// Enemy to the right
+			// Enemy to the right of player
 			int x_diff_1 = Math.abs(enemies[enemy_i].getEnemy_x() - (player_x0 + entity_width));
-			// Enemy to the left			
+			// Enemy to the left of player
 			int x_diff_2 = Math.abs(player_x0 - (enemies[enemy_i].getEnemy_x() + entity_width));
 			
 			// Enemy below player
@@ -189,7 +190,7 @@ public class GamePanel extends JPanel
 				{
 					/*
 					 * Time-to-update logic
-					 * Src: https://www.youtube.com/watch?v=VpH33Uw-_0E&t=1906s
+					 * Src: https://youtu.be/VpH33Uw-_0E?si=VRzlEZTAarzTKXT4
 					 */
 					double draw_interval = Math.pow(10, 9);
 					draw_interval /= FPS;
@@ -211,7 +212,7 @@ public class GamePanel extends JPanel
 							repaint();
 							
 							// Player-enemy collision
-							int[] collision_params = checkCollision( player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, -1);
+							int[] collision_params = checkCollision(player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, -1);
 							
 							// Collision
 							if(collision_params[0] == 1)
@@ -225,7 +226,8 @@ public class GamePanel extends JPanel
 							{
 								// Reach goal x-pos.
 								if(player.getPlayer_x() < GOAL_X && GOAL_X < (player.getPlayer_x() + player.player_width))
-								{	
+								{
+									// Goal reached
 									killThreads();
 									game_timer.setTime_coeff(0);
 								}
@@ -249,11 +251,11 @@ public class GamePanel extends JPanel
 					if(enemy_collision_index > -1)
 						launchMiniGame(enemy_collision_index);
 					
-					// Player exit
+					// User exit
 					else if(key_handler.GamePanel_esc_pressed)
 						initStartMenu();
 					
-					// No collision, game won
+					// No collisions, game won
 					else
 						endGame();
 				} // End of master game-loop
@@ -295,7 +297,6 @@ public class GamePanel extends JPanel
 							// Enemies move away from player for first 20 frames
 							if(anti_spawn)
 							{
-//								0, 3, 1, 2, 1, 0, 2
 								spawn_counter++;
 								if(spawn_counter % 20 == 0)
 								{
@@ -370,18 +371,18 @@ public class GamePanel extends JPanel
 	private void updateEnemies()
 	{
 		/*
-		 *  ____________________________________
-		 * | follow-type |     description      |
-		 * |____________________________________|
-		 * |       0     | Follow at 90% speed  |
-		 * |____________________________________|
-		 * |       1     | Follow at 50% speed  |
-		 * |____________________________________|
-		 * |       2     | Randomized direction |
-		 * |____________________________________|
-		 * |       3     |  Opposite direction  |
-		 * |____________________________________|
-		 * 
+		   ________________________________________
+		  | Follow-type |       Description        |
+		  |________________________________________|
+		  |       0     | Follow at 80% max-speed  |
+		  |________________________________________|
+		  |       1     | Follow at 50% max-speed  |
+		  |________________________________________|
+		  |       2     |   Randomized direction   |
+		  |________________________________________|
+		  |       3     |   Opposite direction     |
+		  |________________________________________|
+		  
 		 */
 		
 		int player_x = player.getPlayer_x();
@@ -430,7 +431,7 @@ public class GamePanel extends JPanel
 				delta_y		  = 1;
 				direction_arr = new double[]{delta_x / Math.abs(delta_x), delta_y / Math.abs(delta_y)};
 			}
-			angle 		  = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
+			angle = Math.atan(Math.abs(delta_y) / Math.abs(delta_x));
 			
 			direction_arr[0] *= speed_coeff;
 			direction_arr[1] *= speed_coeff;
@@ -445,7 +446,7 @@ public class GamePanel extends JPanel
 														   current_enemy.height,
 														   enemy_index);
 			
-			// Collision between enemies
+			// Collision between enemies, go opposite direction
 			if(enemy_collision_params[0] == 1)
 			{
 				speed_x *= -1;
@@ -478,21 +479,22 @@ public class GamePanel extends JPanel
 			entity_x += entity_width;
 		
 		/* 
-		 * 	 entity_x	  	entity_x + entity_width
-		 * 	 		<------->
-		 * 			
-		 * (x, y1)  --------
-		 *   		|      |
-		 *   		|	   |
-		 *   		|	   |
-		 *   		|	   |
-		 *   		|	   |
-		 *  		|	   |
-		 * (x, y2)  --------
-		 * 
+		  	 entity_x	  	entity_x + entity_width
+		  	 		<------->
+		  			
+		   (x, y1)  --------
+		    		|      |
+		    		|	   |
+		    		|	   |
+		    		|	   |
+		    		|	   |
+	  	   		 	|	   |
+		   (x, y2)  --------
+		  
 		 */
 		
-		for(int i = 0; i <= 13; i++)
+		// Look 13 steps in the current direction
+		for(int i = 0; i < 13; i++)
 		{
 			entity_x += direction_arr;
 			
@@ -518,22 +520,24 @@ public class GamePanel extends JPanel
 			entity_y += entity_height;
 		
 		/* 
-		 * 			
-		 *		   (x1, y) <---------> (x2, y)
-		 *  				|		|
-		 *    			/\	|       |
-		 *    			|	|	    |
-		 *     entity  	|	|	    |
-		 *     height  	|	|	    |
-		 *    			|	|	    |
-		 *    			\/	|	    |
-		 *          		----------
-		 * 
+		
+		 		   (x1, y) <---------> (x2, y)
+		   					|		|
+		     			/\	|       |
+		     			|	|	    |
+		      entity  	|	|	    |
+		      height  	|	|	    |
+		     			|	|	    |
+		     			\/	|	    |
+		           			----------
+		  
 		 */
 		
-		for(int i = 0; i <= 13; i++)
+		for(int i = 0; i < 13; i++)
 		{
 			entity_y += direction_arr;
+
+			// Check that position is within map.txt boundaries
 			if((direction_arr < 0 && entity_y > 0) ||
 					(direction_arr > 0 && entity_y < height))
 			{				
@@ -601,7 +605,7 @@ public class GamePanel extends JPanel
 		int player_x = player.getPlayer_x();
 		int player_y = player.getPlayer_y();
 		
-		key_handler.setDirection_arr(new int[] {0, 0});
+		key_handler.setDirection_arr(new int[]{0, 0});
 		frame.remove(this);
 		
 		switch(enemy_collision_index)
@@ -693,7 +697,7 @@ public class GamePanel extends JPanel
 		frame.removeKeyListener(key_handler);
 		frame.remove(this);
 		
-		AudioHandler end_sfx = new AudioHandler("sfx/vada-a-borde-cazzo-sfx.wav", -1);
+		AudioHandler end_sfx = new AudioHandler("sfx/vada-a-bordo-cazzo-sfx.wav", -1);
 		end_sfx.raiseVolume(6);
 		
 		new EndMenu(frame, top, game_audio, final_time_str, "Good Job!", "user_inp");
@@ -713,14 +717,13 @@ public class GamePanel extends JPanel
 	public void paintComponent(Graphics g_1d)
 	{
 		super.paintComponent(g_1d);
-		
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Draw background
 		g_2d.drawImage(map_img, 0, 0, this.width, this.height, null);
 		
 		// Paint player
-		if(player != null)
+		if(game_loop_running)
 			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
 		
 		if(enemies_updating)

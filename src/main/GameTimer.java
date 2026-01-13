@@ -7,6 +7,9 @@ import javax.swing.JLabel;
 
 public class GameTimer extends JLabel
 {
+	/**/
+	private static final long serialVersionUID = 2L;
+	
 	public Timer timer;
 	TimerTask timer_task;
 	double total_time = 0;
@@ -15,13 +18,13 @@ public class GameTimer extends JLabel
 	
 	String time_str;
 	
-	// Game timer that's displayed in top panel
+	// Game timer that is displayed in top panel
 	public void initTimer(JLabel top)
 	{
 		timer = new Timer();
 		
 		timer_task = new TimerTask()
-		{			
+		{
 			StringBuffer time_str_buffer;
 			@Override
 			public void run()
@@ -85,11 +88,11 @@ public class GameTimer extends JLabel
 				
 				if(time_str != null)
 				{
-					setTime_str(time_str_buffer.toString());
+					time_str = time_str_buffer.toString();
 					top.setText(time_str_buffer.toString());
 				}
 				else
-					setTime_str("00:00:00.00");
+					time_str = "00:00:00.00";
 			}
 		};
 		timer.scheduleAtFixedRate(timer_task, 0, 10);
@@ -116,9 +119,5 @@ public class GameTimer extends JLabel
 	public String getTime_str()
 	{
 		return time_str;
-	}
-	public void setTime_str(String time_str)
-	{
-		this.time_str = time_str;
 	}
 }
