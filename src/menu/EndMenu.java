@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import handlers.AudioHandler;
+
 import main.ErrorManagement;
 
 public class EndMenu extends JPanel

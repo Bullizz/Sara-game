@@ -6,9 +6,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+
 import java.util.stream.IntStream;
 
 import javax.imageio.ImageIO;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,9 +19,11 @@ import entities.Player;
 
 import handlers.AudioHandler;
 import handlers.KeyHandler;
+
 import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
+
 import menu.StartMenu;
 
 public class Lkab extends JPanel implements Runnable

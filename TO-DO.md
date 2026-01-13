@@ -48,8 +48,8 @@
 
 - ## General project cleanup
   - ### Ensure (a \* width) / b, not a \* (width / b)
-  - ### Organize used imports
-  - ### Remove unused imports
+  - ### ~~Organize used imports~~
+  - ### ~~Remove unused imports~~
 
 - ## ~~Organize image-folders~~
 
