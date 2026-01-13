@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
@@ -25,6 +24,9 @@ import menu.StartMenu;
 
 public class Pauline extends JPanel implements Runnable
 {
+	/**/
+	private static final long serialVersionUID = 10L;
+	
 	int width, height;
 	Thread pauline_thread;
 	boolean game_loop_running;
@@ -81,11 +83,11 @@ public class Pauline extends JPanel implements Runnable
 	{
 		super();
 			this.width = frame.getWidth();
-			this.height = 9 * (frame.getHeight() / 10);
+			this.height = (9 * frame.getHeight()) / 10;
 		setPreferredSize(new Dimension(width, height));
 		setLocation(0, 0);
 		
-		player = new Player(3 * (this.width / 5), this.height - 194, 112, 194);
+		player = new Player((3 * this.width) / 5, this.height - 194, 112, 194);
 
 		item_held_y += player.getPlayer_y();
 		
@@ -186,12 +188,9 @@ public class Pauline extends JPanel implements Runnable
 		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
-			
 			frame.removeKeyListener(key_handler);
 			frame.remove(this);
-
 			top.setText("Vada a Bordo, Cazzo!");
-			
 			new StartMenu(frame, top, game_audio);
 		}
 		else
@@ -329,7 +328,6 @@ public class Pauline extends JPanel implements Runnable
 		// If generated column has item in it, init. item fall outside of game panel
 		if(valid_index_counter != i)
 			falling_index = rng_lim + 1;
-		
 		
 		return falling_index;
 	}

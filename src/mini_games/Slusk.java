@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -23,6 +22,9 @@ import menu.StartMenu;
 
 public class Slusk extends JPanel implements Runnable
 {
+	/**/
+	private static final long serialVersionUID = 11L;
+	
 	int width, height;
 	Thread slusk_thread;
 	
@@ -52,7 +54,7 @@ public class Slusk extends JPanel implements Runnable
 	int liquid_height = 97; // = bong_height / 5 = bong-tratt height, liquid-1, liquid-2, liquid-3, and liquid-4
 	int liquid_x	  = 930;
 
-	// Space sign parameters
+	// Space-sign parameters
 	BufferedImage space_img_active, space_img_inactive;
 	boolean space_sign 	= false;
 	int space_width		= 320;
@@ -64,7 +66,7 @@ public class Slusk extends JPanel implements Runnable
 	{
 		super();
 			this.width = frame.getWidth();
-			this.height = 9 * (frame.getHeight() / 10);
+			this.height = (9 * frame.getHeight()) / 10;
 		setPreferredSize(new Dimension(width, height));
 		setLocation(0, 0);
 		
@@ -194,12 +196,9 @@ public class Slusk extends JPanel implements Runnable
 		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
-			
 			frame.removeKeyListener(key_handler);
 			frame.remove(this);
-
 			top.setText("Vada a Bordo, Cazzo!");
-			
 			new StartMenu(frame, top, game_audio);
 		}
 		else

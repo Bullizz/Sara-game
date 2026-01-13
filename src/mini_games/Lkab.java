@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.stream.IntStream;
 
 import javax.imageio.ImageIO;
@@ -25,6 +24,9 @@ import menu.StartMenu;
 
 public class Lkab extends JPanel implements Runnable
 {
+	/**/
+	private static final long serialVersionUID = 8L;
+	
 	int width, height;
 	Thread lkab_thread;
 	boolean game_loop_running;
@@ -72,7 +74,7 @@ public class Lkab extends JPanel implements Runnable
 	{
 		super();
 			this.width  = frame.getWidth();
-			this.height = 9 * (frame.getHeight() / 10);
+			this.height = (9 * frame.getHeight()) / 10;
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
 		setFocusable(false);
@@ -109,7 +111,7 @@ public class Lkab extends JPanel implements Runnable
 		
 		wire_src_1 		= initWireSrcArr();
 		wire_src_2 		= initWireSrcArr();
-		wire_src_width  = width / 20;
+		wire_src_width  = width  / 20;
 		wire_src_height = height / 7;
 		wire_width		= wire_src_height / 5;
 		
@@ -460,9 +462,8 @@ public class Lkab extends JPanel implements Runnable
 							active_color_ch = 'b';
 							break;
 					}
-
 				}
-					
+				
 				// Grabbed wire from right side
 				if(wire_x > this.width / 2)
 				{
@@ -483,7 +484,6 @@ public class Lkab extends JPanel implements Runnable
 							break;
 					}
 				}
-				
 				this.wire_x = wire_x;
 				this.wire_y = wire_y;
 				
@@ -518,7 +518,6 @@ public class Lkab extends JPanel implements Runnable
 	public void paintComponent(Graphics g_1d)
 	{
 		super.paintComponent(g_1d);
-		
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Paint swamp
@@ -587,15 +586,15 @@ public class Lkab extends JPanel implements Runnable
 			char color_1 = wire_src_1[i];
 			switch(color_1)
 			{
-			case 'r':
-				img = src_img_RED;
-				break;
-			case 'g':
-				img = src_img_GREEN;
-				break;
-			case 'b':
-				img = src_img_BLUE;
-				break;
+				case 'r':
+					img = src_img_RED;
+					break;
+				case 'g':
+					img = src_img_GREEN;
+					break;
+				case 'b':
+					img = src_img_BLUE;
+					break;
 			}
 			g_2d.drawImage(img, 0, ((i * 2) + 1) * wire_src_height, wire_src_width, wire_src_height, null);
 			

@@ -1,15 +1,15 @@
 package mini_games;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,6 +18,7 @@ import entities.Player;
 
 import handlers.AudioHandler;
 import handlers.KeyHandler;
+
 import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
@@ -26,6 +27,9 @@ import menu.StartMenu;
 
 public class SSC extends JPanel implements Runnable
 {
+	/**/
+	private static final long serialVersionUID = 12L;
+	
 	int width, height;
 	Thread ssc_thread;
 	boolean game_loop_running;
@@ -67,8 +71,8 @@ public class SSC extends JPanel implements Runnable
 	public SSC(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x, int player_y)
 	{
 		super();
-			this.width = frame.getWidth();
-			this.height = 9 * (frame.getHeight() / 10);
+			this.width  = frame.getWidth();
+			this.height = (9 * frame.getHeight()) / 10;
 		setPreferredSize(new Dimension(width, height));
 		setLocation(0, 0);
 		
@@ -176,12 +180,9 @@ public class SSC extends JPanel implements Runnable
 		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
-			
 			frame.removeKeyListener(key_handler);
 			frame.remove(this);
-
 			top.setText("Vada a Bordo, Cazzo!");
-			
 			new StartMenu(frame, top, game_audio);
 		}
 		else
@@ -565,7 +566,6 @@ public class SSC extends JPanel implements Runnable
 			g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), player.player_width, player.player_height, null);
 	
 		// Paint rockets
-		g_2d.setColor(Color.GRAY);
 		if(active_rockets)
 		{
 			switch(rocket_src)
@@ -607,6 +607,7 @@ public class SSC extends JPanel implements Runnable
 					break;
 			}
 		}
+		
 		g_2d.dispose();
 	}
 }

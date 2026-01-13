@@ -1,13 +1,12 @@
 package mini_games;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,6 +16,7 @@ import entities.Player;
 
 import handlers.AudioHandler;
 import handlers.KeyHandler;
+
 import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
@@ -25,10 +25,13 @@ import menu.StartMenu;
 
 public class Lulle extends JPanel implements Runnable
 {
+	/**/
+	private static final long serialVersionUID = 9L;
+	
 	Thread lulle_thread;
 	int width, height;
 	boolean dirt_placed 	  = false;
-	boolean game_loop_running = true;
+	boolean game_loop_running;
 	// 1 in <RNG> chance that dirt is generated ~every millisecond
 	final int RNG 			  = 100;
 
@@ -69,15 +72,15 @@ public class Lulle extends JPanel implements Runnable
 	Enemy npc;
 	// Randomize npc speed direction
 	int[] speed_direction_arr = {-1, 1};
-	int index 			  = (int) (Math.random() * 2);
-	int index2 			  = (int) (Math.random() * 2);
+	int index 				  = (int) (Math.random() * 2);
+	int index2 				  = (int) (Math.random() * 2);
 	BufferedImage npc_img;
 	
 	public Lulle(JFrame frame, JLabel top, GameTimer game_timer, KeyHandler key_handler, AudioHandler game_audio, int player_x, int player_y)
 	{
 		super();
 			this.width 	= frame.getWidth();
-			this.height = 9 * (frame.getHeight() / 10);
+			this.height = (9 * frame.getHeight()) / 10;
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
 		setFocusable(false);
@@ -90,8 +93,8 @@ public class Lulle extends JPanel implements Runnable
 		this.player_x_passing	= player_x;
 		this.player_y_passing	= player_y;
 	
-		player = new Player(1689, 584, entity_width, entity_height);
-		npc = new Enemy((String) null, 121, 193, entity_width, entity_height);
+		player	= new Player(1689, 584, entity_width, entity_height);
+		npc		= new Enemy((String) null, 121, 193, entity_width, entity_height);
 		
 		int npc_speed_x = speed_direction_arr[index];
 		int npc_speed_y = speed_direction_arr[index2];
@@ -117,6 +120,8 @@ public class Lulle extends JPanel implements Runnable
 
 	private void initLulleThread()
 	{
+		game_loop_running = true;
+		
 		lulle_thread = new Thread(this);
 		lulle_thread.start();
 	}
@@ -173,12 +178,9 @@ public class Lulle extends JPanel implements Runnable
 		if(key_handler.GamePanel_esc_pressed)
 		{
 			game_timer.timer.cancel();
-			
 			frame.removeKeyListener(key_handler);
 			frame.remove(this);
-
 			top.setText("Vada a Bordo, Cazzo!");
-			
 			new StartMenu(frame, top, game_audio);
 		}
 		else
@@ -318,7 +320,7 @@ public class Lulle extends JPanel implements Runnable
 		if(Math.abs(player_x - dirt_x) <= (0.2 * (double) entity_width))
 			valid_x = true;
 		
-		// If dirt-y ~= broom
+		// If dirt-y ~ broom
 		if(player_y + (entity_height / 2) < dirt_y && dirt_y + (dirt_heigth / 2) <= player_y + entity_height)
 			valid_y = true;
 		
@@ -331,7 +333,7 @@ public class Lulle extends JPanel implements Runnable
 			cleaning_sound.raiseVolume(6);
 		}
 	}
-
+	
 	@Override
 	public void paintComponent(Graphics g_1d)
 	{
