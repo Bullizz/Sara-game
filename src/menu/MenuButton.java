@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -11,25 +12,32 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 
-import main.AudioHandler;
+import handlers.AudioHandler;
+import main.ErrorManagement;
 import main.GamePanel;
-import main.KeyHandler;
+import handlers.KeyHandler;
 
-public class MenuButton extends JButton implements /*ActionListener, */MouseListener
+public class MenuButton extends JButton implements MouseListener
 {
-	Color blue = new Color(0, 162, 232);
+	/**/
+	private static final long serialVersionUID = 4L;
+	
+	Color blue   = new Color(0, 162, 232);
 	Color yellow = new Color(239, 228, 176);
 	
 	String btn_name;
 	
+	// Status of leaderboard leaderboard_btn or clear_leaderboard_btn is pressed 
+	String leaderboard_default = "leaderboard_default",
+		   leaderboard_cleared = "leaderboard_cleared";
+	
 	Border border;
 	Border hover_border;
 	
-	Font font = new Font("Arial", Font.PLAIN, 40);
-	Font hover_font = new Font("Arial", Font.BOLD, 40);
+	Font font		= new Font("Arial", Font.PLAIN, 40);
+	Font hover_font	= new Font("Arial", Font.BOLD, 40);
 	
 	public MenuButton(String btn_name, int top, int left, int bot, int right)
 	{
@@ -53,10 +61,9 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 	AudioHandler game_audio;
 	
 	@Override
-	public void mouseClicked(MouseEvent e){}
-	@Override
 	public void mousePressed(MouseEvent press)
 	{
+		// Action from which button is pressed
 		switch(btn_name)
 		{
 			case "Play":
@@ -72,29 +79,22 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 				new StartMenu(frame, top, game_audio);
 				break;
 			case "Switch Song":
-				int current_song_index = game_audio.getCurrent_song_index();
 				game_audio.endCurrentSong();
-				game_audio = new AudioHandler("", true, current_song_index);
-				frame.remove(current_panel);
-				new StartMenu(frame, top, game_audio);
 				break;
 			case "Leaderboard":
 				frame.remove(current_panel);
-				new EndMenu(frame, top, game_audio, "", top.getText());
+				new EndMenu(frame, top, game_audio, "", top.getText(), leaderboard_default);
 				break;
 			case "Clear Leaderboard":
 				clearLeaderboard();
 				frame.remove(current_panel);
-				new EndMenu(frame, top, game_audio, "", top.getText());
+				new EndMenu(frame, top, game_audio, "", top.getText(), leaderboard_cleared);
 				break;
 			case "Exit":
 				System.exit(0);
 				break;
 		}
 	}
-	
-	@Override
-	public void mouseReleased(MouseEvent e){}
 	@Override
 	public void mouseEntered(MouseEvent enter)
 	{
@@ -107,6 +107,10 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 		setFont(font);
 		setBorder(border);
 	}
+	@Override
+	public void mouseReleased(MouseEvent e){} // Unused
+	@Override
+	public void mouseClicked(MouseEvent e){} // Unused
 
 	public void setFrame(JFrame frame)
 	{
@@ -125,7 +129,7 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 		this.game_audio = game_audio;
 	}
 
-	// Remove leaderboard file and gen. new empty
+	// Remove leaderboard file and gen. new empty one
 	private void clearLeaderboard()
 	{
 		File file = new File("leaderboard.txt");
@@ -134,9 +138,9 @@ public class MenuButton extends JButton implements /*ActionListener, */MouseList
 			if(file.delete())
 				file.createNewFile();
 			
-		} catch (Exception e)
+		} catch(Exception e)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>menu.MenuButton:</p>Delete/Create File Error<p></p> </html>", e.toString());
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package main;
+package handlers;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,48 +12,65 @@ import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import main.ErrorManagement;
+
 public class AudioHandler implements LineListener
 {
 	String file_name = "src/audio_files/";
-	boolean repeat;
+	boolean audio_finished = false;
 	
 	Clip clip;
 	FloatControl float_ctrl;
 	
-	int current_song_index;
-	boolean user_stop = false;
+	int current_audio_index;
 	
-	public AudioHandler(String file_name, boolean repeat, int current_song_index)
+	// Class that is currently on frame,
+	// only needed for classes without thread
+	String parent_frame;
+	public String getParent_frame()
+	{
+		return parent_frame;
+	}
+	public void setParent_frame(String parent_frame)
+	{
+		this.parent_frame = parent_frame;
+	}
+	public String string_StartMenu				= "StartMenu",
+				  string_GamePanel				= "GamePanel",
+				  string_Leaderboard			= "string_Leaderboard",
+				  string_Leaderboard_cleared	= "string_Leaderboard_cleared",
+				  string_EndMenu				= "EndMenu";
+	
+	public AudioHandler(String file_name, int current_song_index)
 	{
 		if(file_name.equals(""))
 			this.file_name += getRNGSong(current_song_index);
 		else
 			this.file_name += file_name;
-		this.repeat = repeat;
 		
 		File file = new File(this.file_name);
-		if(file.exists())
-			System.out.println();
 		clip = null;
 		
 		// Play audio file
 		try
 		{
 			clip = (Clip) AudioSystem.getLine(new Line.Info(Clip.class));
-			clip.addLineListener(this);
 			clip.open(AudioSystem.getAudioInputStream(file));
+			clip.addLineListener(this);
 			float_ctrl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 			float_ctrl.setValue(0);
 			clip.start();
+			
+			audio_finished = false;
 		} catch (LineUnavailableException lue)
 		{
-			lue.printStackTrace();
+			new ErrorManagement("<html><p>handler.AudioHandler:</p><p>Line Unavailable Error</p></html>", lue.toString());
 		} catch(IOException ioe)
 		{
-			ioe.printStackTrace();
+			new ErrorManagement("<html><p>handler.AudioHandler:</p><p>Reading File Error</p><html>", ioe.toString());
 		} catch(UnsupportedAudioFileException uafe)
 		{
-			uafe.printStackTrace();
+			new ErrorManagement("<html><p>handler.AudioHandler:</p><p>Unsupported Audio File Error</p></html>", uafe.toString());
 		}		
 	}
 	
@@ -64,27 +81,31 @@ public class AudioHandler implements LineListener
 		if(event.getType() == LineEvent.Type.STOP)
 		{				
 			clip.close();
-			if(repeat && !user_stop)
-				new AudioHandler("", true, current_song_index);
+			audio_finished = true;
 		}
 	}
 
-	public int getCurrent_song_index()
+	public boolean isAudio_finished()
 	{
-		return current_song_index;
+		return audio_finished;
+	}
+
+	public int getCurrent_audio_index()
+	{
+		return current_audio_index;
 	}
 	
 	// Randomize next song
 	private String getRNGSong(int old_song_index)
 	{
-		String[] song_names = {"ram_ranch_46.wav",
-							   "vada_a_borde_cazzo-remix.wav",
-							   "canelloni_macaroni.wav",
-							   "caramelldansen.wav",
-							   "italian_sfx.wav",
-							   "miss_li.wav"};
+		String[] audio_files = {"ram_ranch_46.wav",
+							    "vada_a_bordo_cazzo-remix.wav",
+							    "canelloni_macaroni.wav",
+							    "caramelldansen.wav",
+							    "italian_sfx.wav",
+							    "miss_li.wav"};
 		
-		double[][] nums = new double[6][2];
+		double[][] nums = new double[audio_files.length][2];
 		nums[0][0]	= 1;  // Ram Ranch			 - 2%
 		nums[1][0]	= 4;  // Vada a bordo, Cazzo - 8%
 		nums[2][0]	= 10; // Canelloni Macaroni	 - 20%
@@ -92,6 +113,8 @@ public class AudioHandler implements LineListener
 		nums[4][0]	= 10; // Italian SFX		 - 20%
 		nums[5][0]	= 14; // Miss Li			 - 29%
 
+		// Assign 'RNG-limit' of each audio file entry
+		// i.e. if RNG-value is within entry-value, entry is picked 
 		nums[0][1] = 1;
 		for(int i = 1; i < nums.length; i++)
 			nums[i][1] = nums[i][0] + nums[i - 1][1];
@@ -101,7 +124,7 @@ public class AudioHandler implements LineListener
 		int new_song_index = old_song_index;
 		int i = 0;
 		
-		// Ensure new song is not the same as the previous one
+		// Iterate until new song is not the same as the previous one
 		while(new_song_index == old_song_index)
 		{
 			double RNG = Math.random() * max;
@@ -123,14 +146,13 @@ public class AudioHandler implements LineListener
 			i = 0;
 		}
 		
-		current_song_index = new_song_index;
-		return song_names[new_song_index];
+		current_audio_index = new_song_index;
+		return audio_files[current_audio_index];
 	}
 
 	public void endCurrentSong()
 	{
-		user_stop = true;
-		clip.close();
+		clip.stop();
 	}
 	
 	public void raiseVolume(int level)

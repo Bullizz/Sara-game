@@ -4,64 +4,128 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import main.AudioHandler;
+import handlers.AudioHandler;
+import main.ErrorManagement;
 
 public class EndMenu extends JPanel
 {
+	/**/
+	private static final long serialVersionUID = 3L;
+	
 	JFrame frame;
 	JLabel top;
-	AudioHandler game_audio;
+	AudioHandler this_game_audio;
 	
 	int width, height;
 	
-	Color blue = new Color(0, 162, 232);
+	Color blue	 = new Color(0, 162, 232);
 	Color yellow = new Color(239, 228, 176);
 	
 	Font font = new Font("Arial", Font.BOLD, 40);
 	
+	MenuButton menu_btn, clear_leaderboard_btn;
+	
+	// Different statuses this class can have
+	String leaderboard_status;
+	String leaderboard_default 	= "leaderboard_default",
+		   leaderboard_cleared 	= "leaderboard_cleared",
+		   string_user_inp		= "user_inp";
+	
 	boolean key_pressed = false;
 	
-	public EndMenu(JFrame frame, JLabel top, AudioHandler game_audio, String final_time_str, String top_text)
+	/*
+	 * Audio descr. in this class
+	 * 		Considering the structure of passing (AudioHandler) game_audio, it gave a lot of issues when clearing the leaderboard.
+	 *  	This class (and game_audio) needs to know if the leaderboard is cleared or not to properly end the check_for_audio_status.
+	 *  	The variable leaderboard_status will be either default or user_inp (when class is entered from StartMenu or GamePanel respectively),
+	 *  	or cleared (when 'Clear Leaderboard' button is pressed)
+	 */
+	public EndMenu(JFrame frame, JLabel top, AudioHandler game_audio, String final_time_str, String top_text, String passing_leaderboard_status)
 	{
 		super();
 			this.width  = frame.getWidth();
 			this.height = (9 * frame.getHeight()) / 10;
-		
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
 		setBackground(blue);
 		frame.add(this);
 		top.setText(top_text);
 		
-		this.frame		= frame;
-		this.game_audio	= game_audio;
-		this.top		= top;
+		this.frame			= frame;
+		this_game_audio		= game_audio;
+		this.top			= top;
+		leaderboard_status 	= passing_leaderboard_status;
 		
 		if(!final_time_str.equals(""))
 			initUserInpGUI(final_time_str);
 		else
 			initEndPanel(null, "");
+		
+		Timer check_for_audio_status = new Timer();
+		TimerTask task = new TimerTask()
+		{
+			@Override
+			public void run()
+			{
+				if(this_game_audio.isAudio_finished())
+				{
+					int current_audio_index = this_game_audio.getCurrent_audio_index();
+					this_game_audio = new AudioHandler("", current_audio_index);
+					
+					// Update buttons only after initEndPanel() has been called, i.e. after buttons has been init.
+					if(!leaderboard_status.equals(string_user_inp))
+					{						
+						menu_btn.setAudioHandler(this_game_audio);
+						clear_leaderboard_btn.setAudioHandler(this_game_audio);
+						
+						// Case when leaderboard HAS NOT been cleared
+						if(leaderboard_status.equals(leaderboard_default))
+							this_game_audio.setParent_frame(this_game_audio.string_Leaderboard);
+						// Case when leaderboard HAS been cleared
+						else if(leaderboard_status.equals(leaderboard_cleared))
+							this_game_audio.setParent_frame(this_game_audio.string_Leaderboard_cleared);
+					}
+				}
+				
+				// End timer if leaderboard HAS NOT been cleared
+				if(leaderboard_status.equals(leaderboard_default) &&
+						!this_game_audio.getParent_frame().equals(this_game_audio.string_Leaderboard))
+					check_for_audio_status.cancel();
+				// End timer if leaderboard HAS been cleared
+				if(leaderboard_status.equals(leaderboard_cleared) &&
+						!this_game_audio.getParent_frame().equals(this_game_audio.string_Leaderboard_cleared))
+					check_for_audio_status.cancel();
+			}
+		};
+		check_for_audio_status.scheduleAtFixedRate(task, 0, 500);
 	}
 	
 	// Name-input panel
 	private void initUserInpGUI(String final_time_str)
 	{
+		// Assign status and game_audio parent_frame
+		leaderboard_status = string_user_inp;
+		this_game_audio.setParent_frame(this_game_audio.string_EndMenu);
+		
 		setLayout(new GridLayout(3, 3));
 		for(int i = 0; i < 4; i++)
 		{
@@ -90,8 +154,15 @@ public class EndMenu extends JPanel
 				{
 					int user_inp = press.getKeyCode();
 
+					// Remove "Your Name:" when user pressed key
+					if(!key_pressed)
+					{
+						user_inp_field.setText("");
+						key_pressed = true;
+					}
+					
 					// Commit name
-					if(user_inp == KeyEvent.VK_ENTER)
+					else if(user_inp == KeyEvent.VK_ENTER)
 					{
 						String user_name = user_inp_field.getText();
 						removeAll();
@@ -99,14 +170,6 @@ public class EndMenu extends JPanel
 						// Leaderboard-disp. panel
 						initEndPanel(user_name, final_time_str);
 					}
-					// Remove "Your Name:" when user pressed key
-					else if(!key_pressed)
-						user_inp_field.setText("");
-				}
-				public void keyReleased(KeyEvent release)
-				{
-					if(!key_pressed)
-						key_pressed = true;
 				}
 			});
 			user_inp_panel.add(user_inp_field);
@@ -123,6 +186,14 @@ public class EndMenu extends JPanel
 	// Panel with leaderboard and cont. options
 	public void initEndPanel(String user_name, String final_time_str)
 	{
+		// Assign status and game_audio parent_frame
+		if(leaderboard_status.equals(string_user_inp))
+			leaderboard_status = leaderboard_default;
+		if(leaderboard_status.equals(leaderboard_default))
+			this_game_audio.setParent_frame(this_game_audio.string_Leaderboard);
+		if(leaderboard_status.equals(leaderboard_cleared))
+			this_game_audio.setParent_frame(this_game_audio.string_Leaderboard_cleared);
+		
 		String[] leaderboard_matrix = null;
 		int leaderboard_len = 0;
 		
@@ -145,7 +216,7 @@ public class EndMenu extends JPanel
 		setLayout(left);
 		
 		// Top 10 list
-		int width = 3 * (this.width / 5);
+		int width = (3 * this.width) / 5;
 		JPanel leaderboard_container = new JPanel();
 		leaderboard_container.setPreferredSize(new Dimension(width, this.height));
 		leaderboard_container.setLocation(0, 0);
@@ -192,23 +263,23 @@ public class EndMenu extends JPanel
 			filler_top.setBackground(blue);
 			rest.add(filler_top);
 			
-			MenuButton menu_btn = new MenuButton("Main Menu", 4, 4, 4, 4);
+			menu_btn = new MenuButton("Main Menu", 4, 4, 4, 4);
 			menu_btn.setFrame(frame);
 			menu_btn.setTop(top);
 			menu_btn.setPanel(this);
-			menu_btn.setAudioHandler(game_audio);
+			menu_btn.setAudioHandler(this_game_audio);
 			rest.add(menu_btn);
 			
 			JPanel filler_mid = new JPanel();
 			filler_mid.setBackground(blue);
 			rest.add(filler_mid);
 			
-			MenuButton clearLeaderboardBtn = new MenuButton("Clear Leaderboard", 4, 4, 4, 4);
-			clearLeaderboardBtn.setFrame(frame);
-			clearLeaderboardBtn.setTop(top);
-			clearLeaderboardBtn.setPanel(this);
-			clearLeaderboardBtn.setAudioHandler(game_audio);
-			rest.add(clearLeaderboardBtn);
+			clear_leaderboard_btn = new MenuButton("Clear Leaderboard", 4, 4, 4, 4);
+			clear_leaderboard_btn.setFrame(frame);
+			clear_leaderboard_btn.setTop(top);
+			clear_leaderboard_btn.setPanel(this);
+			clear_leaderboard_btn.setAudioHandler(this_game_audio);
+			rest.add(clear_leaderboard_btn);
 			
 			JPanel filler_bottom = new JPanel();
 			filler_bottom.setBackground(blue);
@@ -261,9 +332,9 @@ public class EndMenu extends JPanel
 			writer.append('\n');
 
 			writer.close();
-		} catch (IOException e)
+		} catch (IOException ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Write To Leaderboard Error</p></html>", ioe.toString());
 		}
 	}
 
@@ -279,7 +350,7 @@ public class EndMenu extends JPanel
 			reader = new Scanner(file);
 		} catch (FileNotFoundException e)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Scanner Error</p></html>", e.toString());
 		}
 		
 		int index = 0;
@@ -302,7 +373,7 @@ public class EndMenu extends JPanel
 		return leaderboard;
 	}
 
-	// Sort leaderboard with respect to time, shortest --> longest
+	// Prepare leaderboard for sorting with respect to time
 	private String[] sortLeaderboardMatrix(String[] matrix)
 	{
 		if(matrix == null)
@@ -332,9 +403,7 @@ public class EndMenu extends JPanel
 				tot_time = Double.valueOf(tot_time_str);
 			} catch (Exception e)
 			{
-				System.err.println("str --> double");
-				e.printStackTrace();
-				return null;
+				new ErrorManagement("<html><p>menu.EndMenu:</p><p>Data-type Conversion Error</p></html>", e.toString());
 			}
 			
 			tot_time_arr[i] = tot_time;
@@ -344,7 +413,7 @@ public class EndMenu extends JPanel
 		return sorted_matrix;
 	}
 
-	// Actually sorting
+	// Sort based on time, lowest --> highest
 	private String[] sort(String[] matrix, double[] tot_time_arr)
 	{
 		int placed_wrong = 0;

@@ -1,9 +1,10 @@
 - ## ~~Start Menu~~
 - ## ~~Exit game system (gamePanel --> StartMenu)~~
 
-- ## GAME
-  - ### Music
-    - #### Same Game_Audio is not stored if clip end in minigame, i.e. Switch Song -btn init. new song
+- ## ~~GAME~~
+  - ### ~~Music~~
+    - #### ~~Same game_audio is not stored if clip end in minigame, i.e. Switch Song -btn init. new song~~
+    - #### ~~Remove short-vers.~~
   - ### ~~GamePanel~~
     - #### ~~Enemy imgs~~
     - #### ~~Goal pos. at milano~~
@@ -12,10 +13,10 @@
     - #### ~~Fix player img~~
     - #### ~~Fix lulle img~~
     - #### ~~Set enemies to (x0, y0) if noclip happens~~
-  - ### Lulle
+  - ### ~~Lulle~~
     - #### ~~Improve hitbox~~
     - #### ~~Assign max-points RNG value~~
-    - #### Background img
+    - #### ~~Background img~~
     - #### ~~Fix dirt spawn point is valid~~
     - #### ~~Add cleaning-sfx~~
   - ### ~~Lkab~~
@@ -34,15 +35,22 @@
     - #### ~~Background img~~
     - #### ~~Add buffer columns so fall-items != table | trashbin~~
     - #### ~~Add thrashing-sfx~~
-  - ### Attila
-    - #### Remove initial follow-type?
+    - #### ~~Add picture of Sara & Pauline~~
+  - ### ~~Attila~~
+    - #### ~~Fix user-pressed *activation* time~~
+    - #### ~~Fix no-clip at start~~
 - ## ~~Log game-time~~
 
 - ## ~~End menu~~
   - ### ~~Add "vada a bordo cazzo"-sfx~~
 
-- ## Error mngmt
+- ## ~~Error mngmt~~
 
 - ## General project cleanup
+  - ### Ensure (a \* width) / b, not a \* (width / b)
+  - ### Organize used imports
+  - ### Remove unused imports
 
 - ## ~~Organize image-folders~~
+
+- ## ~~Restructure handlers~~

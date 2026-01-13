@@ -8,17 +8,19 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import entities.Enemy;
 import entities.Player;
-import main.AudioHandler;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+
 import menu.StartMenu;
 
 public class Lulle extends JPanel implements Runnable
@@ -41,8 +43,8 @@ public class Lulle extends JPanel implements Runnable
 	int player_x_passing;
 	int player_y_passing;
 	
-	// Max points 4 - 8
-	int MAX_POINTS  = (int) ((Math.random() * (8 - 4)) + 4);
+	// Max points 4 - 6
+	int MAX_POINTS  = (int) ((Math.random() * (6 - 4)) + 4);
 	int points 		= 0;
 	
 	// General entity parameters
@@ -60,6 +62,8 @@ public class Lulle extends JPanel implements Runnable
 	// Player parameters
 	Player player;
 	BufferedImage player_img;
+	int logged_dx = 0,
+		logged_dy = 0;
 	
 	// NPC parameters
 	Enemy npc;
@@ -77,7 +81,6 @@ public class Lulle extends JPanel implements Runnable
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
 		setFocusable(false);
-		setBackground(new Color(32, 89, 255));
 		
 		this.frame				= frame;
 		this.top				= top;
@@ -97,14 +100,13 @@ public class Lulle extends JPanel implements Runnable
 		
 		try
 		{
-//			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/"));
+			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/"));
 			player_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/Lulle/player.png"));
 			npc_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/Lulle/lulle.png"));
 			dirt_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/Lulle/dirt.png"));
 		} catch(IOException e)
 		{
-			System.err.println("Err ImageIO.read()");
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.Lulle:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		frame.add(this);
@@ -156,7 +158,14 @@ public class Lulle extends JPanel implements Runnable
 						frame.remove(this);
 						game_loop_running = false;
 					}
-						
+					
+					// If playing audio file is ended
+					if(game_audio.isAudio_finished())
+					{
+						int current_audio_index = game_audio.getCurrent_audio_index();
+						game_audio = new AudioHandler("", current_audio_index);
+					}
+					
 					delta = 0;
 				}
 			} // End of slave game-loop
@@ -184,6 +193,12 @@ public class Lulle extends JPanel implements Runnable
 		int player_dx = direction_arr[0];
 		int player_dy = direction_arr[1];
 		
+		// Log dx|dy for player retardation
+		if(player_dx != 0)
+			logged_dx = player_dx;
+		if(player_dy != 0)
+			logged_dy = player_dy;
+		
 		int player_speed_x = player.getPlayer_speed_x();
 		int player_speed_y = player.getPlayer_speed_y();
 		
@@ -203,10 +218,10 @@ public class Lulle extends JPanel implements Runnable
 		int player_y = player.getPlayer_y();
 		
 		// If within map constraints
-		if(moveableX(player_x, player_dx))
-			player_x += player_speed_x * player_dx;
-		if(moveableY(player_y, player_dy))
-			player_y += player_speed_y * player_dy;
+		if(moveableX(player_x, logged_dx))
+			player_x += player_speed_x * logged_dx;
+		if(moveableY(player_y, logged_dy))
+			player_y += player_speed_y * logged_dy;
 		
 		player.setPlayer_x(player_x);
 		player.setPlayer_y(player_y);
@@ -312,7 +327,7 @@ public class Lulle extends JPanel implements Runnable
 		{
 			points++;
 			dirt_placed = false;
-			AudioHandler cleaning_sound = new AudioHandler("sfx/broom-sweep.wav", false, -1);
+			AudioHandler cleaning_sound = new AudioHandler("sfx/broom-sweep.wav", -1);
 			cleaning_sound.raiseVolume(6);
 		}
 	}
@@ -322,6 +337,9 @@ public class Lulle extends JPanel implements Runnable
 	{
 		super.paintComponent(g_1d);
 		Graphics2D g_2d = (Graphics2D) g_1d;
+		
+		// Paint background
+		g_2d.drawImage(background_img, 0, 0, width, height, null);
 		
 		// Paint player
 		g_2d.drawImage(player_img, player.getPlayer_x(), player.getPlayer_y(), entity_width, entity_height, null);

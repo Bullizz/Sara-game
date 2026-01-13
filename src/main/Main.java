@@ -9,13 +9,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import menu.StartMenu;
+import handlers.AudioHandler;
 
 public class Main
 {
 	public static void main(String[] args)
 	{
+		// Init. frame
 		JFrame frame = new JFrame();
 		frame.setUndecorated(true);
+		frame.setTitle("Vada a Bordo, Cazzo!");
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setSize(1920, 1080);
 		frame.setLocationRelativeTo(null);
@@ -33,7 +36,7 @@ public class Main
 		top.setOpaque(true);
 		frame.add(top);
 
-		AudioHandler game_audio = new AudioHandler("", true, -1);
+		AudioHandler game_audio = new AudioHandler("", -1);
 		new StartMenu(frame, top, game_audio);
 	}
 }

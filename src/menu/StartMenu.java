@@ -5,19 +5,23 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 
-import javax.swing.BorderFactory;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import main.AudioHandler;
+import handlers.AudioHandler;
 
 public class StartMenu extends JPanel
 {
+	/**/
+	private static final long serialVersionUID = 5L;
+
 	int width, height;
 	
-	Color blue = new Color(0, 162, 232);
+	Color blue	 = new Color(0, 162, 232);
 	Color yellow = new Color(239, 228, 176);
 	
 	Font font = new Font("Arial", Font.PLAIN, 30);
@@ -60,6 +64,7 @@ public class StartMenu extends JPanel
 				switch_song_btn.setAudioHandler(game_audio);
 				optn_container.add(switch_song_btn);
 				
+				// Enter class with leaderboard
 				MenuButton leaderboard_btn = new MenuButton("Leaderboard", 2, 4, 2, 4);
 				leaderboard_btn.setFrame(frame);
 				leaderboard_btn.setTop(top);
@@ -91,5 +96,29 @@ public class StartMenu extends JPanel
 				esc_info_text.setOpaque(true);
 				filler_right.add(esc_info_text);
 		frame.setVisible(true);
+		
+		game_audio.setParent_frame(game_audio.string_StartMenu);
+		Timer check_for_audio_status = new Timer();
+		TimerTask task = new TimerTask()
+		{
+			AudioHandler updating_game_audio = game_audio;
+			@Override
+			public void run()
+			{
+				if(updating_game_audio.isAudio_finished())
+				{
+					int current_audio_index = updating_game_audio.getCurrent_audio_index();
+					updating_game_audio = new AudioHandler("", current_audio_index);
+					updating_game_audio.setParent_frame(updating_game_audio.string_StartMenu);
+
+					play_btn.setAudioHandler(updating_game_audio);
+					switch_song_btn.setAudioHandler(updating_game_audio);
+					leaderboard_btn.setAudioHandler(updating_game_audio);
+				}
+				if(!updating_game_audio.getParent_frame().equals(updating_game_audio.string_StartMenu))
+					check_for_audio_status.cancel();
+			}
+		};
+		check_for_audio_status.scheduleAtFixedRate(task, 0, 500);
 	}
 }

@@ -12,10 +12,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import main.AudioHandler;
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+
 import menu.StartMenu;
 
 public class Slusk extends JPanel implements Runnable
@@ -73,7 +76,7 @@ public class Slusk extends JPanel implements Runnable
 			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/Slusk/space_bar_inactive.png"));
 		} catch (IOException e)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.Slusk:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		assignPoints();
@@ -177,6 +180,13 @@ public class Slusk extends JPanel implements Runnable
 						time_counter = 0;
 					}
 					
+					// If playing audio file is ended
+					if(game_audio.isAudio_finished())
+					{
+						int current_audio_index = game_audio.getCurrent_audio_index();
+						game_audio = new AudioHandler("", current_audio_index);
+					}
+					
 					delta = 0;
 				}
 			} // End  of slave game-loop
@@ -221,7 +231,7 @@ public class Slusk extends JPanel implements Runnable
 	
 	private void playSFX()
 	{
-		AudioHandler slusk_audio = new AudioHandler("sfx/vine-boom.wav", false, -1);
+		AudioHandler slusk_audio = new AudioHandler("sfx/vine-boom.wav", -1);
 		slusk_audio.raiseVolume(6);
 	}
 	

@@ -1,9 +1,7 @@
-package main;
+package handlers;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
-import javax.swing.JFrame;
 
 public class KeyHandler implements KeyListener
 {
@@ -11,17 +9,18 @@ public class KeyHandler implements KeyListener
 	public boolean UP, LEFT, DOWN, RIGHT;
 	int[] direction_arr = {0, 0};
 	
-	// Slusk minigame
+	// Slusk minigame -variables
 	int slusk_points;
 	boolean slusk_space_pressed;
 	boolean slusk_active;
 	
-	// Attila minigame
+	// Attila minigame -variables
 	boolean attila_active;
+	boolean key_available;
 	char current_key;
 	
 	@Override
-	public void keyTyped(KeyEvent e){}
+	public void keyTyped(KeyEvent e){} // Unused
 	@Override
 	public void keyPressed(KeyEvent press)
 	{
@@ -43,22 +42,21 @@ public class KeyHandler implements KeyListener
 		}
 
 		// For attila minigame
-		else if(attila_active)
+		else if(attila_active && key_available)
 		{
-			int user_key = press.getKeyCode();
-			switch(user_key)
+			switch(user_inp)
 			{
 				case KeyEvent.VK_W:
-					setCurrent_key('w');
+					current_key = 'w';
 					break;
 				case KeyEvent.VK_A:
-					setCurrent_key('a');
+					current_key = 'a';
 					break;
 				case KeyEvent.VK_S:
-					setCurrent_key('s');
+					current_key = 's';
 					break;
 				case KeyEvent.VK_D:
-					setCurrent_key('d');
+					current_key = 'd';
 					break;
 			}
 		}
@@ -105,24 +103,25 @@ public class KeyHandler implements KeyListener
 		
 		else if(attila_active)
 		{
-			switch(current_key)
+			if(current_key == 'w' && release.getKeyCode() == KeyEvent.VK_W)
 			{
-				case 'w':
-					if(release.getKeyCode() == KeyEvent.VK_W)
-						setCurrent_key('\0');
-					break;
-				case 'a':
-					if(release.getKeyCode() == KeyEvent.VK_A)
-						setCurrent_key('\0');
-					break;
-				case 's':
-					if(release.getKeyCode() == KeyEvent.VK_S)
-						setCurrent_key('\0');
-					break;
-				case 'd':
-					if(release.getKeyCode() == KeyEvent.VK_D)
-						setCurrent_key('\0');
-					break;
+				current_key = '\0';
+				key_available = true;						
+			}
+			if(current_key == 'a' && release.getKeyCode() == KeyEvent.VK_A)
+			{
+				current_key = '\0';
+				key_available = true;						
+			}
+			if(current_key == 's' && release.getKeyCode() == KeyEvent.VK_S)
+			{
+				current_key = '\0';
+				key_available = true;						
+			}
+			if(current_key == 'd' && release.getKeyCode() == KeyEvent.VK_D)
+			{
+				current_key = '\0';
+				key_available = true;						
 			}
 		}
 		
@@ -131,26 +130,30 @@ public class KeyHandler implements KeyListener
 			if(user_inp == KeyEvent.VK_UP || user_inp == KeyEvent.VK_W)
 			{
 				UP = false;
-				if(!DOWN)
-					dy = -1;
+				dy = 0;
+				if(DOWN)
+					dy = 1;
 			}
 			if(user_inp == KeyEvent.VK_LEFT || user_inp == KeyEvent.VK_A)
 			{
 				LEFT = false;
-				if(!RIGHT)
-					dx = -1;
+				dx = 0;
+				if(RIGHT)
+					dx = 1;
 			}
 			if(user_inp == KeyEvent.VK_DOWN || user_inp == KeyEvent.VK_S)
 			{
 				DOWN = false;
-				if(!UP)
-					dy = 1;
+				dy = 0;
+				if(UP)
+					dy = -1;
 			}
 			if(user_inp == KeyEvent.VK_RIGHT || user_inp == KeyEvent.VK_D)
 			{
 				RIGHT = false;
-				if(!LEFT)
-					dx = 1;
+				dx = 0;
+				if(LEFT)
+					dx = -1;
 			}
 			
 			setDirection_arr(new int[]{dx, dy});
@@ -204,8 +207,13 @@ public class KeyHandler implements KeyListener
 	{
 		return current_key;
 	}
-	public void setCurrent_key(char current_key)
+	
+	public boolean isKey_available()
 	{
-		this.current_key = current_key;
+		return key_available;
+	}
+	public void setKey_available(boolean key_available)
+	{
+		this.key_available = key_available;
 	}
 }

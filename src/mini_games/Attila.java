@@ -1,11 +1,9 @@
 package mini_games;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -13,14 +11,21 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import entities.Player;
-import main.AudioHandler;
+
+import handlers.AudioHandler;
+import handlers.KeyHandler;
+
+import main.ErrorManagement;
 import main.GamePanel;
 import main.GameTimer;
-import main.KeyHandler;
+
 import menu.StartMenu;
 
 public class Attila extends JPanel implements Runnable
 {
+	/**/
+	private static final long serialVersionUID = 7L;
+	
 	Thread lulle_thread;
 	int width, height;
 	boolean game_loop_running;
@@ -57,10 +62,10 @@ public class Attila extends JPanel implements Runnable
 	int time_to_key_fall;
 	char active_key;
 	
-	int key_dim = 128;
-	int x_ws = 192;
-	int x_a = 64;
-	int x_d = 320;
+	int key_dim		  = 128;
+	int x_ws		  = 192;
+	int x_a			  = 64;
+	int x_d			  = 320;
 	int falling_speed = 14;
 	int[][] player_keys_pos;
 	
@@ -68,11 +73,10 @@ public class Attila extends JPanel implements Runnable
 	{
 		super();
 			this.width 	= frame.getWidth();
-			this.height = 9 * (frame.getHeight() / 10);
+			this.height = (9 * frame.getHeight()) / 10;
 		setPreferredSize(new Dimension(this.width, this.height));
 		setLocation(0, 0);
 		setFocusable(false);
-		setBackground(new Color(32, 89, 255));
 		
 		this.frame				= frame;
 		this.top				= top;
@@ -87,10 +91,10 @@ public class Attila extends JPanel implements Runnable
 							key_dim,
 							2 * key_dim);
 		
-		attila_x = width - (key_dim + 64);
+		attila_x = width  - (key_dim + 64);
 		attila_y = height - (key_dim + 64);
 		
-		key_handler.setAttila_active(true);
+		this.key_handler.setAttila_active(true);
 	
 		// Time until first key-fall, 60 - 120 frames
 		time_to_key_fall = (int) ((Math.random() * (120 - 60)) + 60);
@@ -118,14 +122,15 @@ public class Attila extends JPanel implements Runnable
 			d_img				= ImageIO.read(getClass().getResourceAsStream("/image_files/Attila/D_inactive.png"));
 			inactive_key_imgs	= new BufferedImage[]{w_img, a_img, s_img, d_img};
 			
-		} catch(IOException e)
+		} catch(Throwable ioe)
 		{
-			e.printStackTrace();
+			new ErrorManagement("<html><p>mini_games.Attila:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
 		
 		frame.add(this);
 		frame.repaint();
 		
+		this.key_handler.setKey_available(true);
 		initAttilaThread();
 	}
 
@@ -150,8 +155,9 @@ public class Attila extends JPanel implements Runnable
 			long last_time = System.nanoTime();
 			long current_time;
 			
-			int frame_counter  = 0;
-			int stripe_counter = 0;
+			int frame_counter		= 0;
+			int stripe_counter		= 0;
+			int active_key_counter	= 0;
 			
 			// Slave game-loop
 			while(game_loop_running)
@@ -166,10 +172,22 @@ public class Attila extends JPanel implements Runnable
 					updateFallingKeys();
 					
 					// User pressed key
-					active_key = key_handler.getCurrent_key();
+					if(key_handler.isKey_available())
+						active_key = key_handler.getCurrent_key();
+					if(active_key != '\0')
+					{
+						active_key_counter++;
+						if(active_key_counter % 10 == 0)
+						{
+							key_handler.setKey_available(false);
+							active_key = '\0';
+							active_key_counter = 0;
+						}
+					}
 					
 					int[] collision = checkCollision(active_key);
 					int index = collision[1];
+					
 					// Falling key "catched", i.e. key pressed when falling key in front of it 
 					if(collision[0] == 1 && falling_keys[index][3] == 0)
 					{
@@ -185,7 +203,7 @@ public class Attila extends JPanel implements Runnable
 					repaint();
 					
 					 // Game completed
-					 if(player.getPlayer_x() + player.player_width >= attila_x + key_dim || key_handler.GamePanel_esc_pressed)
+					 if(player.getPlayer_x() + player.player_width > attila_x + key_dim || key_handler.GamePanel_esc_pressed)
 					 {
 						 key_handler.setAttila_active(false);
 						 
@@ -195,7 +213,8 @@ public class Attila extends JPanel implements Runnable
 					 }
 					 
 					frame_counter++;
-					// Init. a falling key, either after 20 or 60 frames
+					
+					// Init. a falling key, either after 20 to 60 frames
 					if(frame_counter % time_to_key_fall == 0)
 					{
 						initFallingKey();
@@ -204,11 +223,19 @@ public class Attila extends JPanel implements Runnable
 					}
 					
 					stripe_counter++;
-					// Player|Attila animation
+					
+					// Player & Attila animation
 					if(stripe_counter % 30 == 0)
 					{
 						toggleAngle();
 						stripe_counter = 0;
+					}
+					
+					// If playing audio file is ended
+					if(game_audio.isAudio_finished())
+					{
+						int current_audio_index = game_audio.getCurrent_audio_index();
+						game_audio = new AudioHandler("", current_audio_index);
 					}
 					
 					delta = 0;
@@ -245,8 +272,9 @@ public class Attila extends JPanel implements Runnable
 		
 		for(int i = 0; i < len; i++)
 		{
-			// If falling key below GamePanel
 			falling_keys[i][2] += falling_speed;
+			
+			// If falling key below GamePanel
 			if(falling_keys[i][2] > height)
 			{
 				shortenArray(i);
@@ -297,7 +325,7 @@ public class Attila extends JPanel implements Runnable
 					return new int[] {1, key_index};
 			}
 		}
-		return new int[] {0, 0};
+		return new int[]{0, 0};
 	}
 	
 	private void initFallingKey()
@@ -437,6 +465,7 @@ public class Attila extends JPanel implements Runnable
 			if(falling_keys[key_index][3] == 0)
 				g_2d.drawImage(key_img, falling_keys[key_index][1], falling_keys[key_index][2], key_dim, key_dim, null);
 		}
+		
 		g_2d.dispose();
 	}
 }
