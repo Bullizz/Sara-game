@@ -70,11 +70,11 @@ public class Slusk extends JPanel implements Runnable
 		
 		try
 		{
-			background_img 		= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/background.png"));
-			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/big_pic.png"));
-			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/space_bar_active.png"));
-			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/slusk/space_bar_inactive.png"));
-		} catch(Throwable ioe)
+			background_img 		= ImageIO.read(getClass().getResourceAsStream("/image_files/Slusk/background.png"));
+			big_pic 			= ImageIO.read(getClass().getResourceAsStream("/image_files/Slusk/big_pic.png"));
+			space_img_active	= ImageIO.read(getClass().getResourceAsStream("/image_files/Slusk/space_bar_active.png"));
+			space_img_inactive	= ImageIO.read(getClass().getResourceAsStream("/image_files/Slusk/space_bar_inactive.png"));
+		} catch (IOException e)
 		{
 			new ErrorManagement("<html><p>mini_games.Slusk:</p><p>Reading File Error</p></html>", ioe.toString());
 		}

@@ -91,15 +91,15 @@ public class Lkab extends JPanel implements Runnable
 		
 		try
 		{
-			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/gallivare_swamp.png"));
-			player_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/player_LEFT.png"));
-			player_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/player_RIGHT.png"));
+			background_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/Lkab/gallivare_swamp.png"));
+			player_img_LEFT		= ImageIO.read(getClass().getResourceAsStream("/image_files/Lkab/player_LEFT.png"));
+			player_img_RIGHT	= ImageIO.read(getClass().getResourceAsStream("/image_files/Lkab/player_RIGHT.png"));
 			player_img			= player_img_RIGHT;
 			
-			src_img_RED			= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_RED.png"));
-			src_img_GREEN		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_GREEN.png"));
-			src_img_BLUE		= ImageIO.read(getClass().getResourceAsStream("/image_files/lkab/wire_src_BLUE.png"));
-		} catch(Throwable ioe)
+			src_img_RED			= ImageIO.read(getClass().getResourceAsStream("/image_files/Lkab/wire_src_RED.png"));
+			src_img_GREEN		= ImageIO.read(getClass().getResourceAsStream("/image_files/Lkab/wire_src_GREEN.png"));
+			src_img_BLUE		= ImageIO.read(getClass().getResourceAsStream("/image_files/Lkab/wire_src_BLUE.png"));
+		} catch(IOException e)
 		{
 			new ErrorManagement("<html><p>mini_games.Lkab:</p><p>Reading File Error</p></html>", ioe.toString());
 		}
