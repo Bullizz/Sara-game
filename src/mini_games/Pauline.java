@@ -54,7 +54,7 @@ public class Pauline extends JPanel implements Runnable
 	
 	String[][] item_array  = {{"song_book", "julmust", "pain_suprise", "christmas_card"}, // Item type
 							 {default_str, default_str, default_str, default_str}, 		  // Item status: <default | falling | holding | placed>
-							 {"-1", "-1", "-1", "-1"},									  // Item x-position
+							 {"-1808", "-1808", "-1808", "-1808"},						  // Item x-position
 							 {"0", "0", "0", "0"},										  // Item y-position
 							 {"0", "0", "0", "0"}};										  // Item placed status
 	int rng_lim            = 4;
@@ -399,7 +399,6 @@ public class Pauline extends JPanel implements Runnable
 	public void paintComponent(Graphics g_1d)
 	{
 		super.paintComponent(g_1d);
-		
 		Graphics2D g_2d = (Graphics2D) g_1d;
 		
 		// Paint room

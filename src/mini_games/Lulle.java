@@ -100,11 +100,11 @@ public class Lulle extends JPanel implements Runnable
 		
 		try
 		{
-			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/"));
-			player_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/Lulle/player.png"));
-			npc_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/Lulle/lulle.png"));
-			dirt_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/Lulle/dirt.png"));
-		} catch(IOException e)
+			background_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/background-img.png"));
+			player_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/player.png"));
+			npc_img			= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/lulle.png"));
+			dirt_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/lulle/dirt.png"));
+		} catch(Throwable ioe)
 		{
 			new ErrorManagement("<html><p>mini_games.Lulle:</p><p>Reading File Error</p></html>", ioe.toString());
 		}

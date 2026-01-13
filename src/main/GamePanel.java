@@ -77,16 +77,16 @@ public class GamePanel extends JPanel
 		
 		try
 		{
-			map_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/world_map.png"));
-			player_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/player.png"));
+			map_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/gamepanel/world_map.png"));
+			player_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/gamepanel/player.png"));
 			
-			lulle_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/lulle.png")); 
-			albin_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/albin.png"));
-			lkab_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/lkab.png"));
-			ssc_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/ssc.png"));
-			slusk_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/slusk.png"));
-			attila_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/attila.png"));
-			pauline_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/GamePanel/pauline.png"));
+			lulle_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/gamepanel/lulle.png")); 
+			albin_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/gamepanel/albin.png"));
+			lkab_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/gamepanel/lkab.png"));
+			ssc_img		= ImageIO.read(getClass().getResourceAsStream("/image_files/gamepanel/ssc.png"));
+			slusk_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/gamepanel/slusk.png"));
+			attila_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/gamepanel/attila.png"));
+			pauline_img	= ImageIO.read(getClass().getResourceAsStream("/image_files/gamepanel/pauline.png"));
 		} catch(Throwable ioe)
 		{
 			new ErrorManagement("<html><p>main.GamePanel:</p><p>Reading File Error</p></html>", ioe.toString());
