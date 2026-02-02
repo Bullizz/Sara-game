@@ -58,10 +58,10 @@ public class Pauline extends JPanel implements Runnable
 	String holding_str = "holding";
 	
 	String[][] item_array  = {{"song_book", "julmust", "pain_suprise", "christmas_card"}, // Item type
-							 {default_str, default_str, default_str, default_str}, 		  // Item status: <default | falling | holding | placed>
-							 {"-1808", "-1808", "-1808", "-1808"},						  // Item x-position
-							 {"0", "0", "0", "0"},										  // Item y-position
-							 {"0", "0", "0", "0"}};										  // Item placed status
+							  {default_str, default_str, default_str, default_str}, 		  // Item status: <default | falling | holding | placed>
+							  {"-1808", "-1808", "-1808", "-1808"},						  // Item x-position
+							  {"0", "0", "0", "0"},										  // Item y-position
+							  {"0", "0", "0", "0"}};										  // Item placed status
 	int rng_lim            = 4;
 	int item_width		   = 100;
 	int item_height		   = 100;
@@ -122,8 +122,8 @@ public class Pauline extends JPanel implements Runnable
 		this.game_timer			= game_timer;
 		this.key_handler		= key_handler;
 		this.game_audio			= game_audio;
-		this.player_x_passing	= player_x;
-		this.player_y_passing	= player_y;
+		player_x_passing		= player_x;
+		player_y_passing		= player_y;
 		
 		frame.add(this);
 		frame.repaint();

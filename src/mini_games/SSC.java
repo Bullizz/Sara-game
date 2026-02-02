@@ -97,8 +97,8 @@ public class SSC extends JPanel implements Runnable
 		this.game_timer			= game_timer;
 		this.key_handler		= key_handler;
 		this.game_audio			= game_audio;
-		this.player_x_passing	= player_x;
-		this.player_y_passing	= player_y;
+		player_x_passing		= player_x;
+		player_y_passing		= player_y;
 		
 		int x0 = ((10 * width) - height) / 20;
 		int y0 = ((10 * height) - width) / 20;
