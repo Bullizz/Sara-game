@@ -304,7 +304,6 @@ public class GamePanel extends JPanel
 								if(spawn_counter % 20 == 0)
 								{
 									enemies[0].setFollow_type(0);
-									enemies[1].setFollow_type(3);
 									enemies[2].setFollow_type(1);
 									enemies[3].setFollow_type(2);
 									enemies[4].setFollow_type(1);
