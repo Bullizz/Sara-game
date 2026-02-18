@@ -1,12 +1,13 @@
 package handlers;
 
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.Line;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
@@ -16,7 +17,7 @@ import main.ErrorManagement;
 
 public class AudioHandler implements LineListener
 {
-	String file_name = "src/audio_files/";
+	String file_name = "/audio_files/";
 	boolean audio_finished = false;
 	
 	Clip clip;
@@ -48,21 +49,24 @@ public class AudioHandler implements LineListener
 		else
 			this.file_name += file_name;
 		
-		File file = new File(this.file_name);
 		clip = null;
 		
 		// Play audio file
 		try
 		{
-			clip = (Clip) AudioSystem.getLine(new Line.Info(Clip.class));
-			clip.open(AudioSystem.getAudioInputStream(file));
+			InputStream inpStream = getClass().getResourceAsStream(this.file_name);
+			BufferedInputStream bufferedInpStream = new BufferedInputStream(inpStream);
+			AudioInputStream audioInpStream = AudioSystem.getAudioInputStream(bufferedInpStream);
+			
+			clip = AudioSystem.getClip();
+			clip.open(audioInpStream);
 			clip.addLineListener(this);
 			float_ctrl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 			float_ctrl.setValue(0);
 			clip.start();
 			
 			audio_finished = false;
-		} catch (LineUnavailableException lue)
+		} catch(LineUnavailableException lue)
 		{
 			new ErrorManagement("<html><p>handler.AudioHandler:</p><p>Line Unavailable Error</p></html>", lue.toString());
 		} catch(IOException ioe)

@@ -7,13 +7,10 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import handlers.AudioHandler;
-
 import main.ErrorManagement;
 
 public class EndMenu extends JPanel
@@ -47,9 +43,9 @@ public class EndMenu extends JPanel
 	
 	// Different statuses this class can have
 	String leaderboard_status;
-	String leaderboard_default 	= "leaderboard_default",
-		   leaderboard_cleared 	= "leaderboard_cleared",
-		   string_user_inp		= "user_inp";
+	String leaderboard_default = "leaderboard_default",
+		   leaderboard_cleared = "leaderboard_cleared",
+		   string_user_inp	   = "user_inp";
 	
 	boolean key_pressed = false;
 	
@@ -344,14 +340,16 @@ public class EndMenu extends JPanel
 	{
 		String[] leaderboard = null;
 		
-		File file = new File("leaderboard.txt");
+//		File file = new File("leaderboard.txt");
+		InputStream inpStream = getClass().getResourceAsStream("/leaderboard.txt");
+		
 		Scanner reader = null;
 		try
 		{
-			reader = new Scanner(file);
-		} catch (FileNotFoundException e)
+			reader = new Scanner(inpStream);
+		} catch(Throwable ioe)
 		{
-			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Scanner Error</p></html>", e.toString());
+			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Scanner Error</p></html>", ioe.toString());
 		}
 		
 		int index = 0;

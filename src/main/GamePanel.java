@@ -4,26 +4,20 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
-import java.io.File;
-
+import java.io.InputStream;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import entities.Enemy;
 import entities.Player;
-
+import handlers.AudioHandler;
+import handlers.KeyHandler;
 import menu.EndMenu;
 import menu.StartMenu;
-
-import handlers.KeyHandler;
-import handlers.AudioHandler;
-
 import mini_games.Albin;
 import mini_games.Attila;
 import mini_games.Lkab;
@@ -647,8 +641,9 @@ public class GamePanel extends JPanel
 		
 		try
 		{
-			File file = new File("map.txt");
-			Scanner reader = new Scanner(file);
+//			File file = new File("map.txt");
+			InputStream inpStream = getClass().getResourceAsStream("/map.txt");
+			Scanner reader = new Scanner(inpStream);
 			while(reader.hasNextLine())
 			{
 				String current_line = reader.nextLine();
@@ -677,7 +672,6 @@ public class GamePanel extends JPanel
 		{
 			new ErrorManagement("<html><p>main.GamePanel:</p><p>Loading Map Error</p></html>", file_except.toString());
 		}
-		
 		return map;
 	}
 

@@ -112,7 +112,7 @@ public class MenuButton extends JButton implements MouseListener
 	@Override
 	public void mouseReleased(MouseEvent e){} // Unused
 	@Override
-	public void mouseClicked(MouseEvent e){} // Unused
+	public void mouseClicked(MouseEvent e){}  // Unused
 
 	public void setFrame(JFrame frame)
 	{
@@ -134,9 +134,9 @@ public class MenuButton extends JButton implements MouseListener
 	// Remove leaderboard file and gen. new empty one
 	private void clearLeaderboard()
 	{
-		File file = new File("leaderboard.txt");
 		try
 		{
+			File file  = new File(System.getProperty("user.dir"), "leaderboard.txt");
 			if(file.delete())
 				file.createNewFile();
 			
