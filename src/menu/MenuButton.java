@@ -136,7 +136,7 @@ public class MenuButton extends JButton implements MouseListener
 	{
 		try
 		{
-			File file  = new File(System.getProperty("user.dir"), "leaderboard.txt");
+			File file  = checkLeaderBoardFile();
 			if(file.delete())
 				file.createNewFile();
 			
@@ -144,5 +144,26 @@ public class MenuButton extends JButton implements MouseListener
 		{
 			new ErrorManagement("<html><p>menu.MenuButton:</p>Delete/Create File Error<p></p> </html>", e.toString());
 		}
+	}
+
+	String LEADERBOARD = "leaderboard.txt";
+	String LEADERBOARD_DIR = "sara-game-leaderboard";
+	private File checkLeaderBoardFile()
+	{
+		// Create place for leaderboard on machine
+		try
+		{			
+			String appData = System.getenv("APPDATA");
+			File dir = new File(appData, LEADERBOARD_DIR);
+			if(!dir.exists())
+				dir.mkdirs();
+		
+			return new File(dir, LEADERBOARD);
+		} catch(SecurityException se)
+		{
+			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Error Creating Dir. For leaderboard.txt</p></html>", se.toString());
+		}
+		
+		return null;
 	}
 }

@@ -7,11 +7,11 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -40,6 +40,10 @@ public class EndMenu extends JPanel
 	Font font = new Font("Arial", Font.BOLD, 40);
 	
 	MenuButton menu_btn, clear_leaderboard_btn;
+	
+	File leaderboardFile;
+	String LEADERBOARD		= "leaderboard.txt";
+	String LEADERBOARD_DIR	= "sara-game-leaderboard";
 	
 	// Different statuses this class can have
 	String leaderboard_status;
@@ -116,6 +120,25 @@ public class EndMenu extends JPanel
 		check_for_audio_status.scheduleAtFixedRate(task, 0, 500);
 	}
 	
+	private File checkLeaderBoardFile()
+	{
+		// Create place for leaderboard on user's machine
+		try
+		{			
+			String appData = System.getenv("APPDATA");
+			File dir = new File(appData, LEADERBOARD_DIR);
+			if(!dir.exists())
+				dir.mkdirs();
+		
+			return new File(dir, LEADERBOARD);
+		} catch(SecurityException se)
+		{
+			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Error Creating Dir. For leaderboard.txt</p></html>", se.toString());
+		}
+		
+		return null;
+	}
+	
 	// Name-input panel
 	private void initUserInpGUI(String final_time_str)
 	{
@@ -183,6 +206,19 @@ public class EndMenu extends JPanel
 	// Panel with leaderboard and cont. options
 	public void initEndPanel(String user_name, String final_time_str)
 	{
+		// Check if leaderboard file exists, otherwise create it
+		leaderboardFile = checkLeaderBoardFile();
+		if(!leaderboardFile.exists())
+		{
+			try
+			{
+				leaderboardFile.createNewFile();
+			} catch(Exception e)
+			{
+				new ErrorManagement("<html><p>menu.EndMenu:</p><p>Error Creating leaderboard.txt</p></html>", e.toString());
+			}
+		}
+		
 		// Assign status and game_audio parent_frame
 		if(leaderboard_status.equals(string_user_inp))
 			leaderboard_status = leaderboard_default;
@@ -283,7 +319,7 @@ public class EndMenu extends JPanel
 			rest.add(filler_bottom);
 		revalidate();
 	}
-	
+
 	// Convert game-time to seconds
 	private double getTotTime(String final_time_str)
 	{
@@ -313,25 +349,23 @@ public class EndMenu extends JPanel
 	// Add new entry to leaderboard file
 	private void writeToLeaderboardMatrix(String user_name, String final_time_str, double tot_time)
 	{
-		StringBuffer new_entry = new StringBuffer();
-		new_entry.append(user_name);
-		new_entry.append(";");
-		new_entry.append(final_time_str);
-		new_entry.append(";");
-		new_entry.append(tot_time);
-		new_entry.append(";");
+		StringBuffer newEntry = new StringBuffer();
+		newEntry.append(user_name);
+		newEntry.append(";");
+		newEntry.append(final_time_str);
+		newEntry.append(";");
+		newEntry.append(tot_time);
+		newEntry.append(";");
 		
-		BufferedWriter writer;
 		try
 		{
-			writer = new BufferedWriter(new FileWriter("leaderboard.txt", true));
-			writer.append(new_entry.toString());
-			writer.append('\n');
-
+			BufferedWriter writer = new BufferedWriter(new FileWriter(leaderboardFile, true));
+			writer.write(newEntry.toString());
+			writer.write("\n");
 			writer.close();
-		} catch (IOException ioe)
+		} catch(Exception e)
 		{
-			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Write To Leaderboard Error</p></html>", ioe.toString());
+			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Write To File</p></html>", e.toString());
 		}
 	}
 
@@ -339,35 +373,27 @@ public class EndMenu extends JPanel
 	private String[] getLeaderboardMatrix()
 	{
 		String[] leaderboard = null;
-		
-//		File file = new File("leaderboard.txt");
-		InputStream inpStream = getClass().getResourceAsStream("/leaderboard.txt");
-		
-		Scanner reader = null;
-		try
+		try(BufferedReader reader = new BufferedReader(new FileReader(leaderboardFile)))
 		{
-			reader = new Scanner(inpStream);
-		} catch(Throwable ioe)
+		    String line;
+		    int index = 0;
+		    while((line = reader.readLine()) != null)
+		    {
+		        // Append array
+				String[] temp_leaderboard = new String[index + 1];
+				int i;
+				for(i = 0; i < index; i++)
+					temp_leaderboard[i] = leaderboard[i];
+				temp_leaderboard[i] = "";
+				leaderboard = temp_leaderboard;
+				
+				leaderboard[i] = line;
+				index++;
+		    }
+		} catch(Exception e)
 		{
-			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Scanner Error</p></html>", ioe.toString());
+			new ErrorManagement("<html><p>menu.EndMenu:</p><p>Read From File</p></html>", e.toString());
 		}
-		
-		int index = 0;
-		while(reader.hasNextLine())
-		{
-			// Append array
-			String[] temp_leaderboard = new String[index + 1];
-			int i;
-			for(i = 0; i < index; i++)
-				temp_leaderboard[i] = leaderboard[i];
-			temp_leaderboard[i] = "";
-			leaderboard = temp_leaderboard;
-			
-			String current_line = reader.nextLine();
-			leaderboard[i] = current_line;
-			index++;
-		}
-		reader.close();
 		
 		return leaderboard;
 	}
