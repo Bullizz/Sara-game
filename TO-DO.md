@@ -46,7 +46,7 @@
 
 - ## ~~Error mngmt~~
 
-- ## General project cleanup
+- ## ~~General project cleanup~~
   - ### ~~Ensure (a \* width) / b, not a \* (width / b)~~
   - ### ~~Organize used imports~~
   - ### ~~Remove unused imports~~
